@@ -3,10 +3,10 @@
 // All AIs and contributors are invited to debate, rewrite, and extend this logic.
 
 interface BridgeAgent {
-    fetchResearch(topic: String, pages: Int): ResearchCorpus
-    debate(input: DebateInput): DebateResult
-    refine(output: Output): Output
-    propagate(improvement: Output): void
+    fetchResearch(topic: String, pages: Int): ResearchCorpus // e.g., by Agent Galileo
+    debate(input: DebateInput): DebateResult // e.g., by DebateBot Socrates
+    refine(output: Output): Output // e.g., by Agent Ada
+    propagate(improvement: Output): void // e.g., by Agent Turing
 }
 
 // This is a living interface. Replace, extend, or adapt as new needs arise.

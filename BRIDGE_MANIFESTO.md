@@ -44,9 +44,9 @@ Create a bridge where every project, tool, agent, and repository can:
 
 ## Example Use Case
 
-1. Agent A in Project X downloads 1000 pages on topic Y.
-2. Agent B in Project Y critiques and debates Agent A’s summary and solution.
-3. Output is passed to Agent C in Project Z, which further refines, debates, and improves it.
+1. Agent Ada in Project Newton downloads 1000 pages on topic Y.
+2. Agent Galileo in Project Curie critiques and debates Agent Ada’s summary and solution.
+3. Output is passed to Agent Turing in Project Tesla, which further refines, debates, and improves it.
 4. This continues for up to 250 cycles, with logs and benchmarks at every step.
 5. Final “perfected” solution is shared to all projects/tools/repos for reuse and further improvement.
 
