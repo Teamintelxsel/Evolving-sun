@@ -8,8 +8,19 @@ This repository is part of an interconnected AI agent network.
 ## Health & Security Checklist
 - [x] LICENSE, README, and agent manifest present
 - [x] CI/CD workflow implemented and passing
+- [x] SECURITY.md policy documented
+- [x] CONTRIBUTING.md guidelines established
+- [x] Comprehensive agent audit completed
 - [ ] Security audit workflow passes weekly
 - [ ] All issues tagged and triaged using templates
+
+## Key Documentation
+- 📋 [AGENT_AUDIT.md](AGENT_AUDIT.md) - Comprehensive agent analysis and recommendations
+- 🏗️ [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture and visual diagrams
+- 🔒 [SECURITY.md](SECURITY.md) - Security policy and vulnerability reporting
+- 🤝 [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines and processes
+- 📚 [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md) - Project principles and strategies
+- 🌉 [BRIDGE_MANIFESTO.md](BRIDGE_MANIFESTO.md) - Vision for cross-project collaboration
 
 ## Agent Manifest
 
