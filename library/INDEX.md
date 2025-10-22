@@ -106,6 +106,34 @@ Referenced in:
 
 ---
 
+## Monitoring & Procedures
+
+### Monitoring Documentation
+**Purpose**: Define procedures for tracking performance and feedback
+
+- **[MONITORING_PROCEDURES.md](MONITORING_PROCEDURES.md)** 📊
+  - Workflow monitoring procedures
+  - Agent evolution tracking
+  - Community feedback monitoring
+  - Performance dashboards and metrics
+  - Alerting and escalation procedures
+  - **Status**: ✅ Active | **Version**: 1.0.0
+
+### Templates
+**Purpose**: Standardized templates for consistent documentation
+
+- **[templates/feedback-form.md](templates/feedback-form.md)** 📝
+  - Community feedback submission template
+  - Structured format for all feedback types
+  - **Status**: ✅ Active
+
+- **[templates/evolution-round-template.md](templates/evolution-round-template.md)** 📋
+  - Template for planning evolution rounds
+  - Standardized structure for consistency
+  - **Status**: ✅ Active
+
+---
+
 ## Change Logs & History
 
 ### Project History
@@ -250,16 +278,18 @@ Local copy:
 ## Statistics
 
 ### Current Content
-- **Total Documents**: 15+
-- **Active Documents**: 10+
-- **Categories**: 6 major categories
+- **Total Documents**: 18+
+- **Active Documents**: 13+
+- **Categories**: 7 major categories
 - **Evolution Rounds**: 1 (in progress)
 - **Workflow Files**: 1 active
+- **Templates**: 2 available
 
 ### Recent Activity
-- Last document added: round-1-progress.md (2025-10-22)
-- Last major update: AGENT_EVOLUTION_FRAMEWORK.md (2025-10-22)
+- Last document added: MONITORING_PROCEDURES.md (2025-10-22)
+- Last major update: INDEX.md (2025-10-22)
 - Last workflow fix: main.yml (2025-10-22)
+- Templates created: feedback-form, evolution-round-template (2025-10-22)
 
 ---
 
