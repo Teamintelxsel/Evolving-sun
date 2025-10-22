@@ -1,29 +1,31 @@
+---
 name: Repository Health Check
 
 # This workflow validates the basic health and structure of the repository
 # It is designed to be transparent and community-friendly
-# Community members are encouraged to suggest improvements via issues/discussions
+# Community members are encouraged to suggest improvements via
+# issues/discussions
 
-on:
+'on':
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:  # Allows manual triggering for testing
 
 jobs:
   validate-repository:
     name: Validate Repository Structure
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Verify essential files exist
         run: |
           echo "Checking for essential repository files..."
-          
+
           # Check for required files
           required_files=(
             "README.md"
@@ -31,7 +33,7 @@ jobs:
             "KNOWLEDGE_BASE.md"
             ".github/workflows/main.yml"
           )
-          
+
           missing_files=()
           for file in "${required_files[@]}"; do
             if [ ! -f "$file" ]; then
@@ -41,25 +43,25 @@ jobs:
               echo "✅ Found: $file"
             fi
           done
-          
+
           if [ ${#missing_files[@]} -ne 0 ]; then
             echo "::error::Missing required files: ${missing_files[*]}"
             exit 1
           fi
-          
+
           echo "All essential files are present!"
-          
+
       - name: Verify documentation structure
         run: |
           echo "Checking documentation structure..."
-          
+
           # Check for important documentation directories
           doc_dirs=(
             "library"
             "issues"
             "bridge"
           )
-          
+
           for dir in "${doc_dirs[@]}"; do
             if [ -d "$dir" ]; then
               echo "✅ Found directory: $dir"
@@ -70,18 +72,18 @@ jobs:
               echo "⚠️  Missing directory: $dir (optional)"
             fi
           done
-          
+
       - name: Validate workflow file
         run: |
           echo "Validating workflow file is not empty..."
-          
+
           if [ ! -s ".github/workflows/main.yml" ]; then
             echo "::error::Workflow file is empty!"
             exit 1
           fi
-          
+
           echo "✅ Workflow file has content"
-          
+
       - name: Repository health summary
         if: success()
         run: |
