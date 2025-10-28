@@ -7,6 +7,7 @@
 ## Repository Structure & Major Components
 
 - **library/README.md**: [Documentation hub](https://github.com/enderyou-lang/Evolving-sun/blob/main/library/README.md)
+- **AGENT_AUDIT.md**: [Comprehensive agent audit and improvement recommendations](https://github.com/enderyou-lang/Evolving-sun/blob/main/AGENT_AUDIT.md)
 - **Active Issues** (Community, improvement, and agent evolution):
   - [Repair Workflows and Initiate Agent Evolution (#5)](https://github.com/enderyou-lang/Evolving-sun/issues/5)
   - [Fix and evolve all workflow issues with community involvement (#4)](https://github.com/enderyou-lang/Evolving-sun/issues/4)
