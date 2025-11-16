@@ -15,6 +15,7 @@ This repository is part of an interconnected AI agent network.
 - [ ] All issues tagged and triaged using templates
 
 ## Key Documentation
+- 🎯 [GOALS.md](GOALS.md) - Project goals, objectives, and roadmap
 - 🚀 [QUICK_REFERENCE.md](QUICK_REFERENCE.md) - Quick reference guide and navigation
 - 📋 [AGENT_AUDIT.md](AGENT_AUDIT.md) - Comprehensive agent analysis and recommendations
 - 🏗️ [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture and visual diagrams
