@@ -1,5 +1,9 @@
 name: Stage-A Lint & Secrets
 on: [push, pull_request]
+
+permissions:
+  contents: read
+
 jobs:
   scan:
     runs-on: ubuntu-latest
