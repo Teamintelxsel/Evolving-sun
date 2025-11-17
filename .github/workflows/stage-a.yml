@@ -1,0 +1,41 @@
+name: Stage-A Lint & Secrets
+on: [push, pull_request]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          pip install --user detect-secrets flake8
+      - name: Run detect-secrets
+        run: |
+          detect-secrets scan --all-files --json > detect_secrets_output.json || true
+      - name: Run flake8
+        run: |
+          flake8 src/ --max-line-length=120 || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage-a-artifacts
+          path: detect_secrets_output.json
+      - name: Validate branch naming
+        run: |
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          if [[ "$BRANCH" == "main" || "$BRANCH" == "develop" || "$BRANCH" == "HEAD" ]]; then
+            echo "Main/develop/HEAD branch - skipping validation"
+            exit 0
+          fi
+          if [[ $BRANCH =~ ^(i-5|us-101|ca-1|i-10|i-80|i-15|ca-99|i-405|i-110|ca-58)/(bugger-swarm|war-game|ender-command|mazer-tactic|xenocide-strike|descolada-virus|hive-queen|pequenino-ethics|starways-fleet|outside-travel)/ ]]; then
+            echo "Valid branch name: $BRANCH"
+          else
+            echo "Invalid branch name: $BRANCH"
+            echo "Expected format: <road>/<theme>/<description>"
+            echo "Roads: i-5, us-101, ca-1, i-10, i-80, i-15, ca-99, i-405, i-110, ca-58"
+            echo "Themes: bugger-swarm, war-game, ender-command, mazer-tactic, xenocide-strike, descolada-virus, hive-queen, pequenino-ethics, starways-fleet, outside-travel"
+            exit 1
+          fi
