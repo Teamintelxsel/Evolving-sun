@@ -22,6 +22,7 @@ This repository is part of an interconnected AI agent network.
 - 🤝 [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines and processes
 - 📚 [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md) - Project principles and strategies
 - 🌉 [BRIDGE_MANIFESTO.md](BRIDGE_MANIFESTO.md) - Vision for cross-project collaboration
+- 🔬 [SWE_BENCH.md](SWE_BENCH.md) - SWE-bench participation and evaluation information
 
 ## Agent Manifest
 
