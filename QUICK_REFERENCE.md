@@ -15,6 +15,7 @@
 
 ### Finding Your Way Around
 - **Project Overview**: [README.md](README.md)
+- **Goals & Roadmap**: [GOALS.md](GOALS.md)
 - **Core Principles**: [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md)
 - **Vision**: [BRIDGE_MANIFESTO.md](BRIDGE_MANIFESTO.md)
 - **Change History**: [library/CHANGE_LOG.md](library/CHANGE_LOG.md)
@@ -27,6 +28,7 @@
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | [README.md](README.md) | Repository overview and entry point | Everyone |
+| [GOALS.md](GOALS.md) | Project goals, objectives, and roadmap | Everyone |
 | [AGENT_AUDIT.md](AGENT_AUDIT.md) | Comprehensive agent analysis | Developers, Contributors |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and diagrams | Developers, Architects |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guidelines | Contributors |
@@ -146,9 +148,10 @@
 2. [AGENT_AUDIT.md](AGENT_AUDIT.md#3-security-analysis) - Known issues
 
 **Project Leaders**
-1. [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md) - Principles and strategy
-2. [AGENT_AUDIT.md](AGENT_AUDIT.md#13-action-plan) - Improvement roadmap
-3. [library/CHANGE_LOG.md](library/CHANGE_LOG.md) - Progress tracking
+1. [GOALS.md](GOALS.md) - Strategic goals and roadmap
+2. [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md) - Principles and strategy
+3. [AGENT_AUDIT.md](AGENT_AUDIT.md#13-action-plan) - Improvement roadmap
+4. [library/CHANGE_LOG.md](library/CHANGE_LOG.md) - Progress tracking
 
 ---
 
@@ -252,6 +255,9 @@ A: See [ARCHITECTURE.md](ARCHITECTURE.md)
 
 **Q: How do I report security issues?**  
 A: See [SECURITY.md](SECURITY.md)
+
+**Q: What are the project goals?**  
+A: See [GOALS.md](GOALS.md)
 
 **Q: What are the project principles?**  
 A: See [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md)

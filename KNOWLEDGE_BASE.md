@@ -6,6 +6,7 @@
 
 ## Repository Structure & Major Components
 
+- **GOALS.md**: [Project goals, objectives, and strategic roadmap](https://github.com/enderyou-lang/Evolving-sun/blob/main/GOALS.md)
 - **library/README.md**: [Documentation hub](https://github.com/enderyou-lang/Evolving-sun/blob/main/library/README.md)
 - **AGENT_AUDIT.md**: [Comprehensive agent audit and improvement recommendations](https://github.com/enderyou-lang/Evolving-sun/blob/main/AGENT_AUDIT.md)
 - **Active Issues** (Community, improvement, and agent evolution):
