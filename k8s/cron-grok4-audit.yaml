@@ -126,7 +126,9 @@ spec:
           
           containers:
             - name: grok4-audit
-              # Image should be configurable - placeholder
+              # Image reference - customize via kubectl set image or kustomize overlay
+              # Example: kubectl set image cronjob/grok4-audit-cronjob \
+              #   grok4-audit=your-registry/grok4-audit:v1.0.0 -n evo-fast
               image: ghcr.io/teamintelxsel/evolving-sun/grok4-audit:latest
               imagePullPolicy: IfNotPresent
               

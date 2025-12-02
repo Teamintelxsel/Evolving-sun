@@ -27,6 +27,11 @@ on:
         required: false
         default: 'audit-only'
 
+# Minimal permissions - principle of least privilege
+permissions:
+  contents: read
+  actions: read
+
 env:
   # Model endpoint - configurable via repository secrets/vars
   GROK_AUDIT_ENDPOINT: ${{ vars.GROK_AUDIT_ENDPOINT || 'https://api.grok.example.com/v1/audit' }}

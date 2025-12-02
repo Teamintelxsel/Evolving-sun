@@ -517,8 +517,8 @@ class TestSampleChecks:
 
         # Hallucination score is increased for low confidence outputs
         assert report.hallucination_score > 0
-        # The normalized score (0.6/3 = 0.2) is below the 0.5 threshold
-        # So the check passes but the issue is recorded for review
+        # The score is normalized so individual low-confidence outputs
+        # may not exceed the threshold, but issues are still recorded
 
 
 if __name__ == "__main__":
