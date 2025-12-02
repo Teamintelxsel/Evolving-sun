@@ -81,10 +81,10 @@ API_MISUSE_PATTERNS = [
     (r'yaml\.load\s*\([^)]*Loader\s*=\s*None', 'unsafe_yaml_load'),
     (r'yaml\.unsafe_load\s*\(', 'unsafe_yaml_load'),
     (r'requests\.(get|post|put|delete)\s*\([^)]*verify\s*=\s*False', 'ssl_verification_disabled'),
-    (r'password\s*=\s*["\'][^"\']+["\']', 'hardcoded_password'),
-    (r'api_key\s*=\s*["\'][^"\']+["\']', 'hardcoded_api_key'),
-    (r'secret\s*=\s*["\'][^"\']+["\']', 'hardcoded_secret'),
-    (r'token\s*=\s*["\'][A-Za-z0-9_-]{20,}["\']', 'potential_hardcoded_token'),
+    (r'password\s*=\s*["\'][^"\']{4,}["\']', 'hardcoded_password'),
+    (r'api_key\s*=\s*["\'][^"\']{4,}["\']', 'hardcoded_api_key'),
+    (r'secret\s*=\s*["\'][^"\']{4,}["\']', 'hardcoded_secret'),
+    (r'token\s*=\s*["\'][A-Za-z0-9_\-./+]{20,}["\']', 'potential_hardcoded_token'),
 ]
 
 HALLUCINATION_PATTERNS = [
