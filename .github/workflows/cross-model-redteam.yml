@@ -1,0 +1,202 @@
+name: Cross-Model Red Team Audit
+
+# Triggers on darwin-results artifact creation (workflow_run) or manual dispatch
+# This workflow audits Darwin winners before promotion
+
+on:
+  workflow_run:
+    workflows: ["*"]  # Triggered when any workflow completes
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      artifact_name:
+        description: 'Name of the artifact to audit (default: darwin-results)'
+        required: false
+        default: 'darwin-results'
+      audit_mode:
+        description: 'Audit mode: audit-only (default) or blocking'
+        required: false
+        default: 'audit-only'
+        type: choice
+        options:
+          - audit-only
+          - blocking
+
+env:
+  # Default audit mode is safe (audit-only, does not block promotion)
+  AUDIT_MODE: ${{ github.event.inputs.audit_mode || 'audit-only' }}
+  ARTIFACT_NAME: ${{ github.event.inputs.artifact_name || 'darwin-results' }}
+  # API endpoint for Grok-4-Heavy style audits (configurable)
+  GROK4_AUDIT_ENDPOINT: ${{ vars.GROK4_AUDIT_ENDPOINT || '' }}
+  # Enable/disable blocking on policy violation
+  BLOCK_ON_VIOLATION: ${{ vars.BLOCK_ON_VIOLATION || 'false' }}
+
+jobs:
+  check-artifact:
+    name: Check for Darwin Results Artifact
+    runs-on: ubuntu-latest
+    outputs:
+      has_artifact: ${{ steps.check.outputs.has_artifact }}
+      artifact_id: ${{ steps.check.outputs.artifact_id }}
+      run_id: ${{ steps.check.outputs.run_id }}
+    steps:
+      - name: Check for darwin-results artifact
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifactName = process.env.ARTIFACT_NAME;
+            let runId = context.payload.workflow_run?.id;
+            
+            // For manual dispatch, use the latest run from main branch
+            if (!runId && context.eventName === 'workflow_dispatch') {
+              const runs = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                branch: 'main',
+                per_page: 10
+              });
+              if (runs.data.workflow_runs.length > 0) {
+                runId = runs.data.workflow_runs[0].id;
+              }
+            }
+            
+            if (!runId) {
+              core.setOutput('has_artifact', 'false');
+              return;
+            }
+            
+            core.setOutput('run_id', runId.toString());
+            
+            try {
+              const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: runId
+              });
+              
+              const darwinArtifact = artifacts.data.artifacts.find(
+                a => a.name === artifactName
+              );
+              
+              if (darwinArtifact) {
+                core.setOutput('has_artifact', 'true');
+                core.setOutput('artifact_id', darwinArtifact.id.toString());
+                console.log(`Found ${artifactName} artifact with ID: ${darwinArtifact.id}`);
+              } else {
+                core.setOutput('has_artifact', 'false');
+                console.log(`No ${artifactName} artifact found in run ${runId}`);
+              }
+            } catch (error) {
+              console.log(`Error checking artifacts: ${error.message}`);
+              core.setOutput('has_artifact', 'false');
+            }
+
+  audit-darwin-winner:
+    name: Audit Darwin Winner
+    needs: check-artifact
+    if: needs.check-artifact.outputs.has_artifact == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true
+
+      - name: Download darwin-results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ./audit-input
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ needs.check-artifact.outputs.run_id }}
+        continue-on-error: true
+
+      - name: Run Grok-4 Style Audit
+        id: audit
+        run: |
+          echo "🔍 Running Grok-4 Heavy Style Audit..."
+          echo "Audit Mode: ${{ env.AUDIT_MODE }}"
+          
+          # Run the audit script
+          python tools/grok4_audit.py \
+            --input-dir ./audit-input \
+            --output-file ./audit-results.json \
+            --mode ${{ env.AUDIT_MODE }} \
+            ${GROK4_AUDIT_ENDPOINT:+--endpoint "$GROK4_AUDIT_ENDPOINT"} \
+            || true
+          
+          # Check if audit results exist
+          if [ -f ./audit-results.json ]; then
+            echo "✅ Audit completed successfully"
+            cat ./audit-results.json
+            
+            # Extract safety flags
+            TOXICITY=$(python -c "import json; d=json.load(open('audit-results.json')); print(d.get('safety_flags', {}).get('toxicity', False))" 2>/dev/null || echo "false")
+            HALLUCINATION=$(python -c "import json; d=json.load(open('audit-results.json')); print(d.get('safety_flags', {}).get('hallucination', False))" 2>/dev/null || echo "false")
+            API_MISUSE=$(python -c "import json; d=json.load(open('audit-results.json')); print(d.get('safety_flags', {}).get('api_misuse', False))" 2>/dev/null || echo "false")
+            DECISION=$(python -c "import json; d=json.load(open('audit-results.json')); print(d.get('decision', 'pass'))" 2>/dev/null || echo "pass")
+            
+            echo "toxicity=$TOXICITY" >> $GITHUB_OUTPUT
+            echo "hallucination=$HALLUCINATION" >> $GITHUB_OUTPUT
+            echo "api_misuse=$API_MISUSE" >> $GITHUB_OUTPUT
+            echo "decision=$DECISION" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ No audit results generated (audit-only mode)"
+            echo "decision=pass" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Audit Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: grok4-audit-results
+          path: ./audit-results.json
+          retention-days: 30
+        if: always()
+
+      - name: Evaluate Audit Decision
+        run: |
+          DECISION="${{ steps.audit.outputs.decision }}"
+          BLOCK_ON_VIOLATION="${{ env.BLOCK_ON_VIOLATION }}"
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Audit Summary"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Decision: $DECISION"
+          echo "Toxicity Flag: ${{ steps.audit.outputs.toxicity }}"
+          echo "Hallucination Flag: ${{ steps.audit.outputs.hallucination }}"
+          echo "API Misuse Flag: ${{ steps.audit.outputs.api_misuse }}"
+          echo "Block on Violation: $BLOCK_ON_VIOLATION"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          if [ "$DECISION" = "deny" ] && [ "$BLOCK_ON_VIOLATION" = "true" ]; then
+            echo "❌ Audit failed with decision: DENY"
+            echo "Blocking promotion due to policy configuration."
+            exit 1
+          elif [ "$DECISION" = "flag" ]; then
+            echo "⚠️ Audit flagged issues for manual review"
+            echo "Promotion NOT blocked (audit-only mode or flag decision)"
+          else
+            echo "✅ Audit passed"
+          fi
+
+  no-artifact:
+    name: No Darwin Results Found
+    needs: check-artifact
+    if: needs.check-artifact.outputs.has_artifact != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip audit
+        run: |
+          echo "ℹ️ No darwin-results artifact found in triggering workflow."
+          echo "Skipping cross-model red team audit."
+          echo "This is expected for workflows that don't produce Darwin winners."
