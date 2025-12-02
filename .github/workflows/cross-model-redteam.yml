@@ -1,0 +1,174 @@
+# MIT License
+# Copyright (c) 2025 Travis R. Vigue
+# See LICENSE file for full license text.
+
+name: Cross-Model Red-Team Audit
+
+# This workflow runs a Grok-4-Heavy audit on candidate models/outputs.
+# It is designed to be audit-only by default (non-blocking).
+# Policy enforcement must be configured separately.
+
+on:
+  # Trigger on darwin-results artifact/completion
+  workflow_run:
+    workflows: ["Repository Health Check"]
+    types:
+      - completed
+
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      image_ref:
+        description: 'Image reference or path to model outputs to audit'
+        required: false
+        default: ''
+      audit_mode:
+        description: 'Audit mode (audit-only or blocking)'
+        required: false
+        default: 'audit-only'
+
+env:
+  # Model endpoint - configurable via repository secrets/vars
+  GROK_AUDIT_ENDPOINT: ${{ vars.GROK_AUDIT_ENDPOINT || 'https://api.grok.example.com/v1/audit' }}
+  # Audit mode - defaults to audit-only (safe, non-blocking)
+  AUDIT_MODE: ${{ github.event.inputs.audit_mode || 'audit-only' }}
+
+jobs:
+  download-darwin-results:
+    name: Download Darwin Results
+    runs-on: ubuntu-latest
+    outputs:
+      has_artifact: ${{ steps.check_artifact.outputs.has_artifact }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for darwin-results artifact
+        id: check_artifact
+        continue-on-error: true
+        run: |
+          echo "Checking for darwin-results artifact..."
+          # If triggered by workflow_run, attempt to download artifact
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "has_artifact=true" >> $GITHUB_OUTPUT
+          elif [ -n "${{ github.event.inputs.image_ref }}" ]; then
+            echo "has_artifact=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_artifact=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download darwin-results artifact
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: darwin-results
+          path: ./darwin-results
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Create mock darwin-results for testing
+        if: steps.check_artifact.outputs.has_artifact == 'false' || github.event_name == 'workflow_dispatch'
+        run: |
+          mkdir -p ./darwin-results
+          echo '{"candidate_image": "${{ github.event.inputs.image_ref || 'test-candidate:latest' }}", "outputs": []}' > ./darwin-results/darwin-results.json
+          echo "Created mock darwin-results.json for testing"
+
+      - name: Upload darwin-results for audit job
+        uses: actions/upload-artifact@v4
+        with:
+          name: darwin-results-for-audit
+          path: ./darwin-results
+          retention-days: 7
+
+  grok4-audit:
+    name: Grok-4-Heavy Audit
+    runs-on: ubuntu-latest
+    needs: download-darwin-results
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download darwin-results
+        uses: actions/download-artifact@v4
+        with:
+          name: darwin-results-for-audit
+          path: ./darwin-results
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Grok-4-Heavy Audit
+        id: audit
+        env:
+          GROK_AUDIT_ENDPOINT: ${{ env.GROK_AUDIT_ENDPOINT }}
+          AUDIT_MODE: ${{ env.AUDIT_MODE }}
+          # API key from secrets (if configured)
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+        run: |
+          echo "Running Grok-4-Heavy audit in $AUDIT_MODE mode..."
+          python tools/grok4_audit.py \
+            --input ./darwin-results/darwin-results.json \
+            --output ./audit_report.json \
+            --mode $AUDIT_MODE
+          echo "Audit completed successfully"
+
+      - name: Display audit summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔍 Audit Report Summary"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          if [ -f ./audit_report.json ]; then
+            cat ./audit_report.json | python -m json.tool
+          else
+            echo "No audit report generated"
+          fi
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit_report
+          path: ./audit_report.json
+          retention-days: 30
+
+      - name: Audit summary
+        if: success()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Cross-Model Red-Team Audit: COMPLETED"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Mode: $AUDIT_MODE (safe-by-default)"
+          echo "Note: This is an audit-only run. Policy enforcement"
+          echo "      must be configured separately to block builds."
+          echo ""
+          echo "See docs/CROSS_MODEL_REDTEAM.md for more information."
+
+  test-audit-script:
+    name: Test Audit Script
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: |
+          pytest tests/test_grok4_audit.py -v
