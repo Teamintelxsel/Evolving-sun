@@ -23,6 +23,11 @@ on:
           - audit-only
           - blocking
 
+# Minimal permissions required for this workflow
+permissions:
+  contents: read
+  actions: read
+
 env:
   # Default audit mode is safe (audit-only, does not block promotion)
   AUDIT_MODE: ${{ github.event.inputs.audit_mode || 'audit-only' }}
