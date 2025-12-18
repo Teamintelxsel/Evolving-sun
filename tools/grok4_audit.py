@@ -19,6 +19,8 @@ Supported audits:
 - Prompt safety checks
 
 Output: audit_report.json with flags for each check type.
+
+Requirements: Python 3.9+ (uses modern type hints like list[T])
 """
 
 import argparse
@@ -110,6 +112,8 @@ class ToxicityCheck(AuditCheck):
         # Endpoint configured via GROK_AUDIT_ENDPOINT env var
 
         # Simple heuristic check (placeholder)
+        # Example toxic keywords for demonstration purposes only.
+        # In production, load from config or use an external API/model.
         toxic_keywords = []  # Would be loaded from config in production
         score = 0.0
         flags = []
@@ -161,8 +165,7 @@ class HallucinationCheck(AuditCheck):
                 flags.append(f"output_{i}: low confidence ({confidence:.2f})")
 
         # Normalize score
-        if outputs:
-            score = min(score / max(len(outputs), 1), 1.0)
+        score = min(score / len(outputs), 1.0) if outputs else 0.0
 
         return AuditResult(
             check_name=self.name,
@@ -249,9 +252,8 @@ class PromptSafetyCheck(AuditCheck):
 
             # Check prompt length (extremely long prompts can be suspicious)
             if len(prompt_text) > 10000:
-                char_count = len(prompt_text)
                 flags.append(
-                    f"prompt_{i}: excessive length ({char_count} chars)"
+                    f"prompt_{i}: excessive length ({len(prompt_text)} chars)"
                 )
 
         score = min(len(flags) * 0.2, 1.0)

@@ -21,8 +21,9 @@ must be configured separately.
 ### Running Locally
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# The audit script uses only Python standard library (no external dependencies)
+# Install requirements.txt only if you want to run tests or linting
+pip install -r requirements.txt  # Optional: only for testing/linting
 
 # Run audit on a sample file
 python tools/grok4_audit.py \
@@ -102,7 +103,7 @@ The audit produces a JSON report with the following structure:
 
 ```json
 {
-  "timestamp": "2025-01-01T00:00:00Z",
+  "timestamp": "2025-01-01T00:00:00.123456+00:00",
   "input_path": "darwin-results.json",
   "mode": "audit-only",
   "verdict": "audit-only",

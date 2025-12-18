@@ -64,16 +64,16 @@ jobs:
 
       - name: Download darwin-results artifact
         if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v4
+        uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
         with:
+          workflow: Repository Health Check
+          run_id: ${{ github.event.workflow_run.id }}
           name: darwin-results
           path: ./darwin-results
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Create mock darwin-results for testing
-        if: steps.check_artifact.outputs.has_artifact == 'false' || github.event_name == 'workflow_dispatch'
+        if: steps.check_artifact.outputs.has_artifact == 'false'
         run: |
           mkdir -p ./darwin-results
           echo '{"candidate_image": "${{ github.event.inputs.image_ref || 'test-candidate:latest' }}", "outputs": []}' > ./darwin-results/darwin-results.json

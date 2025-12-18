@@ -37,7 +37,9 @@ metadata:
   name: grok4-audit-role
   namespace: evo-fast
 rules:
-  # Read darwin-results ConfigMap
+  # Read ConfigMaps (restricted to darwin-results for security)
+  # Note: If ConfigMap name changes or multiple need to be read,
+  # remove resourceNames restriction and allow get/list on all ConfigMaps
   - apiGroups: [""]
     resources: ["configmaps"]
     verbs: ["get", "list"]
@@ -129,6 +131,8 @@ spec:
               # Image reference - customize via kubectl set image or kustomize overlay
               # Example: kubectl set image cronjob/grok4-audit-cronjob \
               #   grok4-audit=your-registry/grok4-audit:v1.0.0 -n evo-fast
+              # WARNING: Do NOT use the 'latest' tag in production!
+              # Replace with a specific version tag or digest before enabling.
               image: ghcr.io/teamintelxsel/evolving-sun/grok4-audit:latest
               imagePullPolicy: IfNotPresent
               
@@ -224,20 +228,9 @@ spec:
               operator: "Exists"
               effect: "NoSchedule"
 ---
-# Optional: Secret template for API credentials
-# Create this manually with actual values:
+# API credentials Secret NOT included in this manifest for security.
+# Admins must create the required Secret manually before enabling the CronJob.
+# Example:
 # kubectl create secret generic grok4-audit-secrets -n evo-fast \
 #   --from-literal=endpoint='https://api.grok.example.com/v1/audit' \
 #   --from-literal=api-key='your-api-key'
-apiVersion: v1
-kind: Secret
-metadata:
-  name: grok4-audit-secrets
-  namespace: evo-fast
-  labels:
-    app: grok4-audit
-type: Opaque
-stringData:
-  # Placeholder - replace with actual values via kubectl or GitOps
-  endpoint: "https://api.grok.example.com/v1/audit"
-  api-key: ""  # Set via kubectl create secret or external secrets manager
