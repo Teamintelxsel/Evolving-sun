@@ -99,7 +99,7 @@ Every intake JSON **must** have:
   "notes": "Free-form observations",
   "relevant_to": ["future_api_testing", "cors_research"],
   "confidence": "high|medium|low",
-  "outcome": "valid|duplicate|informative|n/a|out-of-scope"
+  "outcome": "valid|duplicate|informative|n|a|out-of-scope"
 }
 ```
 
