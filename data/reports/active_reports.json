@@ -1,0 +1,62 @@
+{
+  "last_updated": "2025-12-30T00:00:00Z",
+  "total_reports": 2,
+  "reports": [
+    {
+      "report_id": "3443313",
+      "program": "OPPO",
+      "title": "Lock Screen and FRP Bypass on Realme GT7 Pro via Accessibility Gesture leads to complete device takeover and data extraction",
+      "severity": "Critical",
+      "cvss": "7.8",
+      "cvss_vector": "AV:P/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "status": "Needs more info",
+      "submitted_date": "2025-11-27",
+      "last_update": "2025-12-16",
+      "bounty_estimate": "$11,500",
+      "bounty_range": "$5,000-$11,500",
+      "missing_attachments": [
+        "bypass_video.mp4",
+        "device_info.png",
+        "leak_proof.txt",
+        "logs.tar.gz"
+      ],
+      "next_action": "Upload missing PoC files and detailed reproduction steps",
+      "deadline": "2025-12-30",
+      "tags": ["mobile", "frp-bypass", "lock-screen", "android", "realme"],
+      "notes": "Triage requested files 3 times. Need to provide complete PoC with video and logs."
+    },
+    {
+      "report_id": "3431738",
+      "program": "OPPO/Realme",
+      "title": "Realme Bug Bounty - Multiple CVE submissions",
+      "severity": "Informative",
+      "status": "Closed - Informative",
+      "submitted_date": "2025-11-18",
+      "closed_date": "2025-11-25",
+      "bounty_estimate": "$0",
+      "tags": ["kubernetes", "ingress-nginx", "cve-2025-1974"],
+      "notes": "Closed as informative - no significant security impact. Report was incomplete and lacked clear asset identification.",
+      "lessons_learned": [
+        "Always specify exact affected assets/domains",
+        "Provide complete PoC before submission",
+        "Ensure vulnerability is in-scope for the program",
+        "Don't submit third-party CVEs without demonstrating impact on target"
+      ]
+    }
+  ],
+  "programs_active": [
+    {
+      "program": "OPPO/Realme",
+      "slug": "oppo",
+      "response_efficiency": "93%",
+      "avg_triage": "4 days",
+      "avg_bounty_time": "1 month",
+      "bounty_ranges": {
+        "critical": "$5,000-$11,500",
+        "high": "$2,900-$3,500",
+        "moderate": "$230-$430",
+        "low": "$20-$45"
+      }
+    }
+  ]
+}
