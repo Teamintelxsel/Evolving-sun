@@ -1,3 +1,0 @@
-# Project runtime / dev requirements (template)
-flake8>=4.0.0
-pytest>=7.0.0
