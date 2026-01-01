@@ -1,0 +1,36 @@
+{
+  "date": "YYYY-MM-DD",
+  "program_name": "example-program",
+  "title": "Short, descriptive title of the session or finding",
+  "summary": "Detailed summary: what you tested, how, what you found (or didn't find). Include dead-ends.",
+  "tags": [
+    "recon",
+    "api",
+    "cors",
+    "xss",
+    "sqli",
+    "auth",
+    "dead-end",
+    "duplicate",
+    "informative"
+  ],
+  "notes": "Free-form notes: observations, tool outputs, ideas for future sessions.",
+  "relevant_to": [
+    "future_api_testing",
+    "cors_research",
+    "auth_bypass_patterns"
+  ],
+  "confidence": "high",
+  "outcome": "valid",
+  "tools_used": [
+    "burp",
+    "ffuf",
+    "nuclei",
+    "custom_script.py"
+  ],
+  "time_spent_minutes": 120,
+  "attachments": [
+    "logs/hackerone/example-program/burp_2025-12-31.burp",
+    "logs/hackerone/example-program/screenshots/finding_1.png"
+  ]
+}
