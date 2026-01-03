@@ -1,47 +1,74 @@
-name: "CodeQL"
+name: "CodeQL Analysis"
 
 on:
   push:
     branches: [ "main" ]
     paths:
+      # Python
       - '**.py'
+      # JavaScript/TypeScript
       - '**.js'
       - '**.jsx'
       - '**.ts'
       - '**.tsx'
+      # Java/Kotlin
       - '**.java'
+      - '**.kt'
+      - '**.kts'
+      # Go
       - '**.go'
+      # C/C++
       - '**.cpp'
       - '**.c'
+      - '**.cc'
+      - '**.cxx'
+      - '**.h'
+      - '**.hpp'
+      # C#
       - '**.cs'
+      # Ruby
       - '**.rb'
+      # Swift
       - '**.swift'
-      - '**.kt'
+      # Rust
       - '**.rs'
   pull_request:
     branches: [ "main" ]
     paths:
+      # Python
       - '**.py'
+      # JavaScript/TypeScript
       - '**.js'
       - '**.jsx'
       - '**.ts'
       - '**.tsx'
+      # Java/Kotlin
       - '**.java'
+      - '**.kt'
+      - '**.kts'
+      # Go
       - '**.go'
+      # C/C++
       - '**.cpp'
       - '**.c'
+      - '**.cc'
+      - '**.cxx'
+      - '**.h'
+      - '**.hpp'
+      # C#
       - '**.cs'
+      # Ruby
       - '**.rb'
+      # Swift
       - '**.swift'
-      - '**.kt'
+      # Rust
       - '**.rs'
-  schedule:
-    - cron: '0 0 * * 0'
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 360
     permissions:
       actions: read
       contents: read
@@ -50,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python', 'javascript' ]
+        language: [ 'python', 'javascript-typescript' ]
 
     steps:
     - name: Checkout repository
@@ -60,6 +87,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        queries: security-extended
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
