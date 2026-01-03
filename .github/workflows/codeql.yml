@@ -1,0 +1,91 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      # Python
+      - '**.py'
+      # JavaScript/TypeScript
+      - '**.js'
+      - '**.jsx'
+      - '**.ts'
+      - '**.tsx'
+      # Java/Kotlin
+      - '**.java'
+      - '**.kt'
+      - '**.kts'
+      # Go
+      - '**.go'
+      # C/C++
+      - '**.cpp'
+      - '**.c'
+      - '**.cc'
+      - '**.cxx'
+      - '**.h'
+      - '**.hpp'
+      # C#
+      - '**.cs'
+      # Ruby
+      - '**.rb'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      # Python
+      - '**.py'
+      # JavaScript/TypeScript
+      - '**.js'
+      - '**.jsx'
+      - '**.ts'
+      - '**.tsx'
+      # Java/Kotlin
+      - '**.java'
+      - '**.kt'
+      - '**.kts'
+      # Go
+      - '**.go'
+      # C/C++
+      - '**.cpp'
+      - '**.c'
+      - '**.cc'
+      - '**.cxx'
+      - '**.h'
+      - '**.hpp'
+      # C#
+      - '**.cs'
+      # Ruby
+      - '**.rb'
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Start with common languages - add more as needed when code is added
+        # Supported: c-cpp, csharp, go, java-kotlin, javascript-typescript, python, ruby
+        language: [ 'python', 'javascript-typescript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"
