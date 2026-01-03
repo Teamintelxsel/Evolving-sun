@@ -28,10 +28,6 @@ on:
       - '**.cs'
       # Ruby
       - '**.rb'
-      # Swift
-      - '**.swift'
-      # Rust
-      - '**.rs'
   pull_request:
     branches: [ "main" ]
     paths:
@@ -59,10 +55,6 @@ on:
       - '**.cs'
       # Ruby
       - '**.rb'
-      # Swift
-      - '**.swift'
-      # Rust
-      - '**.rs'
 
 jobs:
   analyze:
@@ -77,6 +69,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Start with common languages - add more as needed when code is added
+        # Supported: c-cpp, csharp, go, java-kotlin, javascript-typescript, python, ruby
         language: [ 'python', 'javascript-typescript' ]
 
     steps:
@@ -87,7 +81,6 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        queries: security-extended
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
