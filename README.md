@@ -22,8 +22,8 @@ Only when files with the following extensions are modified:
 - C/C++: `.c`, `.cpp`, `.cc`, `.cxx`, `.h`, `.hpp`
 - C#: `.cs`
 - Ruby: `.rb`
-- Swift: `.swift`
-- Rust: `.rs`
+
+**Note:** The workflow currently analyzes Python and JavaScript/TypeScript code. To add support for other languages (Java, Go, C++, C#, Ruby), update the `matrix.language` array in `.github/workflows/codeql.yml`.
 
 ### Important Note
 
