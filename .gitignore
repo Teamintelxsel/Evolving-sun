@@ -1,0 +1,188 @@
+# Gitignore for Evolving-sun Repository
+
+# Environment variables and secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+.env.*
+secrets.yml
+secrets.json
+
+# API keys and credentials
+**/config/credentials.yml
+**/config/master.key
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+api-keys.txt
+credentials.json
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+*.iml
+.vscode-test/
+.history/
+
+# Node.js dependencies and artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Build outputs and artifacts
+dist/
+build/
+out/
+target/
+*.log
+*.pid
+*.seed
+*.pid.lock
+coverage/
+.nyc_output/
+*.lcov
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.tox/
+*.egg-info/
+.eggs/
+*.egg
+dist-info/
+
+# Ruby
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/test/tmp/
+/test/version_tmp/
+/tmp/
+.bundle/
+vendor/bundle
+
+# Java/Maven/Gradle
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+.tmp/
+temp/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Cloud and deployment
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# CI/CD
+.github/workflows/secrets/

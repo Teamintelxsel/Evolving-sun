@@ -1,0 +1,12 @@
+# Code Owners
+# This file defines individuals or teams that are responsible for code in this repository.
+# Code owners are automatically requested for review when someone opens a pull request that modifies code that they own.
+
+# Default owners for everything in the repo
+# These owners will be the default owners for everything in the repo
+* @Teamintelxsel
+
+# Security-sensitive files require review from the organization
+/SECURITY.md @Teamintelxsel
+/.github/ @Teamintelxsel
+/.gitignore @Teamintelxsel
