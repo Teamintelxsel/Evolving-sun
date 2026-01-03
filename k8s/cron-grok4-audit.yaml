@@ -1,0 +1,236 @@
+# MIT License
+# Copyright (c) 2025 Travis R. Vigue
+# See LICENSE file for full license text.
+
+# Kubernetes CronJob for Grok-4-Heavy Audit
+# 
+# This CronJob runs large-scale audits in-cluster.
+# 
+# IMPORTANT SAFETY DEFAULTS:
+# - suspend: true - Admin must explicitly enable this job
+# - Minimal RBAC permissions
+# - Runs in evo-fast namespace
+# 
+# To enable, set suspend to false after reviewing security implications.
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: evo-fast
+  labels:
+    app: grok4-audit
+    environment: production
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grok4-audit-sa
+  namespace: evo-fast
+  labels:
+    app: grok4-audit
+---
+# Minimal RBAC: Only allows reading ConfigMaps and creating audit reports
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: grok4-audit-role
+  namespace: evo-fast
+rules:
+  # Read ConfigMaps (restricted to darwin-results for security)
+  # Note: If ConfigMap name changes or multiple need to be read,
+  # remove resourceNames restriction and allow get/list on all ConfigMaps
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]
+    resourceNames: ["darwin-results"]
+  # Create audit report ConfigMaps
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: grok4-audit-rolebinding
+  namespace: evo-fast
+subjects:
+  - kind: ServiceAccount
+    name: grok4-audit-sa
+    namespace: evo-fast
+roleRef:
+  kind: Role
+  name: grok4-audit-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grok4-audit-config
+  namespace: evo-fast
+  labels:
+    app: grok4-audit
+data:
+  # Audit mode - defaults to safe audit-only
+  AUDIT_MODE: "audit-only"
+  # Schedule configuration (used as reference, CronJob uses spec.schedule)
+  SCHEDULE_DESCRIPTION: "Daily at 2 AM UTC"
+  # Log level
+  LOG_LEVEL: "INFO"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: grok4-audit-cronjob
+  namespace: evo-fast
+  labels:
+    app: grok4-audit
+    component: audit
+spec:
+  # Schedule: configurable, defaults to daily at 2 AM UTC
+  schedule: "0 2 * * *"
+  
+  # CRITICAL SAFETY DEFAULT: Job is suspended until admin opts in
+  # To enable: kubectl patch cronjob grok4-audit-cronjob -n evo-fast -p '{"spec":{"suspend":false}}'
+  suspend: true
+  
+  # Concurrency policy - do not allow concurrent runs
+  concurrencyPolicy: Forbid
+  
+  # Keep history for debugging
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  
+  # Start deadline - if job misses its scheduled time by more than 1 hour, skip it
+  startingDeadlineSeconds: 3600
+  
+  jobTemplate:
+    metadata:
+      labels:
+        app: grok4-audit
+    spec:
+      # TTL for automatic cleanup
+      ttlSecondsAfterFinished: 86400  # 24 hours
+      
+      template:
+        metadata:
+          labels:
+            app: grok4-audit
+        spec:
+          serviceAccountName: grok4-audit-sa
+          restartPolicy: OnFailure
+          
+          # Security context for the pod
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            fsGroup: 1000
+          
+          containers:
+            - name: grok4-audit
+              # Image reference - customize via kubectl set image or kustomize overlay
+              # Example: kubectl set image cronjob/grok4-audit-cronjob \
+              #   grok4-audit=your-registry/grok4-audit:v1.0.0 -n evo-fast
+              # WARNING: Do NOT use the 'latest' tag in production!
+              # Replace with a specific version tag or digest before enabling.
+              image: ghcr.io/teamintelxsel/evolving-sun/grok4-audit:latest
+              imagePullPolicy: IfNotPresent
+              
+              # Security context for the container
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              
+              # Command to run the audit
+              command:
+                - python
+                - /app/tools/grok4_audit.py
+              args:
+                - "--input"
+                - "/data/darwin-results.json"
+                - "--output"
+                - "/output/audit_report.json"
+                - "--mode"
+                - "$(AUDIT_MODE)"
+              
+              env:
+                - name: AUDIT_MODE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: grok4-audit-config
+                      key: AUDIT_MODE
+                - name: LOG_LEVEL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: grok4-audit-config
+                      key: LOG_LEVEL
+                # API endpoint from secret (if configured)
+                - name: GROK_AUDIT_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: grok4-audit-secrets
+                      key: endpoint
+                      optional: true
+                - name: GROK_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: grok4-audit-secrets
+                      key: api-key
+                      optional: true
+              
+              # Resource limits - configurable based on audit scale
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "1Gi"
+                  cpu: "500m"
+              
+              # Volume mounts
+              volumeMounts:
+                - name: darwin-results
+                  mountPath: /data
+                  readOnly: true
+                - name: output
+                  mountPath: /output
+                - name: tmp
+                  mountPath: /tmp
+          
+          volumes:
+            - name: darwin-results
+              configMap:
+                name: darwin-results
+                optional: true
+            - name: output
+              emptyDir: {}
+            - name: tmp
+              emptyDir: {}
+          
+          # Node affinity - prefer nodes with audit label (optional)
+          affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  preference:
+                    matchExpressions:
+                      - key: workload-type
+                        operator: In
+                        values:
+                          - audit
+          
+          # Tolerations for dedicated audit nodes (optional)
+          tolerations:
+            - key: "audit-only"
+              operator: "Exists"
+              effect: "NoSchedule"
+---
+# API credentials Secret NOT included in this manifest for security.
+# Admins must create the required Secret manually before enabling the CronJob.
+# Example:
+# kubectl create secret generic grok4-audit-secrets -n evo-fast \
+#   --from-literal=endpoint='https://api.grok.example.com/v1/audit' \
+#   --from-literal=api-key='your-api-key'
