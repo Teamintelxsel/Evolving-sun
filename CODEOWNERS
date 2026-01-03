@@ -1,0 +1,28 @@
+# CODEOWNERS - Define individuals or teams responsible for code in this repository
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repository
+# This will be requested for review when someone opens a pull request
+* @Teamintelxsel
+
+# Source code directory
+/src/ @Teamintelxsel
+
+# Documentation
+/docs/ @Teamintelxsel
+*.md @Teamintelxsel
+
+# GitHub configuration and workflows
+/.github/ @Teamintelxsel
+
+# Security-sensitive files
+/SECURITY.md @Teamintelxsel
+/.github/workflows/security-scan.yml @Teamintelxsel
+/.secrets.baseline @Teamintelxsel
+
+# Dependency configuration
+/.github/dependabot.yml @Teamintelxsel
+requirements.txt @Teamintelxsel
+setup.py @Teamintelxsel
+pyproject.toml @Teamintelxsel
+package.json @Teamintelxsel
