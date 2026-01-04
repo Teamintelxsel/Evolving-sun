@@ -1,0 +1,113 @@
+# Python Dependencies for Evolving-sun Platform
+# Version: 1.0
+# Last Updated: January 4, 2026
+
+# Core Dependencies
+# -----------------
+
+# Testing Framework
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.21.0
+
+# Code Quality
+flake8>=6.1.0
+black>=23.7.0
+mypy>=1.5.0
+pylint>=2.17.0
+
+# Security
+pip-audit>=2.6.0
+safety>=2.3.0
+bandit>=1.7.5
+
+# Git Integration
+GitPython>=3.1.32
+
+# LLM Integration (for audit verification)
+openai>=1.3.0
+anthropic>=0.5.0
+
+# Data Processing
+pyyaml>=6.0.1
+toml>=0.10.2
+jsonschema>=4.19.0
+
+# Logging and Monitoring
+structlog>=23.1.0
+prometheus-client>=0.17.1
+
+# HTTP/API (if needed for webhooks, etc.)
+requests>=2.31.0
+httpx>=0.24.1
+
+# Async Support
+aiofiles>=23.2.1
+asyncio>=3.4.3
+
+# Date/Time Utilities
+python-dateutil>=2.8.2
+
+# Development Dependencies
+# -------------------------
+# (install with: pip install -r requirements.txt -r requirements-dev.txt)
+
+# Linting (extended)
+# autopep8>=2.0.4
+# isort>=5.12.0
+
+# Documentation
+# sphinx>=7.1.2
+# sphinx-rtd-theme>=1.3.0
+
+# Testing Utilities
+# faker>=19.6.0
+# freezegun>=1.2.2
+# responses>=0.23.3
+
+# Optional: Performance
+# ----------------------
+# uvloop>=0.17.0  # For async performance boost (Linux/Mac only)
+
+# Optional: Advanced Features
+# ---------------------------
+# pandas>=2.1.0  # For data analysis in audit reports
+# matplotlib>=3.7.2  # For visualization
+# plotly>=5.17.0  # For interactive dashboards
+
+# Platform-Specific Notes
+# ------------------------
+# Some dependencies may have platform-specific requirements.
+# For Windows, consider installing via conda for some packages.
+# For production, pin exact versions instead of using >=
+
+# Installation Instructions
+# --------------------------
+# Basic installation:
+#   pip install -r requirements.txt
+#
+# Development installation:
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+# Upgrade all packages:
+#   pip install --upgrade -r requirements.txt
+#
+# Create virtual environment:
+#   python -m venv venv
+#   source venv/bin/activate  # On Windows: venv\Scripts\activate
+#   pip install -r requirements.txt
+
+# Security Notes
+# --------------
+# - Run `pip-audit` regularly to check for vulnerabilities
+# - Keep dependencies updated, especially security-related ones
+# - Review dependency licenses before commercial use
+# - Consider using dependabot for automated updates
+
+# Version Pinning for Production
+# -------------------------------
+# For production deployments, replace >= with == for exact versions:
+# pytest==7.4.0
+# openai==1.3.0
+# etc.
+# This ensures reproducible builds and prevents unexpected breakage.

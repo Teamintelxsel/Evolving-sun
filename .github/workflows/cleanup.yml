@@ -1,0 +1,49 @@
+name: Automated Cleanup
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday at midnight UTC
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark and close stale issues and PRs
+        uses: actions/stale@v9
+        with:
+          # Issues
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          stale-issue-message: >
+            This issue has been automatically marked as stale because it has not had
+            recent activity. It will be closed in 7 days if no further activity occurs.
+            Thank you for your contributions.
+          close-issue-message: >
+            This issue was automatically closed because it has been stale for 7 days
+            with no activity.
+          
+          # Pull Requests
+          stale-pr-label: 'stale'
+          stale-pr-message: >
+            This pull request has been automatically marked as stale because it has not had
+            recent activity. It will be closed in 7 days if no further activity occurs.
+            Please update or close this PR if it is no longer relevant.
+          close-pr-message: >
+            This pull request was automatically closed because it has been stale for 7 days
+            with no activity.
+          
+          # Exemptions
+          exempt-issue-labels: 'pinned,security,priority-high'
+          exempt-pr-labels: 'pinned,security,priority-high'
+          exempt-milestones: true
+          exempt-assignees: true
+          
+          # Advanced options
+          operations-per-run: 100
+          remove-stale-when-updated: true
+          ascending: true  # Process oldest first

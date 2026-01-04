@@ -1,0 +1,97 @@
+name: Weekly Comprehensive Audit
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday at midnight UTC
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for comprehensive audit
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+      
+      - name: Run Comprehensive Audit
+        id: audit
+        run: |
+          if [ -f comprehensive_audit.py ]; then
+            python3 comprehensive_audit.py
+            echo "audit_completed=true" >> $GITHUB_OUTPUT
+          else
+            echo "comprehensive_audit.py not found, skipping"
+            echo "audit_completed=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+      
+      - name: Run Tests
+        if: steps.audit.outputs.audit_completed == 'true'
+        run: |
+          if [ -f test_comprehensive_audit.py ]; then
+            python3 -m pytest test_comprehensive_audit.py -v --tb=short
+          else
+            echo "test_comprehensive_audit.py not found, skipping tests"
+          fi
+        continue-on-error: true
+      
+      - name: Generate Audit Reports
+        if: steps.audit.outputs.audit_completed == 'true'
+        run: |
+          if [ -f comprehensive_audit.py ]; then
+            python3 comprehensive_audit.py --generate-reports
+          fi
+        continue-on-error: true
+      
+      - name: Upload Audit Reports
+        if: steps.audit.outputs.audit_completed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-reports-${{ github.run_number }}
+          path: audit_reports/
+          retention-days: 90
+          if-no-files-found: warn
+      
+      - name: Create Audit Summary
+        if: steps.audit.outputs.audit_completed == 'true'
+        run: |
+          echo "## Audit Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Run:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -d "audit_reports" ]; then
+            echo "### Generated Reports" >> $GITHUB_STEP_SUMMARY
+            ls -lh audit_reports/ >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Download full reports from the artifacts section above." >> $GITHUB_STEP_SUMMARY
+      
+      - name: Audit Status
+        run: |
+          if [ "${{ steps.audit.outputs.audit_completed }}" == "true" ]; then
+            echo "✅ Comprehensive audit completed successfully"
+          else
+            echo "⚠️  Audit skipped - comprehensive_audit.py not found"
+            echo "This is expected if the audit system has not been implemented yet."
+          fi
