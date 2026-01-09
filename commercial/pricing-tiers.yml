@@ -1,0 +1,427 @@
+# Commercial Pricing Strategy (2025 Best Practices)
+# Hybrid Model: SaaS Subscription + Usage-Based + Outcome-Based
+
+pricing_model:
+  type: hybrid
+  components:
+    - base_subscription  # Predictable monthly revenue
+    - usage_based        # Pay per API call/token
+    - outcome_based      # Align with customer value (enterprise only)
+
+# Pricing Tiers
+tiers:
+  starter:
+    name: "Starter"
+    monthly_base: 99
+    annual_discount: 0.20  # 20% off if paid annually ($950/year)
+    
+    included_credits: 10000  # API calls
+    overage_rate: 0.01       # $0.01 per additional call
+    
+    features:
+      - "Basic agent automation (2 agents)"
+      - "Single model access (GPT-4o-mini)"
+      - "Community support (48-hour response)"
+      - "Public dashboard access"
+      - "Up to 3 team members"
+      - "10GB storage"
+      - "Email notifications"
+    
+    limits:
+      max_users: 3
+      max_agents: 2
+      max_api_calls_per_month: 10000
+      max_storage_gb: 10
+      support_response_hours: 48
+      models:
+        - gpt4o_mini
+      
+    target_customers:
+      - "Individual developers"
+      - "Small teams (1-5 people)"
+      - "Early-stage startups"
+      - "Proof-of-concept projects"
+    
+    conversion_path: "Free trial → Starter → Professional"
+  
+  professional:
+    name: "Professional"
+    monthly_base: 499
+    annual_discount: 0.20  # 20% off if paid annually ($4,788/year)
+    
+    included_credits: 100000
+    overage_rate: 0.008  # $0.008 per additional call (20% discount)
+    
+    features:
+      - "Multi-agent orchestration (6 agents)"
+      - "All models (swap freely: OpenAI, Anthropic, Google, Meta)"
+      - "Priority support (12-hour response)"
+      - "Private deployment option"
+      - "SOC 2 compliance documentation included"
+      - "Up to 25 team members"
+      - "100GB storage"
+      - "Slack/Teams integration"
+      - "Advanced analytics dashboard"
+      - "Custom agent configuration"
+    
+    limits:
+      max_users: 25
+      max_agents: 6
+      max_api_calls_per_month: 100000
+      max_storage_gb: 100
+      support_response_hours: 12
+      models:
+        - gpt4o_mini
+        - gpt4_turbo
+        - claude_sonnet_3_5
+        - gemini_3_flash
+        - llama_4_70b
+    
+    target_customers:
+      - "Growing startups (5-50 people)"
+      - "Mid-size companies"
+      - "Development teams"
+      - "SaaS companies"
+    
+    conversion_path: "Starter → Professional → Enterprise"
+  
+  enterprise:
+    name: "Enterprise"
+    monthly_base: 2999
+    annual_discount: 0.25  # 25% off if paid annually ($26,991/year)
+    
+    included_credits: unlimited
+    overage_rate: null  # No overage, pay for outcomes instead
+    
+    outcome_based_pricing: true
+    outcome_metrics:
+      - issues_resolved_automatically
+      - code_quality_improvement_pct
+      - security_vulnerabilities_prevented
+      - developer_hours_saved
+      - deployment_frequency_increase
+    
+    features:
+      - "Dedicated infrastructure (isolated tenant)"
+      - "Custom model fine-tuning"
+      - "All compliance certifications (SOC 2, ISO 27001, ISO 42001)"
+      - "SLA guarantees (99.9% uptime)"
+      - "White-label option (your branding)"
+      - "On-premise deployment available"
+      - "24/7 dedicated support (1-hour response)"
+      - "Unlimited team members"
+      - "Unlimited storage"
+      - "Custom integrations (Jira, GitHub, GitLab, etc.)"
+      - "Dedicated customer success manager"
+      - "Quarterly business reviews"
+      - "Custom SLA negotiation"
+      - "Priority feature requests"
+      - "Advanced security (SSO, SAML, SCIM)"
+    
+    limits:
+      max_users: unlimited
+      max_agents: unlimited
+      max_api_calls_per_month: unlimited
+      max_storage_gb: unlimited
+      support_response_hours: 1
+      models: all
+      
+    target_customers:
+      - "Fortune 500 companies"
+      - "Regulated industries (finance, healthcare, government)"
+      - "Large enterprises (500+ people)"
+      - "Companies requiring on-premise"
+    
+    conversion_path: "Professional → Enterprise (sales-assisted)"
+
+# Outcome-Based Pricing (Enterprise Only)
+outcome_pricing:
+  description: "Align pricing with customer value creation"
+  
+  formula: |
+    Monthly Fee = Base Fee + (Value Generated × Revenue Share)
+    
+    Where:
+    - Base Fee = $2,999 (covers infrastructure, support)
+    - Value Generated = Measurable business impact
+    - Revenue Share = 20% of value generated
+    
+  example_calculation:
+    scenario: "AI automation saves customer $50K/month in developer time"
+    calculation:
+      base_fee: 2999
+      value_generated: 50000
+      revenue_share: 0.20
+      outcome_fee: 10000  # $50K × 20%
+      total_monthly_fee: 12999  # $2,999 + $10,000
+      customer_net_gain: 37001  # $50K - $12,999
+      customer_roi: 2.85  # 285% ROI
+  
+  metrics_measurement:
+    issues_resolved_automatically:
+      unit: "issues"
+      value_per_unit: 100  # $100 per issue resolved
+      measurement: "GitHub/Jira ticket automation"
+      
+    code_quality_improvement_pct:
+      unit: "percentage"
+      value_per_percent: 500  # $500 per 1% improvement
+      measurement: "Code coverage, bug density, technical debt"
+      
+    security_vulnerabilities_prevented:
+      unit: "vulnerabilities"
+      value_per_unit: 1000  # $1,000 per CVE prevented
+      measurement: "Security scans, patch automation"
+      
+    developer_hours_saved:
+      unit: "hours"
+      value_per_unit: 100  # $100 per hour (avg developer cost)
+      measurement: "Time tracking, automation analytics"
+      
+    deployment_frequency_increase:
+      unit: "deployments"
+      value_per_unit: 500  # $500 per additional deployment
+      measurement: "CI/CD pipeline metrics"
+  
+  reporting:
+    frequency: monthly
+    format: "Executive summary + detailed breakdown"
+    transparency: "Full visibility into value calculation"
+    dispute_resolution: "Third-party audit if needed"
+
+# Add-Ons (All Tiers)
+add_ons:
+  premium_support:
+    price: 499
+    frequency: monthly
+    features:
+      - "24/7 phone support"
+      - "Dedicated Slack channel"
+      - "30-minute response SLA"
+      - "Named support engineer"
+  
+  white_label:
+    price: 999
+    frequency: monthly
+    features:
+      - "Custom branding (logo, colors)"
+      - "Custom domain"
+      - "Remove 'Powered by Evolving-sun' footer"
+      - "Custom email templates"
+  
+  on_premise:
+    price: 2000
+    frequency: monthly
+    features:
+      - "Self-hosted deployment"
+      - "Air-gapped option"
+      - "Quarterly updates"
+      - "Implementation support"
+  
+  custom_model_training:
+    price: 5000
+    frequency: one_time
+    features:
+      - "Fine-tune model on your data"
+      - "Proprietary model weights"
+      - "Ongoing model improvement"
+      - "Model performance guarantee"
+  
+  additional_users:
+    price: 20
+    frequency: "per user per month"
+    applicable_tiers:
+      - starter
+      - professional
+  
+  additional_storage:
+    price: 10
+    frequency: "per 10GB per month"
+    applicable_tiers:
+      - starter
+      - professional
+  
+  sla_upgrade:
+    price: 500
+    frequency: monthly
+    features:
+      - "99.99% uptime (vs. 99.9%)"
+      - "Financial penalties for downtime"
+      - "Dedicated infrastructure"
+
+# Free Trial
+free_trial:
+  duration_days: 14
+  credit_card_required: false
+  
+  included:
+    api_calls: 1000
+    users: 1
+    agents: 2
+    models:
+      - gpt4o_mini
+    storage_gb: 1
+  
+  conversion_tactics:
+    - "Email drip campaign (days 1, 3, 7, 14)"
+    - "In-app upgrade prompts at 50% usage"
+    - "Onboarding call with sales (day 3)"
+    - "Feature comparison chart"
+    - "Success stories / case studies"
+  
+  trial_to_paid_target: 0.15  # 15% conversion rate
+
+# Discounts and Promotions
+discounts:
+  annual_prepay:
+    starter: 0.20    # 20% off
+    professional: 0.20
+    enterprise: 0.25
+    
+  multi_year:
+    two_year: 0.30   # 30% off
+    three_year: 0.35 # 35% off
+  
+  nonprofit:
+    discount: 0.50   # 50% off
+    verification: "501(c)(3) or equivalent"
+  
+  academic:
+    discount: 0.75   # 75% off
+    verification: ".edu email or research institution"
+  
+  startup:
+    discount: 0.50   # 50% off for first year
+    eligibility: "YC, TechStars, or <2 years old, <$1M funding"
+  
+  volume:
+    tier_1: {min_licenses: 50, discount: 0.10}   # 10% off
+    tier_2: {min_licenses: 100, discount: 0.15}  # 15% off
+    tier_3: {min_licenses: 250, discount: 0.20}  # 20% off
+
+# Payment Terms
+payment:
+  methods:
+    - credit_card
+    - ach
+    - wire_transfer
+    - invoice  # Enterprise only
+  
+  billing_frequency:
+    - monthly
+    - annual
+    - multi_year  # Enterprise only
+  
+  currencies:
+    - USD
+    - EUR
+    - GBP
+    # Add more as we expand
+  
+  invoice_terms:
+    starter: pay_now
+    professional: net_15
+    enterprise: net_30
+
+# Revenue Projections
+revenue_projections:
+  assumptions:
+    trial_signups_per_month: 500
+    trial_to_starter: 0.15      # 15% → 75 Starter
+    starter_to_professional: 0.20  # 20% → 15 Professional
+    professional_to_enterprise: 0.10  # 10% → 1.5 Enterprise
+    churn_rate_monthly: 0.05    # 5% monthly churn
+  
+  month_4_6:
+    starter_customers: 150
+    professional_customers: 25
+    enterprise_customers: 2
+    mrr: 25000
+    arr: 300000
+  
+  month_7_12:
+    starter_customers: 400
+    professional_customers: 80
+    enterprise_customers: 10
+    mrr: 150000
+    arr: 1800000
+  
+  year_2:
+    starter_customers: 800
+    professional_customers: 200
+    enterprise_customers: 25
+    mrr: 225000
+    arr: 2700000
+
+# Competitive Pricing Analysis
+competitive_analysis:
+  competitor_a:
+    name: "GitHub Copilot Enterprise"
+    pricing: 39_per_user_per_month
+    positioning: "Lower price, single model (OpenAI only)"
+    our_advantage: "Multi-model, agentic workflows, 6 specialized agents"
+  
+  competitor_b:
+    name: "Sourcegraph Cody"
+    pricing: 19_per_user_per_month
+    positioning: "Code search + AI, basic automation"
+    our_advantage: "Enterprise security (SOC 2), compliance, advanced simulations"
+  
+  competitor_c:
+    name: "Tabnine Enterprise"
+    pricing: 39_per_user_per_month
+    positioning: "Code completion, on-premise option"
+    our_advantage: "Full platform (not just completion), outcome-based pricing"
+  
+  our_positioning:
+    starter: "Competitive with basic tools, better features"
+    professional: "Premium pricing justified by multi-model + agents"
+    enterprise: "Best value through outcome alignment (customer only pays for results)"
+
+# Sales Compensation
+sales_compensation:
+  account_executive:
+    base_salary: 80000
+    commission_rate: 0.10  # 10% of first-year ACV
+    quota: 500000  # $500K annual contract value
+  
+  customer_success:
+    base_salary: 70000
+    renewal_bonus: 0.05  # 5% of renewed ACV
+    expansion_bonus: 0.10  # 10% of expansion revenue
+  
+  referral_program:
+    customer_referral: 500  # $500 credit for successful referral
+    partner_referral: 0.10  # 10% of first year revenue
+
+# Pricing Optimization Strategy
+optimization:
+  # A/B test pricing
+  ab_testing:
+    enabled: true
+    variants:
+      - current_pricing
+      - 10_percent_higher
+      - 10_percent_lower
+    metric: conversion_rate
+    duration_days: 30
+  
+  # Dynamic pricing based on usage
+  dynamic_pricing:
+    enabled: false  # Future consideration
+    factors:
+      - time_of_day
+      - current_capacity
+      - customer_segment
+  
+  # Price anchoring
+  anchoring:
+    show_annual_savings: true
+    highlight_most_popular: true  # Professional tier
+    show_enterprise_as_premium: true
+  
+  # Psychological pricing
+  psychological:
+    use_99_pricing: true  # $499 vs $500
+    show_monthly_breakdown: true  # "Only $16.50/day"
+    emphasize_roi: true  # "Save $37K/month"
