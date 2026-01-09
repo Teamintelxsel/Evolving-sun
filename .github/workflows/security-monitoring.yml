@@ -1,0 +1,181 @@
+name: Security Monitoring
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better secret detection
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install security tools
+        run: |
+          pip install detect-secrets bandit safety
+
+      - name: Run detect-secrets
+        id: detect-secrets
+        continue-on-error: true
+        run: |
+          detect-secrets scan --all-files --force-use-all-plugins > .secrets.baseline
+          if [ -s .secrets.baseline ]; then
+            echo "secrets_found=true" >> $GITHUB_OUTPUT
+            echo "::warning::Potential secrets detected in repository"
+          else
+            echo "secrets_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run bandit security scan
+        id: bandit
+        continue-on-error: true
+        run: |
+          bandit -r . -f json -o bandit-report.json || true
+          if [ -f bandit-report.json ]; then
+            # Check for high/medium severity issues
+            HIGH_COUNT=$(python3 -c "import json; data=json.load(open('bandit-report.json')); print(len([m for m in data.get('results', []) if m.get('issue_severity') in ['HIGH', 'MEDIUM']]))")
+            echo "high_issues=$HIGH_COUNT" >> $GITHUB_OUTPUT
+            if [ "$HIGH_COUNT" -gt "0" ]; then
+              echo "::warning::Found $HIGH_COUNT high/medium severity issues"
+            fi
+          fi
+
+      - name: Check for common vulnerabilities
+        run: |
+          python3 << 'EOF'
+          import os
+          import re
+          from pathlib import Path
+
+          # Patterns to check for
+          patterns = {
+              'API Keys': r'(api[_-]?key|apikey)\s*[=:]\s*["\']?[a-zA-Z0-9]{20,}["\']?',
+              'AWS Keys': r'AKIA[0-9A-Z]{16}',
+              'Private Keys': r'-----BEGIN (RSA |EC )?PRIVATE KEY-----',
+              'Passwords': r'(password|passwd|pwd)\s*[=:]\s*["\'][^"\']{8,}["\']',
+              'Tokens': r'(token|bearer)\s*[=:]\s*["\']?[a-zA-Z0-9_-]{20,}["\']?',
+          }
+
+          findings = []
+          for root, dirs, files in os.walk('.'):
+              # Skip hidden and vendor directories
+              dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', 'venv', 'vendor']]
+              
+              for file in files:
+                  if file.endswith(('.py', '.js', '.yml', '.yaml', '.json', '.env', '.sh')):
+                      filepath = os.path.join(root, file)
+                      try:
+                          with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                              content = f.read()
+                              for pattern_name, pattern in patterns.items():
+                                  matches = re.finditer(pattern, content, re.IGNORECASE)
+                                  for match in matches:
+                                      findings.append({
+                                          'file': filepath,
+                                          'type': pattern_name,
+                                          'line': content[:match.start()].count('\n') + 1
+                                      })
+                      except Exception as e:
+                          pass
+
+          if findings:
+              print(f"⚠️ Found {len(findings)} potential security issues:")
+              for finding in findings[:10]:  # Limit output
+                  print(f"  - {finding['type']} in {finding['file']}:{finding['line']}")
+          else:
+              print("✅ No obvious security issues found")
+          EOF
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python, javascript
+          queries: security-and-quality
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:python,javascript"
+
+      - name: Create security issue if critical findings
+        if: steps.detect-secrets.outputs.secrets_found == 'true' || (steps.bandit.outputs.high_issues && steps.bandit.outputs.high_issues > 0)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import os
+          from github import Github
+
+          g = Github(os.environ['GITHUB_TOKEN'])
+          repo = g.get_repo(os.environ['GITHUB_REPOSITORY'])
+
+          title = f"🔒 Security Findings - {os.environ['GITHUB_SHA'][:7]}"
+          body = f"""## Automated Security Scan Results
+
+          **Commit:** {os.environ['GITHUB_SHA']}
+          **Branch:** {os.environ['GITHUB_REF']}
+          **Triggered by:** {os.environ['GITHUB_ACTOR']}
+
+          ### Findings:
+          - Potential secrets detected: Yes
+          - High/Medium severity issues found
+
+          Please review the workflow run for detailed information:
+          {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}
+
+          ### Recommended Actions:
+          1. Review the security scan results
+          2. Remove any exposed secrets immediately
+          3. Rotate compromised credentials
+          4. Address high-severity code issues
+
+          **This issue was automatically created by the security monitoring workflow.**
+          """
+
+          # Check if similar issue already exists
+          existing_issues = repo.get_issues(state='open', labels=['security'])
+          similar = [i for i in existing_issues if title in i.title]
+          
+          if not similar:
+              issue = repo.create_issue(
+                  title=title,
+                  body=body,
+                  labels=['security', 'priority-critical', 'automation']
+              )
+              print(f"Created security issue: #{issue.number}")
+          else:
+              print("Similar security issue already exists")
+          EOF
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            .secrets.baseline
+            bandit-report.json
+          retention-days: 30
+
+      - name: Block merge if critical issues
+        if: github.event_name == 'pull_request' && (steps.detect-secrets.outputs.secrets_found == 'true' || (steps.bandit.outputs.high_issues && steps.bandit.outputs.high_issues > 5))
+        run: |
+          echo "::error::Critical security issues found. Please address before merging."
+          exit 1

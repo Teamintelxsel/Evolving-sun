@@ -1,0 +1,231 @@
+name: Benchmark Automation
+
+on:
+  schedule:
+    # Runs weekly on Sunday at 00:00 UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run-benchmarks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests numpy pandas
+
+      - name: Create benchmark results directory
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          mkdir -p benchmarks/results/$DATE
+
+      - name: Run KEGG benchmark
+        id: kegg
+        continue-on-error: true
+        run: |
+          python3 benchmarks/scripts/kegg_benchmark.py > benchmarks/results/$(date +%Y-%m-%d)/kegg_results.json
+          echo "kegg_status=completed" >> $GITHUB_OUTPUT
+
+      - name: Run SWE-bench
+        id: swe
+        continue-on-error: true
+        run: |
+          python3 benchmarks/scripts/swe_bench_runner.py > benchmarks/results/$(date +%Y-%m-%d)/swe_bench_results.json
+          echo "swe_status=completed" >> $GITHUB_OUTPUT
+
+      - name: Run GPQA verification
+        id: gpqa
+        continue-on-error: true
+        run: |
+          python3 benchmarks/scripts/gpqa_verifier.py > benchmarks/results/$(date +%Y-%m-%d)/gpqa_results.json
+          echo "gpqa_status=completed" >> $GITHUB_OUTPUT
+
+      - name: Generate SHA256 hashes and Merkle root
+        run: |
+          python3 << 'EOF'
+          import os
+          import json
+          import hashlib
+          from datetime import datetime
+          from pathlib import Path
+
+          date_str = datetime.now().strftime('%Y-%m-%d')
+          results_dir = f'benchmarks/results/{date_str}'
+          
+          hashes = {}
+          merkle_leaves = []
+
+          # Generate SHA256 for each result file
+          for filename in ['kegg_results.json', 'swe_bench_results.json', 'gpqa_results.json']:
+              filepath = os.path.join(results_dir, filename)
+              if os.path.exists(filepath):
+                  with open(filepath, 'rb') as f:
+                      file_hash = hashlib.sha256(f.read()).hexdigest()
+                      hashes[filename] = file_hash
+                      merkle_leaves.append(file_hash)
+          
+          # Simple Merkle root (hash of concatenated hashes)
+          if merkle_leaves:
+              merkle_data = ''.join(sorted(merkle_leaves))
+              merkle_root = hashlib.sha256(merkle_data.encode()).hexdigest()
+          else:
+              merkle_root = None
+
+          # Save hashes
+          hash_data = {
+              'date': date_str,
+              'hashes': hashes,
+              'merkle_root': merkle_root
+          }
+
+          # Update verification files
+          hashes_file = 'benchmarks/verification/sha256_hashes.json'
+          if os.path.exists(hashes_file):
+              with open(hashes_file, 'r') as f:
+                  all_hashes = json.load(f)
+          else:
+              all_hashes = []
+          
+          all_hashes.append(hash_data)
+          
+          os.makedirs('benchmarks/verification', exist_ok=True)
+          with open(hashes_file, 'w') as f:
+              json.dump(all_hashes, f, indent=2)
+
+          # Update Merkle roots
+          merkle_file = 'benchmarks/verification/merkle_roots.json'
+          if os.path.exists(merkle_file):
+              with open(merkle_file, 'r') as f:
+                  all_merkle = json.load(f)
+          else:
+              all_merkle = []
+          
+          if merkle_root:
+              all_merkle.append({
+                  'date': date_str,
+                  'merkle_root': merkle_root
+              })
+          
+          with open(merkle_file, 'w') as f:
+              json.dump(all_merkle, f, indent=2)
+
+          print(f"Generated hashes for {len(hashes)} files")
+          print(f"Merkle root: {merkle_root}")
+          EOF
+
+      - name: Update BENCHMARKS.md
+        run: |
+          python3 << 'EOF'
+          import os
+          import json
+          from datetime import datetime
+
+          date_str = datetime.now().strftime('%Y-%m-%d')
+          results_dir = f'benchmarks/results/{date_str}'
+
+          # Load results
+          results = {}
+          for bench_name, filename in [
+              ('KEGG', 'kegg_results.json'),
+              ('SWE-bench', 'swe_bench_results.json'),
+              ('GPQA', 'gpqa_results.json')
+          ]:
+              filepath = os.path.join(results_dir, filename)
+              if os.path.exists(filepath):
+                  with open(filepath, 'r') as f:
+                      try:
+                          results[bench_name] = json.load(f)
+                      except:
+                          results[bench_name] = None
+
+          # Load verification data
+          merkle_file = 'benchmarks/verification/merkle_roots.json'
+          if os.path.exists(merkle_file):
+              with open(merkle_file, 'r') as f:
+                  merkle_data = json.load(f)
+                  latest_merkle = merkle_data[-1] if merkle_data else None
+          else:
+              latest_merkle = None
+
+          # Generate markdown
+          content = f"""# Benchmark Results
+
+          Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
+
+          ## Current Performance
+
+          | Benchmark | Score | Status | Target |
+          |-----------|-------|--------|--------|
+          | KEGG Pathway Completion | {results.get('KEGG', {}).get('completion', 'N/A')}% | {'✅' if results.get('KEGG') else '❌'} | 99.94% |
+          | SWE-bench Resolution | {results.get('SWE-bench', {}).get('resolution', 'N/A')}% | {'✅' if results.get('SWE-bench') else '❌'} | 92%+ |
+          | GPQA Accuracy | {results.get('GPQA', {}).get('accuracy', 'N/A')}% | {'✅' if results.get('GPQA') else '❌'} | 95%+ |
+
+          ## Verification
+
+          **Merkle Root:** `{latest_merkle.get('merkle_root', 'N/A') if latest_merkle else 'N/A'}`
+
+          All benchmark results are cryptographically verified using SHA256 hashing and Merkle tree verification.
+          See `benchmarks/verification/` for full verification data.
+
+          ## Historical Results
+
+          Results are stored in `benchmarks/results/YYYY-MM-DD/` directories.
+
+          ## Running Benchmarks
+
+          Benchmarks run automatically every Sunday at 00:00 UTC via GitHub Actions.
+
+          To run manually:
+          ```bash
+          # Run all benchmarks
+          python3 benchmarks/scripts/kegg_benchmark.py
+          python3 benchmarks/scripts/swe_bench_runner.py
+          python3 benchmarks/scripts/gpqa_verifier.py
+          ```
+
+          ## Benchmark Details
+
+          ### KEGG Pathway Completion
+          Tests biological pathway analysis and completion capabilities.
+
+          ### SWE-bench Resolution
+          Evaluates software engineering problem-solving accuracy.
+
+          ### GPQA Verification
+          Measures general question-answering accuracy.
+
+          ---
+          *This file is automatically updated by the benchmark automation workflow.*
+          """
+
+          with open('BENCHMARKS.md', 'w') as f:
+              f.write(content)
+          
+          print("BENCHMARKS.md updated successfully")
+          EOF
+
+      - name: Commit and push results
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add benchmarks/ BENCHMARKS.md
+          git diff --staged --quiet || git commit -m "chore: update benchmark results $(date +%Y-%m-%d)"
+          git push
+
+      - name: Create performance report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📊 Benchmark automation completed. Check BENCHMARKS.md for latest results."
