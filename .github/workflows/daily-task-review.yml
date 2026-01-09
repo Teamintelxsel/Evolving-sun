@@ -1,0 +1,145 @@
+name: Daily Task Review
+
+on:
+  schedule:
+    # Runs daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  issues: write
+  pull-requests: read
+  discussions: write
+
+jobs:
+  review-tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install PyGithub requests
+
+      - name: Run daily task review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAME: ${{ github.repository }}
+        run: |
+          python3 << 'EOF'
+          import os
+          import json
+          from datetime import datetime, timedelta
+          from github import Github
+
+          # Initialize GitHub client
+          g = Github(os.environ['GITHUB_TOKEN'])
+          repo = g.get_repo(os.environ['REPO_NAME'])
+
+          # Scan all open issues and PRs
+          issues = list(repo.get_issues(state='open'))
+          prs = list(repo.get_pulls(state='open'))
+
+          # Categorize by priority
+          critical = []
+          high = []
+          medium = []
+          low = []
+          stale = []
+
+          now = datetime.now()
+          stale_threshold = now - timedelta(days=30)
+
+          for issue in issues:
+              # Check if stale
+              if issue.updated_at.replace(tzinfo=None) < stale_threshold:
+                  stale.append(issue)
+              
+              # Categorize by labels
+              labels = [label.name for label in issue.labels]
+              if 'priority-critical' in labels or 'security' in labels:
+                  critical.append(issue)
+              elif 'priority-high' in labels or 'bug' in labels:
+                  high.append(issue)
+              elif 'priority-medium' in labels or 'enhancement' in labels:
+                  medium.append(issue)
+              else:
+                  low.append(issue)
+
+          # Generate summary
+          summary = f"""# Daily Task Review - {now.strftime('%Y-%m-%d')}
+
+          ## Summary Statistics
+          - Total Open Issues: {len(issues)}
+          - Total Open PRs: {len(prs)}
+          - Stale Items (>30 days): {len(stale)}
+
+          ## Priority Breakdown
+
+          ### 🔴 Critical Priority ({len(critical)} items)
+          """
+          
+          for item in critical[:10]:  # Limit to 10 items
+              summary += f"- #{item.number}: {item.title}\n"
+          
+          summary += f"\n### 🟠 High Priority ({len(high)} items)\n"
+          for item in high[:10]:
+              summary += f"- #{item.number}: {item.title}\n"
+          
+          summary += f"\n### 🟡 Medium Priority ({len(medium)} items)\n"
+          for item in medium[:5]:
+              summary += f"- #{item.number}: {item.title}\n"
+          
+          summary += f"\n### 🟢 Low Priority ({len(low)} items)\n"
+          for item in low[:5]:
+              summary += f"- #{item.number}: {item.title}\n"
+
+          summary += f"\n## ⚠️ Stale Items Requiring Attention ({len(stale)} items)\n"
+          for item in stale[:10]:
+              days_stale = (now - item.updated_at.replace(tzinfo=None)).days
+              summary += f"- #{item.number}: {item.title} (stale for {days_stale} days)\n"
+
+          summary += "\n## Recommended Actions\n"
+          if len(critical) > 0:
+              summary += "- ⚡ Address critical priority items immediately\n"
+          if len(stale) > 10:
+              summary += f"- 🧹 Review and close/update {len(stale)} stale items\n"
+          if len(prs) > 5:
+              summary += f"- 🔄 Review and merge {len(prs)} pending pull requests\n"
+
+          # Save summary to file
+          with open('task_review_summary.md', 'w') as f:
+              f.write(summary)
+
+          print(summary)
+
+          # Comment on stale issues
+          for item in stale:
+              if not any(comment.user.login == 'github-actions[bot]' for comment in item.get_comments()):
+                  days_stale = (now - item.updated_at.replace(tzinfo=None)).days
+                  item.create_comment(
+                      f"⚠️ This issue has been inactive for {days_stale} days. "
+                      "Please provide an update or this issue may be closed in 14 days."
+                  )
+                  if 'stale' not in [label.name for label in item.labels]:
+                      item.add_to_labels('stale')
+          
+          EOF
+
+      - name: Upload summary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-task-review
+          path: task_review_summary.md
+          retention-days: 90
+
+      - name: Post summary as issue comment
+        if: always()
+        run: |
+          echo "Daily task review completed. Check artifacts for full summary."

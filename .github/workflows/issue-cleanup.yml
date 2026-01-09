@@ -1,0 +1,122 @@
+name: Issue Cleanup
+
+on:
+  schedule:
+    # Runs daily at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  cleanup-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install PyGithub
+
+      - name: Run issue cleanup
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import os
+          from datetime import datetime, timedelta
+          from github import Github
+
+          g = Github(os.environ['GITHUB_TOKEN'])
+          repo = g.get_repo(os.environ['GITHUB_REPOSITORY'])
+
+          now = datetime.now()
+          stale_threshold = now - timedelta(days=30)
+          close_threshold = now - timedelta(days=44)  # 30 + 14 days warning
+
+          # Get all open issues
+          issues = list(repo.get_issues(state='open'))
+
+          stale_count = 0
+          closed_count = 0
+          clarification_count = 0
+
+          for issue in issues:
+              last_update = issue.updated_at.replace(tzinfo=None)
+              labels = [label.name for label in issue.labels]
+              
+              # Skip if already being worked on or is critical
+              if any(label in labels for label in ['in-progress', 'priority-critical', 'security']):
+                  continue
+
+              # Check if needs clarification (short body)
+              if issue.body and len(issue.body.strip()) < 50:
+                  if 'needs-clarification' not in labels:
+                      issue.add_to_labels('needs-clarification')
+                      issue.create_comment(
+                          "⚠️ This issue needs more information. Please provide:\n"
+                          "- A clear description of the problem or feature request\n"
+                          "- Steps to reproduce (if applicable)\n"
+                          "- Expected vs actual behavior\n"
+                          "- Any relevant context or screenshots\n\n"
+                          "This issue may be closed if no additional information is provided within 14 days."
+                      )
+                      clarification_count += 1
+
+              # Mark as stale if inactive for 30+ days
+              if last_update < stale_threshold:
+                  if 'stale' not in labels:
+                      issue.add_to_labels('stale')
+                      days_inactive = (now - last_update).days
+                      issue.create_comment(
+                          f"⏰ This issue has been inactive for {days_inactive} days and is marked as stale.\n\n"
+                          "If this issue is still relevant, please comment to keep it open. "
+                          "Otherwise, it will be automatically closed in 14 days.\n\n"
+                          "To remove the stale label, simply add a comment with an update."
+                      )
+                      stale_count += 1
+                  
+                  # Close if stale for 14+ days after warning
+                  elif last_update < close_threshold:
+                      # Check if there are any comments after the stale warning
+                      comments = list(issue.get_comments())
+                      stale_comments = [c for c in comments if 'marked as stale' in c.body]
+                      if stale_comments:
+                          last_stale_comment = max(stale_comments, key=lambda c: c.created_at)
+                          if last_stale_comment.created_at.replace(tzinfo=None) < close_threshold:
+                              issue.create_comment(
+                                  "🔒 Closing this issue due to inactivity. "
+                                  "If you still need this addressed, please reopen with updated information."
+                              )
+                              issue.edit(state='closed')
+                              closed_count += 1
+
+              # Check for duplicates
+              if 'duplicate' in labels and issue.state == 'open':
+                  # Find the duplicate reference in comments
+                  comments = list(issue.get_comments())
+                  duplicate_comments = [c for c in comments if 'duplicate of #' in c.body.lower()]
+                  if duplicate_comments and last_update < (now - timedelta(days=7)):
+                      issue.create_comment(
+                          "🔒 Closing as duplicate. Please follow the linked issue for updates."
+                      )
+                      issue.edit(state='closed')
+                      closed_count += 1
+
+          print(f"Issue cleanup summary:")
+          print(f"- Marked {stale_count} issues as stale")
+          print(f"- Closed {closed_count} inactive issues")
+          print(f"- Requested clarification on {clarification_count} issues")
+          EOF
+
+      - name: Create cleanup summary
+        run: |
+          echo "✅ Issue cleanup completed"

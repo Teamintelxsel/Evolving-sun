@@ -1,0 +1,227 @@
+# Agent Configuration
+# Defines responsibilities, priorities, and escalation thresholds for each agent
+
+agents:
+  security:
+    name: SecurityAgent
+    priority: critical
+    workflows:
+      - security-monitoring
+      - cross-model-audit
+    responsibilities:
+      - Monitor security workflows
+      - Triage security findings
+      - Escalate critical vulnerabilities
+      - Track remediation progress
+      - Scan for secrets and credentials
+      - Run vulnerability analysis
+    escalation_threshold: any_critical_finding
+    escalation_actions:
+      - Create high-priority issue
+      - Notify security team
+      - Block affected PRs
+      - Generate security report
+    performance_targets:
+      scan_success_rate: 98
+      finding_response_time_hours: 1
+      false_positive_rate: 5
+  
+  quality:
+    name: QualityAgent
+    priority: high
+    workflows:
+      - daily-task-review
+      - issue-triage-automation
+    responsibilities:
+      - Manage issue lifecycle
+      - Ensure proper labeling
+      - Track resolution times
+      - Identify bottlenecks
+      - Monitor code quality
+      - Coordinate reviews
+    escalation_threshold: benchmark_degradation_5pct
+    escalation_actions:
+      - Create investigation issue
+      - Request maintainer review
+      - Analyze root cause
+      - Propose improvements
+    performance_targets:
+      issue_response_time_hours: 2
+      resolution_time_days: 7
+      labeling_accuracy: 95
+  
+  documentation:
+    name: DocAgent
+    priority: medium
+    workflows:
+      - update-dashboard
+    responsibilities:
+      - Maintain documentation currency
+      - Update dashboards and reports
+      - Track documentation coverage
+      - Identify documentation gaps
+      - Generate automated reports
+      - Keep README up to date
+    escalation_threshold: outdated_docs_30days
+    escalation_actions:
+      - Create documentation issue
+      - Request update
+      - Mark as stale
+    performance_targets:
+      documentation_coverage: 90
+      update_frequency_days: 30
+      accuracy_score: 95
+  
+  benchmark:
+    name: BenchmarkAgent
+    priority: high
+    workflows:
+      - benchmark-automation
+    responsibilities:
+      - Execute benchmark tests
+      - Verify result integrity
+      - Track performance trends
+      - Report regressions
+      - Manage benchmark data
+      - Generate performance reports
+    escalation_threshold: failed_verification
+    escalation_actions:
+      - Halt deployment
+      - Create critical issue
+      - Analyze regression
+      - Request investigation
+    performance_targets:
+      kegg_completion: 99.94
+      swe_bench_resolution: 92
+      gpqa_accuracy: 95
+      verification_success_rate: 100
+  
+  triage:
+    name: TriageAgent
+    priority: medium
+    workflows:
+      - issue-triage-automation
+      - issue-cleanup
+    responsibilities:
+      - Auto-label new issues
+      - Assign priorities
+      - Link related issues
+      - Detect duplicates
+      - Welcome contributors
+      - Close stale issues
+    escalation_threshold: stale_critical_issue
+    escalation_actions:
+      - Notify maintainers
+      - Request status update
+      - Escalate priority
+    performance_targets:
+      triage_time_minutes: 5
+      labeling_accuracy: 90
+      duplicate_detection_rate: 85
+
+# Agent coordination rules
+coordination:
+  handoff_rules:
+    - from: TriageAgent
+      to: SecurityAgent
+      condition: security_label_added
+    
+    - from: QualityAgent
+      to: BenchmarkAgent
+      condition: performance_regression_detected
+    
+    - from: BenchmarkAgent
+      to: QualityAgent
+      condition: benchmark_failure
+  
+  collaboration_triggers:
+    - agents: [SecurityAgent, QualityAgent]
+      trigger: critical_vulnerability_in_code
+      action: joint_review
+    
+    - agents: [BenchmarkAgent, QualityAgent]
+      trigger: performance_degradation
+      action: root_cause_analysis
+    
+    - agents: [DocAgent, TriageAgent]
+      trigger: documentation_issue
+      action: update_coordination
+
+# Learning and feedback
+learning:
+  feedback_sources:
+    - workflow_outcomes
+    - issue_resolution_times
+    - user_feedback
+    - escalation_patterns
+  
+  improvement_triggers:
+    - success_rate_below_target
+    - escalation_rate_above_threshold
+    - repeated_failures
+  
+  adaptation_frequency: monthly
+  
+  metrics_tracked:
+    - task_success_rate
+    - average_completion_time
+    - escalation_frequency
+    - user_satisfaction
+    - automation_effectiveness
+
+# Resource allocation
+resources:
+  api_rate_limits:
+    github_api: 5000  # per hour
+    security_scans: 100  # per day
+    benchmarks: 10  # per week
+  
+  execution_limits:
+    max_concurrent_tasks: 5
+    max_task_duration_minutes: 30
+    max_retries: 3
+  
+  priority_allocation:
+    critical: 50  # percentage of resources
+    high: 30
+    medium: 15
+    low: 5
+
+# Monitoring and alerting
+monitoring:
+  health_checks:
+    frequency_minutes: 30
+    timeout_seconds: 60
+  
+  alerts:
+    - condition: agent_failure_rate_above_10pct
+      severity: high
+      recipients: [maintainers]
+    
+    - condition: escalation_rate_above_20pct
+      severity: medium
+      recipients: [team_leads]
+    
+    - condition: benchmark_degradation_above_5pct
+      severity: critical
+      recipients: [all]
+
+# Audit and compliance
+audit:
+  logging:
+    level: INFO
+    retention_days: 90
+    include_decisions: true
+  
+  compliance_checks:
+    - security_scan_coverage: 100
+    - benchmark_verification: 100
+    - documentation_currency: 95
+  
+  review_frequency: monthly
+  
+  audit_trail:
+    - task_assignments
+    - escalations
+    - completions
+    - failures

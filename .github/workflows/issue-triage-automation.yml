@@ -1,0 +1,180 @@
+name: Issue Triage Automation
+
+on:
+  issues:
+    types: [opened, edited, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  triage-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install PyGithub
+
+      - name: Auto-label and triage issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          python3 << 'EOF'
+          import os
+          import re
+          from github import Github
+
+          g = Github(os.environ['GITHUB_TOKEN'])
+          repo = g.get_repo(os.environ['GITHUB_REPOSITORY'])
+          issue = repo.get_issue(int(os.environ['ISSUE_NUMBER']))
+
+          title = os.environ.get('ISSUE_TITLE', '').lower()
+          body = os.environ.get('ISSUE_BODY', '').lower()
+          text = f"{title} {body}"
+
+          # Auto-labeling based on content analysis
+          labels_to_add = []
+
+          # Security-related
+          if any(word in text for word in ['security', 'vulnerability', 'cve', 'exploit', 'leak']):
+              labels_to_add.extend(['security', 'priority-critical'])
+
+          # Bug-related
+          elif any(word in text for word in ['bug', 'error', 'crash', 'fail', 'broken', 'issue']):
+              labels_to_add.extend(['bug', 'priority-high'])
+
+          # Documentation
+          elif any(word in text for word in ['documentation', 'docs', 'readme', 'guide', 'tutorial']):
+              labels_to_add.extend(['documentation', 'priority-medium'])
+
+          # Automation
+          elif any(word in text for word in ['automation', 'workflow', 'ci', 'cd', 'pipeline']):
+              labels_to_add.extend(['automation', 'priority-medium'])
+
+          # Benchmark
+          elif any(word in text for word in ['benchmark', 'performance', 'test', 'metric']):
+              labels_to_add.extend(['benchmark', 'priority-medium'])
+
+          # Enhancement
+          elif any(word in text for word in ['feature', 'enhancement', 'improve', 'add']):
+              labels_to_add.extend(['enhancement', 'priority-low'])
+
+          # Question
+          elif any(word in text for word in ['question', 'how to', 'help', '?']):
+              labels_to_add.extend(['question', 'priority-low'])
+
+          # Add needs-clarification if body is too short
+          if len(body) < 50:
+              labels_to_add.append('needs-clarification')
+
+          # Get existing labels
+          existing_labels = [label.name for label in issue.labels]
+
+          # Only add new labels
+          new_labels = [label for label in labels_to_add if label not in existing_labels]
+          
+          if new_labels:
+              # Create labels if they don't exist
+              repo_labels = [label.name for label in repo.get_labels()]
+              for label_name in new_labels:
+                  if label_name not in repo_labels:
+                      # Create label with appropriate color
+                      colors = {
+                          'priority-critical': 'B60205',
+                          'priority-high': 'D93F0B',
+                          'priority-medium': 'FBCA04',
+                          'priority-low': '0E8A16',
+                          'security': 'B60205',
+                          'bug': 'D73A4A',
+                          'documentation': '0075CA',
+                          'automation': '1D76DB',
+                          'benchmark': '5319E7',
+                          'enhancement': 'A2EEEF',
+                          'question': 'D876E3',
+                          'needs-clarification': 'FEF2C0',
+                          'stale': 'EEEEEE',
+                          'agent-task': '7057FF'
+                      }
+                      try:
+                          repo.create_label(
+                              name=label_name,
+                              color=colors.get(label_name, '000000'),
+                              description=f"Auto-created by triage automation"
+                          )
+                      except Exception as e:
+                          print(f"Label {label_name} might already exist: {e}")
+              
+              # Add labels to issue
+              for label in new_labels:
+                  try:
+                      issue.add_to_labels(label)
+                  except:
+                      pass
+              
+              print(f"Added labels: {', '.join(new_labels)}")
+
+          # Find and link related issues
+          all_issues = list(repo.get_issues(state='all'))
+          related = []
+          
+          for other_issue in all_issues:
+              if other_issue.number == issue.number:
+                  continue
+              
+              # Simple similarity check based on common words
+              other_text = f"{other_issue.title} {other_issue.body or ''}".lower()
+              common_words = set(text.split()) & set(other_text.split())
+              
+              # Filter out common words
+              meaningful_words = [w for w in common_words if len(w) > 4]
+              
+              if len(meaningful_words) > 3:
+                  related.append(other_issue)
+          
+          if related and len(related) <= 5:
+              # Check for exact duplicates
+              for other_issue in related[:3]:
+                  if other_issue.title.lower() == title:
+                      comment = f"⚠️ This issue appears to be a duplicate of #{other_issue.number}\n\nPlease check if that issue addresses your concern."
+                      issue.create_comment(comment)
+                      issue.add_to_labels('duplicate')
+                      break
+              else:
+                  # Add related issues comment
+                  related_text = "\n".join([f"- #{r.number}: {r.title}" for r in related[:5]])
+                  comment = f"🔗 **Related Issues:**\n{related_text}"
+                  
+                  # Only comment if we haven't already
+                  existing_comments = [c.body for c in issue.get_comments()]
+                  if not any("Related Issues:" in c for c in existing_comments):
+                      issue.create_comment(comment)
+
+          # Add welcome message for first-time contributors
+          if issue.user.login not in [i.user.login for i in all_issues[1:]]:
+              welcome_msg = f"""👋 Welcome @{issue.user.login}! Thanks for opening your first issue.
+
+          This issue has been automatically triaged. A maintainer will review it soon.
+
+          In the meantime, please ensure you've provided:
+          - A clear description of the issue
+          - Steps to reproduce (if applicable)
+          - Expected vs actual behavior
+          - Any relevant logs or screenshots
+          """
+              issue.create_comment(welcome_msg)
+
+          print(f"Issue #{issue.number} triaged successfully")
+          EOF

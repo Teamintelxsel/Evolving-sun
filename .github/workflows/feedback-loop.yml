@@ -1,0 +1,111 @@
+name: Feedback Loop
+
+on:
+  schedule:
+    # Runs monthly on the 1st at 00:00 UTC
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  feedback-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install PyGithub pandas numpy
+
+      - name: Run feedback analyzer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 tools/feedback_analyzer.py --output reports/feedback_analysis_$(date +%Y-%m).json
+
+      - name: Create improvement issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import os
+          import json
+          from pathlib import Path
+          from github import Github
+
+          g = Github(os.environ['GITHUB_TOKEN'])
+          repo = g.get_repo(os.environ['GITHUB_REPOSITORY'])
+
+          # Find latest feedback analysis
+          reports_dir = Path('reports')
+          if reports_dir.exists():
+              reports = list(reports_dir.glob('feedback_analysis_*.json'))
+              if reports:
+                  latest_report = max(reports, key=os.path.getmtime)
+                  
+                  with open(latest_report, 'r') as f:
+                      analysis = json.load(f)
+                  
+                  # Create issues for top recommendations
+                  recommendations = analysis.get('recommendations', [])[:5]
+                  
+                  for i, rec in enumerate(recommendations, 1):
+                      title = f"[Automation] {rec.get('title', f'Improvement #{i}')}"
+                      body = f"""## Automated Improvement Recommendation
+
+          **Priority:** {rec.get('priority', 'Medium')}
+          **Category:** {rec.get('category', 'General')}
+
+          ### Description
+          {rec.get('description', 'No description provided')}
+
+          ### Rationale
+          {rec.get('rationale', 'Based on feedback analysis')}
+
+          ### Suggested Actions
+          {rec.get('actions', 'No specific actions provided')}
+
+          ### Expected Impact
+          {rec.get('impact', 'Not specified')}
+
+          ---
+          *This issue was automatically created by the feedback loop workflow.*
+          *Source: Monthly feedback analysis*
+          """
+                      
+                      # Check if similar issue exists
+                      existing = list(repo.get_issues(state='open', labels=['automation', 'improvement']))
+                      similar = [iss for iss in existing if rec.get('title', '') in iss.title]
+                      
+                      if not similar:
+                          issue = repo.create_issue(
+                              title=title,
+                              body=body,
+                              labels=['automation', 'improvement', f"priority-{rec.get('priority', 'medium').lower()}"]
+                          )
+                          print(f"Created improvement issue: #{issue.number}")
+                      else:
+                          print(f"Similar issue already exists: #{similar[0].number}")
+          EOF
+
+      - name: Commit analysis results
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add reports/
+          git diff --staged --quiet || git commit -m "chore: monthly feedback analysis $(date +%Y-%m)"
+          git push
+
+      - name: Post analysis summary
+        run: |
+          echo "📈 Monthly feedback analysis completed"
+          echo "Check reports/ directory for detailed results"

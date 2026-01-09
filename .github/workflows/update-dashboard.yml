@@ -1,0 +1,94 @@
+name: Update Dashboard
+
+on:
+  schedule:
+    # Runs every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install PyGithub jinja2
+
+      - name: Generate monitoring dashboard
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 tools/monitoring_dashboard.py
+
+      - name: Commit dashboard updates
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/dashboard.html docs/dashboard_data.json
+          git diff --staged --quiet || git commit -m "chore: update monitoring dashboard $(date +%Y-%m-%d-%H%M)"
+          git push
+
+      - name: Check for significant changes
+        id: check_changes
+        run: |
+          # Compare with previous dashboard data
+          if [ -f docs/dashboard_data.json ]; then
+            python3 << 'EOF'
+          import json
+          import os
+          
+          try:
+              with open('docs/dashboard_data.json', 'r') as f:
+                  current = json.load(f)
+              
+              # Check for significant changes (e.g., 10% change in metrics)
+              significant = False
+              changes = []
+              
+              if 'metrics' in current:
+                  metrics = current['metrics']
+                  
+                  # Example thresholds
+                  if metrics.get('open_issues', 0) > metrics.get('closed_issues', 1):
+                      changes.append("⚠️ More open issues than closed")
+                      significant = True
+                  
+                  if metrics.get('security_score', 100) < 80:
+                      changes.append("🔒 Security score below 80%")
+                      significant = True
+                  
+                  if metrics.get('workflow_failure_rate', 0) > 10:
+                      changes.append("❌ Workflow failure rate above 10%")
+                      significant = True
+              
+              if significant:
+                  print("significant_changes=true")
+                  print(f"changes={';'.join(changes)}")
+              else:
+                  print("significant_changes=false")
+          except Exception as e:
+              print(f"Error checking changes: {e}")
+              print("significant_changes=false")
+          EOF
+          fi
+
+      - name: Post summary if significant changes
+        if: steps.check_changes.outputs.significant_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Significant changes detected in repository health metrics"
+          echo "See dashboard at docs/dashboard.html for details"
