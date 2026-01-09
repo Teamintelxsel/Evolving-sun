@@ -1,0 +1,308 @@
+# Model Registry for LLM Independence
+# Tracks all models, versions, performance, and costs
+
+models:
+  gpt4_turbo:
+    provider: openai
+    version: "2024-11-20"
+    capabilities:
+      - reasoning
+      - coding
+      - analysis
+    performance:
+      gpqa_score: 0.76
+      swe_bench_verified: 0.74
+      swe_bench_pro: 0.23
+    cost_per_1k_tokens: 0.01
+    p95_latency_ms: 1200
+    max_tokens: 128000
+    quantized_versions:
+      - int8
+      - int4
+    context_window: 128000
+    
+  claude_opus_4_5:
+    provider: anthropic
+    version: "4.5"
+    capabilities:
+      - reasoning
+      - coding
+      - long_context
+      - analysis
+    performance:
+      gpqa_score: 0.78
+      swe_bench_verified: 0.76
+      swe_bench_pro: 0.25
+    cost_per_1k_tokens: 0.015
+    p95_latency_ms: 1500
+    max_tokens: 200000
+    quantized_versions:
+      - int8
+    context_window: 200000
+    
+  gemini_3_flash:
+    provider: google
+    version: "3.0-flash"
+    capabilities:
+      - fast_inference
+      - coding
+      - multimodal
+      - reasoning
+    performance:
+      gpqa_score: 0.74
+      swe_bench_verified: 0.74
+      swe_bench_pro: 0.22
+    cost_per_1k_tokens: 0.005
+    p95_latency_ms: 800
+    max_tokens: 1000000
+    quantized_versions:
+      - int8
+      - int4
+    context_window: 1000000
+
+  llama_4_70b:
+    provider: meta
+    version: "4-70b"
+    capabilities:
+      - reasoning
+      - coding
+      - cost_optimized
+    performance:
+      gpqa_score: 0.72
+      swe_bench_verified: 0.70
+      swe_bench_pro: 0.19
+    cost_per_1k_tokens: 0.002  # Self-hosted cost estimate
+    p95_latency_ms: 2000
+    max_tokens: 8192
+    quantized_versions:
+      - int8
+      - int4
+      - int3
+    context_window: 8192
+
+  gpt4o_mini:
+    provider: openai
+    version: "2024-07-18"
+    capabilities:
+      - fast_inference
+      - coding
+      - cost_optimized
+    performance:
+      gpqa_score: 0.70
+      swe_bench_verified: 0.68
+      swe_bench_pro: 0.18
+    cost_per_1k_tokens: 0.0015
+    p95_latency_ms: 600
+    max_tokens: 128000
+    quantized_versions:
+      - int8
+    context_window: 128000
+
+  claude_sonnet_3_5:
+    provider: anthropic
+    version: "3.5"
+    capabilities:
+      - reasoning
+      - coding
+      - analysis
+    performance:
+      gpqa_score: 0.75
+      swe_bench_verified: 0.73
+      swe_bench_pro: 0.21
+    cost_per_1k_tokens: 0.003
+    p95_latency_ms: 1000
+    max_tokens: 200000
+    quantized_versions:
+      - int8
+    context_window: 200000
+
+# Fallback chains by task type
+# These define which models to try if the primary fails
+fallback_chains:
+  critical_reasoning:
+    # For high-stakes reasoning tasks (PhD-level questions, complex analysis)
+    - claude_opus_4_5      # Best accuracy (78%)
+    - gpt4_turbo           # Second best (76%)
+    - gemini_3_flash       # Fast alternative (74%)
+    - llama_4_70b          # Cost-effective fallback (72%)
+  
+  fast_coding:
+    # For quick code generation and completion
+    - gemini_3_flash       # Fastest (800ms)
+    - gpt4o_mini           # Fast + cheap (600ms)
+    - gpt4_turbo           # High quality fallback
+    - claude_sonnet_3_5    # Balanced option
+  
+  cost_optimized:
+    # For high-volume, cost-sensitive workloads
+    - llama_4_70b          # Cheapest self-hosted ($0.002)
+    - gpt4o_mini           # Cheap API ($0.0015)
+    - gemini_3_flash       # Good value ($0.005)
+    - claude_sonnet_3_5    # Premium budget option ($0.003)
+  
+  long_context:
+    # For tasks requiring large context windows
+    - gemini_3_flash       # 1M tokens
+    - claude_opus_4_5      # 200K tokens
+    - claude_sonnet_3_5    # 200K tokens
+    - gpt4_turbo           # 128K tokens
+  
+  enterprise_grade:
+    # For production enterprise workloads (balance of all factors)
+    - claude_opus_4_5      # Best overall for enterprise
+    - gpt4_turbo           # Reliable standard
+    - gemini_3_flash       # Fast scaling
+    - claude_sonnet_3_5    # Cost-effective premium
+
+# Model selection policies
+selection_policies:
+  # Default weights for model scoring
+  default_weights:
+    accuracy: 0.5
+    cost: 0.3
+    latency: 0.2
+  
+  # Task-specific weight overrides
+  task_overrides:
+    critical_reasoning:
+      accuracy: 0.7
+      cost: 0.1
+      latency: 0.2
+    
+    fast_inference:
+      accuracy: 0.3
+      cost: 0.2
+      latency: 0.5
+    
+    cost_optimized:
+      accuracy: 0.3
+      cost: 0.6
+      latency: 0.1
+    
+    long_context:
+      accuracy: 0.5
+      cost: 0.2
+      latency: 0.3
+
+# Cost optimization settings
+cost_optimization:
+  # Enable automatic model switching based on cost
+  enabled: true
+  
+  # Cost thresholds for automatic downgrading
+  thresholds:
+    high: 0.015  # Switch to cheaper model if cost exceeds
+    medium: 0.010
+    low: 0.005
+  
+  # Quantization preferences
+  quantization:
+    enabled: true
+    prefer_quantized: true
+    min_accuracy_loss: 0.02  # Max 2% accuracy loss acceptable
+    
+  # Caching settings
+  cache:
+    enabled: true
+    ttl_seconds: 3600  # 1 hour
+    max_size_mb: 1000  # 1GB cache
+    eviction_policy: lru
+
+# Performance monitoring
+monitoring:
+  # Track these metrics for each model
+  metrics:
+    - latency_p50
+    - latency_p95
+    - latency_p99
+    - cost_per_request
+    - error_rate
+    - availability
+    - tokens_per_second
+  
+  # Alert thresholds
+  alerts:
+    latency_p95_ms:
+      warning: 2000
+      critical: 5000
+    
+    error_rate:
+      warning: 0.05  # 5%
+      critical: 0.10  # 10%
+    
+    availability:
+      warning: 0.95  # 95%
+      critical: 0.90  # 90%
+  
+  # Health check intervals
+  health_check_interval_seconds: 60
+
+# Provider-specific configurations
+providers:
+  openai:
+    api_base: "https://api.openai.com/v1"
+    timeout_seconds: 60
+    max_retries: 3
+    retry_backoff: exponential
+    
+  anthropic:
+    api_base: "https://api.anthropic.com/v1"
+    timeout_seconds: 90
+    max_retries: 3
+    retry_backoff: exponential
+    
+  google:
+    api_base: "https://generativelanguage.googleapis.com/v1"
+    timeout_seconds: 45
+    max_retries: 3
+    retry_backoff: exponential
+    
+  meta:
+    # Self-hosted or third-party API
+    api_base: "https://api.together.xyz/v1"  # Example: Together AI
+    timeout_seconds: 120
+    max_retries: 2
+    retry_backoff: linear
+
+# Model versioning and rollback
+versioning:
+  # Track model versions for rollback capability
+  enabled: true
+  
+  # Automatically rollback if new version underperforms
+  auto_rollback:
+    enabled: true
+    evaluation_window_requests: 1000
+    min_accuracy_threshold: 0.95  # Relative to previous version
+    min_availability_threshold: 0.98
+  
+  # Version history retention
+  retention:
+    keep_versions: 5
+    keep_days: 90
+
+# Rate limiting and quotas
+rate_limiting:
+  # Per-provider rate limits (requests per minute)
+  providers:
+    openai: 10000
+    anthropic: 5000
+    google: 15000
+    meta: 1000  # Self-hosted capacity
+  
+  # Per-customer tier rate limits
+  tiers:
+    starter: 100
+    professional: 1000
+    enterprise: unlimited
+  
+  # Burst allowance
+  burst_factor: 1.5  # Allow 150% of limit for short bursts
+
+# Feature flags
+features:
+  multi_model_ensemble: false  # Experimental: Query multiple models and aggregate
+  adaptive_routing: true       # Adjust routing based on real-time performance
+  predictive_scaling: false    # Experimental: Pre-scale based on usage patterns
+  smart_caching: true          # Intelligent cache with semantic similarity
+  cost_alerts: true            # Alert when cost thresholds exceeded
