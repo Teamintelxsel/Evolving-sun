@@ -8,7 +8,7 @@ Target: 95%+ accuracy.
 
 import json
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def run_gpqa_verification():
@@ -62,7 +62,7 @@ def run_gpqa_verification():
     avg_explanation_quality = sum(r['explanation_quality'] for r in results) / len(results)
     
     benchmark_result = {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'benchmark': 'GPQA',
         'version': '1.0',
         'accuracy': round(overall_accuracy, 2),

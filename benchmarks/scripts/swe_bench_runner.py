@@ -8,7 +8,7 @@ Target: 92%+ resolution rate.
 
 import json
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def run_swe_bench():
@@ -57,7 +57,7 @@ def run_swe_bench():
     overall_resolution = (total_solved / total_problems * 100)
     
     benchmark_result = {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'benchmark': 'SWE-bench',
         'version': '1.0',
         'resolution': round(overall_resolution, 2),

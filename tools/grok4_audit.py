@@ -15,7 +15,7 @@ import os
 import json
 import sys
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -197,7 +197,7 @@ def generate_report(toxicity_result, hallucination_result, api_misuse_result):
         recommendations.append("- Use authentication best practices")
     
     report = {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'overall_status': overall_status,
         'toxicity_score': toxicity_result['average_toxicity_score'],
         'hallucination_rate': hallucination_result['hallucination_rate'],

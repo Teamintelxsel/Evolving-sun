@@ -73,7 +73,7 @@ def collect_metrics():
     
     # Calculate metrics
     metrics = {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'issues': {
             'open': open_count,
             'closed': closed_count,

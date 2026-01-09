@@ -8,7 +8,7 @@ Target: 99.94% pathway completion accuracy.
 
 import json
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def run_kegg_benchmark():
@@ -60,7 +60,7 @@ def run_kegg_benchmark():
     avg_accuracy = total_accuracy / len(pathways)
     
     benchmark_result = {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'benchmark': 'KEGG Pathway Analysis',
         'version': '1.0',
         'completion': round(avg_accuracy, 2),

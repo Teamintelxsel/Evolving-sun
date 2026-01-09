@@ -19,7 +19,7 @@ Each agent has:
 import os
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
@@ -169,7 +169,7 @@ class TaskDistributor:
     def get_all_metrics(self) -> Dict:
         """Get metrics for all agents."""
         return {
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'agents': [agent.get_metrics() for agent in self.agents]
         }
     

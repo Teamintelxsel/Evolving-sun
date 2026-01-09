@@ -254,7 +254,7 @@ def main():
     
     # Compile analysis report
     report = {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'period': '30 days',
         'workflow_analysis': workflow_analysis,
         'issue_analysis': issue_analysis,
