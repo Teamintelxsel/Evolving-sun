@@ -1,27 +1,27 @@
 {
-  "timestamp": "2026-01-10T02:09:34.053720",
+  "timestamp": "2026-01-10T02:17:20.740720",
   "data": {
-    "total_tasks": 5,
-    "passed": 3,
-    "failed": 2,
+    "total_tasks": 3,
+    "passed": 2,
+    "failed": 1,
     "status": "simulated",
     "note": "Simulated results - vendor/SWE-bench not available",
     "simulation_seed": 42,
     "benchmark": "swe-bench-verified",
     "config": {
       "dataset": "verified",
-      "max_tasks": 5,
+      "max_tasks": 3,
       "num_workers": 1
     }
   },
   "provenance": {
-    "commit_sha": "1a226da1571b3fba10a4ca2eef043a8f1e75787b",
+    "commit_sha": "6e1819ccd78c18ae48a5ccf86a91b184bcca558b",
     "image": "sweagent/swe-agent:latest",
     "image_digest": "sweagent/swe-agent:latest",
     "dataset": "verified",
     "num_workers": 1,
-    "max_tasks": 5,
-    "timestamp": "2026-01-10T02:09:34.052574",
+    "max_tasks": 3,
+    "timestamp": "2026-01-10T02:17:20.739566",
     "script": "swe_run.py",
     "python_version": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]"
   },
@@ -29,5 +29,5 @@
     "logged_by": "secure_logging.watermark_log",
     "version": "1.0"
   },
-  "integrity_hash": "8295955d8eae2d7740ae3c5442e8484eac7a82fd1114e8483fee842d95f6bf8e"
+  "integrity_hash": "aea5ec3cd50e53e315b4980e251722887272b07bc4b24aa9a9f4e9f647bccde2"
 }

@@ -1,25 +1,41 @@
 {
-  "timestamp": "2026-01-10T02:14:08.139109",
-  "total_benchmarks": 2,
-  "completed": 2,
+  "timestamp": "2026-01-10T02:17:21.407284",
+  "total_benchmarks": 4,
+  "completed": 4,
   "failed": 0,
   "errors": 0,
   "results": [
     {
+      "name": "Legacy Benchmarks",
+      "status": "completed",
+      "returncode": 0,
+      "duration_seconds": 0.036743,
+      "start_time": "2026-01-10T02:17:20.629027",
+      "end_time": "2026-01-10T02:17:20.665770"
+    },
+    {
+      "name": "SWE-bench Verified",
+      "status": "completed",
+      "returncode": 0,
+      "duration_seconds": 0.084098,
+      "start_time": "2026-01-10T02:17:20.665884",
+      "end_time": "2026-01-10T02:17:20.749982"
+    },
+    {
       "name": "GPQA Diamond",
       "status": "completed",
       "returncode": 0,
-      "duration_seconds": 0.056155,
-      "start_time": "2026-01-10T02:14:07.479069",
-      "end_time": "2026-01-10T02:14:07.535224"
+      "duration_seconds": 0.055272,
+      "start_time": "2026-01-10T02:17:20.750071",
+      "end_time": "2026-01-10T02:17:20.805343"
     },
     {
       "name": "KEGG KGML",
       "status": "completed",
       "returncode": 0,
-      "duration_seconds": 0.603652,
-      "start_time": "2026-01-10T02:14:07.535330",
-      "end_time": "2026-01-10T02:14:08.138982"
+      "duration_seconds": 0.601663,
+      "start_time": "2026-01-10T02:17:20.805427",
+      "end_time": "2026-01-10T02:17:21.407090"
     }
   ]
 }
