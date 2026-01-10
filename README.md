@@ -76,7 +76,7 @@ The script will:
 
 ### Running Benchmarks
 
-Run all benchmarks:
+Run all benchmarks (including real benchmark harnesses):
 
 ```bash
 python scripts/run_benchmarks.py
@@ -85,17 +85,20 @@ python scripts/run_benchmarks.py
 Run specific benchmarks:
 
 ```bash
-# Performance benchmark
+# Simulated benchmarks
 python scripts/run_benchmarks.py --benchmark performance
-
-# Accuracy benchmark
 python scripts/run_benchmarks.py --benchmark accuracy
-
-# Security benchmark
 python scripts/run_benchmarks.py --benchmark security
+
+# Real benchmark harnesses
+python scripts/run_benchmarks.py --benchmark swe-bench  # SWE-bench Verified
+python scripts/run_benchmarks.py --benchmark gpqa       # GPQA dataset
+python scripts/run_benchmarks.py --benchmark kegg       # KEGG pathways
 ```
 
-Results are saved to `logs/benchmarks/` as JSON files.
+Results are saved to `logs/benchmarks/` as watermarked JSON files with full provenance tracking.
+
+See [scripts/BENCHMARKS.md](scripts/BENCHMARKS.md) for detailed documentation on benchmark harness integrations.
 
 ### Using Structured Logging
 
@@ -154,7 +157,11 @@ For tracking and organization of issues related to this project, please refer to
 - [x] Implement weekly CI for benchmark archival
 - [x] Add structured logging utilities
 - [x] Create comprehensive documentation and examples
+- [x] Add real benchmark harness integrations (SWE-bench, GPQA, KEGG)
+- [x] Implement watermarked logging with provenance tracking
 - [ ] Add security scanning integration
 - [ ] Enhance logging with real-time monitoring
+- [ ] Replace simulated metrics with real benchmark runs
+- [ ] Add more benchmark types (MATH, HumanEval, etc.)
 - [ ] Add support for more benchmark types
 - [ ] Integrate with external monitoring tools
