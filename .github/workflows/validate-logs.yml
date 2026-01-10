@@ -12,6 +12,9 @@ on:
       - 'logs/**'
       - 'docs/conversations/**'
 
+permissions:
+  contents: read
+
 jobs:
   validate-logs:
     name: Validate Log Files
