@@ -34,10 +34,10 @@ class WatermarkedLogger:
             Hexadecimal watermark string
         """
         # Combine data and provenance for watermark
+        # Use only the data and provenance (not adding extra timestamp)
         combined = {
             "data": data,
-            "provenance": provenance,
-            "timestamp": datetime.now().isoformat()
+            "provenance": provenance
         }
         
         # Create deterministic JSON representation
