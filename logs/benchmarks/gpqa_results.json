@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-01-10T02:09:22.184340",
+  "timestamp": "2026-01-10T02:11:37.027713",
   "data": {
     "mode": "baseline_tally",
     "dataset_statistics": {
-      "total_examples": 100,
+      "total_examples": 50,
       "features": [
         "question",
         "answer",
@@ -33,7 +33,7 @@
       ]
     },
     "baseline_metrics": {
-      "total_questions": 100,
+      "total_questions": 50,
       "data_validated": false,
       "features_validated": true,
       "simulated_random_baseline": {
@@ -43,17 +43,17 @@
     },
     "benchmark": "gpqa-diamond",
     "config": {
-      "limit": 100,
+      "limit": 50,
       "mode": "baseline_tally"
     }
   },
   "provenance": {
-    "commit_sha": "1a226da1571b3fba10a4ca2eef043a8f1e75787b",
+    "commit_sha": "a809368bd596fe3623758698041dda5bf2f178d1",
     "dataset": "Idavidrein/gpqa",
     "split": "diamond",
     "dataset_version_hash": "7f427f3079890d1d",
-    "limit": 100,
-    "timestamp": "2026-01-10T02:09:22.183357",
+    "limit": 50,
+    "timestamp": "2026-01-10T02:11:37.026804",
     "script": "gpqa_run.py",
     "python_version": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]"
   },
@@ -61,5 +61,5 @@
     "logged_by": "secure_logging.watermark_log",
     "version": "1.0"
   },
-  "integrity_hash": "15747573cccfd2bf84a3774ee948567f9652f050293a4a84204c4fb4fe41e898"
+  "integrity_hash": "cdcb009c73cebc69a50f66ae25846e090125ca45b2dcb7211b2794e7b9a5bbd8"
 }

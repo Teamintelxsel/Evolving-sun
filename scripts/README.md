@@ -54,7 +54,7 @@ imported_at: 2026-01-10 01:15:00
 
 ### run_benchmarks.py
 
-Unified benchmark runner for executing and archiving benchmark results.
+Legacy benchmark runner for executing and archiving benchmark results.
 
 **Usage:**
 
@@ -105,6 +105,144 @@ Results are saved as JSON files with timestamps:
 logs/benchmarks/benchmark_all_20260110_011538.json
 ```
 
+### unified_runner.py
+
+Unified runner for all benchmark harnesses (legacy + new).
+
+**Usage:**
+
+```bash
+# Run all benchmarks
+python scripts/unified_runner.py
+
+# Run specific benchmark categories
+python scripts/unified_runner.py --gpqa --kegg
+python scripts/unified_runner.py --swe-bench --swe-max-tasks 5
+
+# Customize individual benchmarks
+python scripts/unified_runner.py --all --gpqa-limit 100 --kegg-pathways 15
+```
+
+**Arguments:**
+
+- `--all`: Run all benchmarks (default if no specific benchmarks selected)
+- `--legacy`: Run legacy benchmarks
+- `--swe-bench`: Run SWE-bench Verified
+- `--gpqa`: Run GPQA Diamond
+- `--kegg`: Run KEGG KGML
+- `--swe-max-tasks`: Maximum tasks for SWE-bench (default: 10)
+- `--swe-workers`: Workers for SWE-bench (default: 1)
+- `--gpqa-limit`: Examples for GPQA (default: 500)
+- `--kegg-pathways`: Pathways for KEGG (default: 10)
+- `--output-dir`: Custom output directory (default: logs/benchmarks)
+
+**Output:**
+
+Creates a `unified_summary.json` file with execution results for all benchmarks.
+
+### swe_run.py
+
+SWE-bench Verified benchmark runner for software engineering task evaluation.
+
+**Usage:**
+
+```bash
+# Run with defaults
+python scripts/swe_run.py
+
+# Customize execution
+python scripts/swe_run.py --max-tasks 20 --num-workers 2
+python scripts/swe_run.py --dataset verified --image sweagent/swe-agent@sha256:abc123...
+```
+
+**Arguments:**
+
+- `--dataset`: Dataset split (default: verified)
+- `--image`: Docker image name (use digest for reproducibility)
+- `--num-workers`: Parallel workers, 1-2 for CI (default: 1)
+- `--max-tasks`: Maximum tasks to run (default: 10)
+- `--output-dir`: Output directory (default: logs/benchmarks)
+
+**Features:**
+
+- Integrates with vendor/SWE-bench submodule
+- Falls back to simulation mode if vendor script unavailable
+- Captures provenance: commit SHA, image digest, dataset config
+- Watermarked logging for result integrity
+
+**Output:**
+
+```
+logs/benchmarks/swe_results.json
+```
+
+### gpqa_run.py
+
+GPQA Diamond benchmark runner for graduate-level science questions.
+
+**Usage:**
+
+```bash
+# Run with defaults (500 examples)
+python scripts/gpqa_run.py
+
+# Limit examples
+python scripts/gpqa_run.py --limit 100
+```
+
+**Arguments:**
+
+- `--limit`: Maximum examples to process (default: 500)
+- `--output-dir`: Output directory (default: logs/benchmarks)
+
+**Features:**
+
+- Loads GPQA diamond dataset via HuggingFace datasets library
+- Falls back to simulation mode if datasets library not installed
+- Baseline tally mode for initial runs (no model inference)
+- Watermarked logging with dataset version hash
+
+**Output:**
+
+```
+logs/benchmarks/gpqa_results.json
+```
+
+### bio_kegg_run.py
+
+KEGG KGML biological pathway benchmark runner.
+
+**Usage:**
+
+```bash
+# Run with defaults (10 human pathways)
+python scripts/bio_kegg_run.py
+
+# Customize organism and pathway count
+python scripts/bio_kegg_run.py --organism hsa --max-pathways 20
+python scripts/bio_kegg_run.py --organism mmu --max-pathways 5  # Mouse pathways
+```
+
+**Arguments:**
+
+- `--organism`: Organism code (default: hsa for human)
+- `--max-pathways`: Maximum pathways to process (default: 10)
+- `--output-dir`: Output directory (default: logs/benchmarks)
+
+**Features:**
+
+- Fetches KGML via KEGG REST API (http://rest.kegg.jp)
+- Parses pathway elements (entries, relations, reactions)
+- Falls back to simulation when API unavailable
+- Rate limiting to be respectful to KEGG API
+- Watermarked logging with API endpoint provenance
+
+**Output:**
+
+```
+logs/benchmarks/kegg_results.json
+```
+
 **Example Output:**
 
 ```json
@@ -124,12 +262,46 @@ logs/benchmarks/benchmark_all_20260110_011538.json
 ]
 ```
 
+## Watermarked Logging
+
+All new benchmark scripts use secure watermarked logging via `src/utils/secure_logging.py`:
+
+**Features:**
+- Cryptographic integrity hashes for result verification
+- Provenance tracking (commit SHA, timestamps, configurations)
+- Metadata preservation for reproducibility
+- Tamper detection via `verify_log_integrity()`
+
+**Example Watermarked Output:**
+
+```json
+{
+  "timestamp": "2026-01-10T02:00:00.000000",
+  "data": {
+    "benchmark": "gpqa-diamond",
+    "metrics": {...}
+  },
+  "provenance": {
+    "commit_sha": "abc123...",
+    "dataset": "Idavidrein/gpqa",
+    "script": "gpqa_run.py"
+  },
+  "metadata": {
+    "logged_by": "secure_logging.watermark_log",
+    "version": "1.0"
+  },
+  "integrity_hash": "sha256:def456..."
+}
+```
+
 ## Integration with CI/CD
 
-Both scripts are designed to work seamlessly with CI/CD pipelines:
+All scripts are designed to work seamlessly with CI/CD pipelines:
 
-- **import_conversations.py**: Can be used in workflows to automatically import conversation logs
-- **run_benchmarks.py**: Integrated with the weekly benchmark GitHub Actions workflow
+- **import_conversations.py**: Automatically import conversation logs
+- **run_benchmarks.py**: Legacy benchmarks in weekly workflow
+- **unified_runner.py**: Single command for all benchmarks
+- **swe_run.py, gpqa_run.py, bio_kegg_run.py**: Individual harnesses with simulation fallback
 
 See `.github/workflows/weekly-benchmarks.yml` for CI integration examples.
 
