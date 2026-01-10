@@ -198,7 +198,7 @@ Examples:
     parser.add_argument(
         '--input', '-i',
         help='Input file path (use - for stdin)',
-        default=None
+        default='-'
     )
     
     parser.add_argument(
@@ -234,7 +234,7 @@ Examples:
     importer = ConversationImporter(args.output_dir)
     
     try:
-        if args.input == '-' or args.input is None:
+        if args.input == '-':
             # Read from stdin
             content = sys.stdin.read()
             output_path = importer.import_from_text(

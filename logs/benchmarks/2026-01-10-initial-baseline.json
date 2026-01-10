@@ -10,7 +10,7 @@
   },
   "environment": {
     "platform": "linux",
-    "repository": "Evolving-sun"
+    "repository": "Evolving-Sun"
   },
   "notes": "Initial baseline - no performance metrics available yet. Future benchmarks will measure response times, accuracy, and resource utilization."
 }

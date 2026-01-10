@@ -79,7 +79,13 @@ def extract_watermark(content: str) -> Optional[Dict]:
         content: Content string to extract watermark from
         
     Returns:
-        Dictionary with watermark metadata, or None if no watermark found
+        Dictionary with watermark metadata containing 'type', 'source', and 'timestamp' keys,
+        or None if no watermark found. Expected watermark format:
+        <!-- Evolving Sun Watermark
+        Type: <type>
+        Source: <source>
+        Timestamp: <timestamp>
+        -->
     """
     if not content.startswith("<!-- Evolving Sun Watermark"):
         return None

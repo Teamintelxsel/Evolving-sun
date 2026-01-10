@@ -97,12 +97,12 @@ jobs:
           echo "Checking file naming conventions..."
           
           # Check evolution logs naming (YYYY-MM-DD-*.md)
-          find logs/evolution -name "*.md" -type f | grep -v "README.md" | while read file; do
+          while IFS= read -r file; do
             basename=$(basename "$file")
             if ! echo "$basename" | grep -qE "^[0-9]{4}-[0-9]{2}-[0-9]{2}-.*\.md$"; then
               echo "Warning: File $file doesn't follow naming convention (YYYY-MM-DD-description.md)"
             fi
-          done
+          done < <(find logs/evolution -name "*.md" -type f | grep -v "README.md")
           
           echo "File naming check complete!"
 
@@ -147,6 +147,17 @@ jobs:
           fi
           
           echo "✓ Conversation import test passed!"
+          
+          # Verify the files are valid
+          MD_FILE=$(find docs/conversations -name "*test-conversation.md" -type f | head -1)
+          JSON_FILE=$(find docs/conversations -name "*test-conversation.meta.json" -type f | head -1)
+          
+          if ! python -m json.tool "$JSON_FILE" > /dev/null 2>&1; then
+            echo "Error: Created metadata is not valid JSON"
+            exit 1
+          fi
+          
+          echo "✓ Created files are valid!"
       
       - name: Test stdin import
         run: |
