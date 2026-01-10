@@ -41,6 +41,8 @@ logs/**/*.txt
 logs/**/events_*.json
 !logs/**/.gitkeep
 !logs/**/benchmark_*.json
+!logs/**/*_results.json
+!logs/**/unified_summary.json
 
 # Temporary files
 /tmp/

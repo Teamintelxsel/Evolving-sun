@@ -5,32 +5,87 @@ on:
     # Run every Sunday at 00:00 UTC
     - cron: '0 0 * * 0'
   workflow_dispatch:  # Allow manual triggering
+  push:
+    paths:
+      - 'scripts/**'
+      - 'src/utils/**'
+      - '.github/workflows/weekly-benchmarks.yml'
+
+# Ensure only one workflow runs at a time
+concurrency:
+  group: benchmark-${{ github.ref }}
+  cancel-in-progress: false
+
+# Default permissions (read-only)
+permissions:
+  contents: read
 
 jobs:
   run-benchmarks:
     runs-on: ubuntu-latest
     
+    # Job-specific permissions
     permissions:
       contents: write  # Required for committing and pushing benchmark results
       actions: read    # Required for workflow operations
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
         with:
           fetch-depth: 0
+          submodules: true  # Fetch submodules including vendor/SWE-bench
       
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
         with:
           python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: |
+            **/requirements*.txt
+            **/setup.py
+            **/pyproject.toml
       
-      - name: Run benchmarks
+      - name: Cache benchmark dependencies
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57  # v4.2.0
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/huggingface
+          key: benchmark-${{ runner.os }}-${{ hashFiles('scripts/*.py') }}
+          restore-keys: |
+            benchmark-${{ runner.os }}-
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Install minimal dependencies for benchmarks
+          # datasets library is optional - scripts will use simulation mode if not available
+          if ! pip install datasets; then
+            echo "Warning: datasets library could not be installed, will use simulation mode"
+          fi
+      
+      - name: Run legacy benchmarks
         run: |
           python scripts/run_benchmarks.py --benchmark all
       
+      - name: Run SWE-bench Verified
+        run: |
+          python scripts/swe_run.py --max-tasks 5 --num-workers 1
+        continue-on-error: true  # Don't fail workflow if benchmark fails
+      
+      - name: Run GPQA Diamond
+        run: |
+          python scripts/gpqa_run.py --limit 100
+        continue-on-error: true
+      
+      - name: Run KEGG KGML
+        run: |
+          python scripts/bio_kegg_run.py --max-pathways 10
+        continue-on-error: true
+      
       - name: Archive benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: benchmark-results-${{ github.run_number }}
           path: logs/benchmarks/*.json

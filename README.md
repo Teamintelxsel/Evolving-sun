@@ -5,10 +5,14 @@ Structured logging, upgrades, and conversation management system with integrated
 ## Overview
 
 This repository provides utilities and infrastructure for:
-- **Structured Logging**: Organized log directories for evolution, benchmarks, security, and agent activity
+- **Structured Logging**: Organized log directories for evolution, benchmarks, security, and agent activity with watermarking and provenance tracking
 - **Upgrade Management**: Version tracking and archival system for software upgrades
 - **Conversation Ingestion**: Tools to import and organize conversation exports
 - **Benchmark Runners**: Unified system for running and archiving benchmark results
+  - **Legacy Benchmarks**: Performance, accuracy, and security metrics
+  - **SWE-bench Verified**: Software engineering task evaluation
+  - **GPQA Diamond**: Graduate-level science question answering
+  - **KEGG KGML**: Biological pathway analysis
 
 ## Repository Structure
 
@@ -21,17 +25,23 @@ Evolving-sun/
 ├── examples/                # Example scripts demonstrating utilities
 ├── logs/
 │   ├── evolution/           # Evolution tracking logs
-│   ├── benchmarks/          # Benchmark execution logs and results
+│   ├── benchmarks/          # Benchmark execution logs and results (watermarked)
 │   ├── security/            # Security-related logs
 │   └── agent-activity/      # Agent activity logs
 ├── scripts/
 │   ├── import_conversations.py  # Conversation import utility
-│   └── run_benchmarks.py        # Unified benchmark runner
+│   ├── run_benchmarks.py        # Legacy benchmark runner
+│   ├── unified_runner.py        # Unified benchmark harness runner
+│   ├── swe_run.py              # SWE-bench Verified runner
+│   ├── gpqa_run.py             # GPQA Diamond runner
+│   └── bio_kegg_run.py         # KEGG KGML runner
 ├── src/
-│   └── utils/               # Core utility modules (logging, etc.)
-└── upgrades/
-    ├── v1.0/                # Version 1.0 upgrades
-    └── archive/             # Historical upgrade archives
+│   └── utils/               # Core utility modules (logging, secure_logging)
+├── upgrades/
+│   ├── v1.0/                # Version 1.0 upgrades
+│   └── archive/             # Historical upgrade archives
+└── vendor/
+    └── SWE-bench/           # SWE-bench submodule (for real evaluations)
 ```
 
 ## Getting Started
@@ -39,14 +49,30 @@ Evolving-sun/
 ### Prerequisites
 
 - Python 3.7 or higher
+- Git (for submodules)
+- Docker (optional, for SWE-bench evaluations)
 
 ### Installation
 
-Clone the repository:
+Clone the repository with submodules:
 
 ```bash
-git clone https://github.com/Teamintelxsel/Evolving-sun.git
+git clone --recurse-submodules https://github.com/Teamintelxsel/Evolving-sun.git
 cd Evolving-sun
+```
+
+If you've already cloned without submodules:
+
+```bash
+cd Evolving-sun
+git submodule update --init --recursive
+```
+
+Optional: Install Python dependencies for enhanced features:
+
+```bash
+pip install datasets  # For real GPQA dataset access
+# Docker is required for real SWE-bench evaluations
 ```
 
 ## Usage
@@ -76,26 +102,64 @@ The script will:
 
 ### Running Benchmarks
 
-Run all benchmarks:
+#### Unified Benchmark Runner
+
+Run all benchmarks with a single command:
 
 ```bash
-python scripts/run_benchmarks.py
+# Run all benchmarks (legacy + new harnesses)
+python scripts/unified_runner.py
+
+# Run specific benchmark categories
+python scripts/unified_runner.py --gpqa --kegg
+python scripts/unified_runner.py --swe-bench --swe-max-tasks 5
 ```
 
-Run specific benchmarks:
+#### Individual Benchmark Harnesses
+
+**Legacy Benchmarks** (Performance, Accuracy, Security):
 
 ```bash
-# Performance benchmark
+# Run all legacy benchmarks
+python scripts/run_benchmarks.py
+
+# Run specific legacy benchmarks
 python scripts/run_benchmarks.py --benchmark performance
-
-# Accuracy benchmark
 python scripts/run_benchmarks.py --benchmark accuracy
-
-# Security benchmark
 python scripts/run_benchmarks.py --benchmark security
 ```
 
-Results are saved to `logs/benchmarks/` as JSON files.
+**SWE-bench Verified** (Software Engineering Benchmarks):
+
+```bash
+# Run with default settings
+python scripts/swe_run.py
+
+# Customize execution
+python scripts/swe_run.py --max-tasks 20 --num-workers 2 --dataset verified
+```
+
+**GPQA Diamond** (Graduate-Level Science Questions):
+
+```bash
+# Run with default settings (500 examples)
+python scripts/gpqa_run.py
+
+# Limit number of examples
+python scripts/gpqa_run.py --limit 100
+```
+
+**KEGG KGML** (Biological Pathway Benchmarks):
+
+```bash
+# Run with default settings (10 pathways, human organism)
+python scripts/bio_kegg_run.py
+
+# Customize organism and pathway count
+python scripts/bio_kegg_run.py --organism hsa --max-pathways 20
+```
+
+All benchmark results are saved to `logs/benchmarks/` as watermarked JSON files with provenance information.
 
 ### Using Structured Logging
 
@@ -154,7 +218,11 @@ For tracking and organization of issues related to this project, please refer to
 - [x] Implement weekly CI for benchmark archival
 - [x] Add structured logging utilities
 - [x] Create comprehensive documentation and examples
+- [x] Integrate real benchmark harnesses (SWE-bench, GPQA, KEGG)
+- [x] Add secure logging with watermarking and provenance tracking
+- [x] Implement vendor submodule for SWE-bench
+- [x] Add workflow audit improvements (permissions, concurrency, pinning, caching)
 - [ ] Add security scanning integration
 - [ ] Enhance logging with real-time monitoring
-- [ ] Add support for more benchmark types
+- [ ] Replace simulated metrics with real benchmark results (after first runs)
 - [ ] Integrate with external monitoring tools

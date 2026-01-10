@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-01-10T02:17:21.394790",
+  "data": {
+    "organism": "hsa",
+    "total_pathways_processed": 2,
+    "successful_fetches": 0,
+    "simulated_fetches": 2,
+    "pathway_data": [
+      {
+        "pathway_id": "hsa00010",
+        "data_size_bytes": 28478,
+        "has_entry": true,
+        "has_relation": true,
+        "has_reaction": true,
+        "fetched": false,
+        "simulated": true,
+        "entry_count": 68,
+        "relation_count": 33,
+        "reaction_count": 16
+      },
+      {
+        "pathway_id": "hsa00020",
+        "data_size_bytes": 16150,
+        "has_entry": true,
+        "has_relation": true,
+        "has_reaction": true,
+        "fetched": false,
+        "simulated": true,
+        "entry_count": 99,
+        "relation_count": 58,
+        "reaction_count": 27
+      }
+    ],
+    "statistics": {
+      "total_entries": 167,
+      "total_relations": 91,
+      "total_reactions": 43,
+      "avg_entries_per_pathway": 83.5,
+      "avg_relations_per_pathway": 45.5,
+      "avg_reactions_per_pathway": 21.5
+    },
+    "benchmark": "kegg-kgml",
+    "config": {
+      "organism": "hsa",
+      "max_pathways": 2
+    }
+  },
+  "provenance": {
+    "commit_sha": "6e1819ccd78c18ae48a5ccf86a91b184bcca558b",
+    "data_source": "KEGG REST API",
+    "api_endpoint": "http://rest.kegg.jp",
+    "organism": "hsa",
+    "max_pathways": 2,
+    "timestamp": "2026-01-10T02:17:20.867221",
+    "script": "bio_kegg_run.py",
+    "python_version": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]"
+  },
+  "metadata": {
+    "logged_by": "secure_logging.watermark_log",
+    "version": "1.0"
+  },
+  "integrity_hash": "abd32dc5a2091ddb75da91083e76a44459522bc26ac8c7dd00d2f2f82b5d06e8"
+}
