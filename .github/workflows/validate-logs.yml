@@ -44,13 +44,19 @@ jobs:
           done
           
           # Validate JSON files in logs
-          find logs -name "*.json" -type f | while read file; do
+          FAILED=0
+          while IFS= read -r file; do
             if ! python -m json.tool "$file" > /dev/null 2>&1; then
               echo "Error: Invalid JSON in $file"
-              exit 1
+              FAILED=1
+            else
+              echo "✓ Valid JSON: $file"
             fi
-            echo "✓ Valid JSON: $file"
-          done
+          done < <(find logs -name "*.json" -type f)
+          
+          if [ $FAILED -eq 1 ]; then
+            exit 1
+          fi
           
           echo "All log files validated successfully!"
       
@@ -59,24 +65,30 @@ jobs:
           echo "Validating conversation metadata..."
           
           # Check conversation metadata files
-          find docs/conversations -name "*.meta.json" -type f | while read file; do
+          FAILED=0
+          while IFS= read -r file; do
             if ! python -m json.tool "$file" > /dev/null 2>&1; then
               echo "Error: Invalid metadata JSON in $file"
-              exit 1
+              FAILED=1
+              continue
             fi
             
             # Verify required fields
             if ! grep -q '"title"' "$file"; then
               echo "Error: Missing 'title' in $file"
-              exit 1
+              FAILED=1
             fi
             if ! grep -q '"imported_at"' "$file"; then
               echo "Error: Missing 'imported_at' in $file"
-              exit 1
+              FAILED=1
             fi
             
             echo "✓ Valid metadata: $file"
-          done
+          done < <(find docs/conversations -name "*.meta.json" -type f)
+          
+          if [ $FAILED -eq 1 ]; then
+            exit 1
+          fi
           
           echo "All conversation metadata validated successfully!"
       
@@ -121,12 +133,15 @@ jobs:
             --author "CI Bot"
           
           # Verify output files were created
-          if [ ! -f docs/conversations/*test-conversation.md ]; then
+          OUTPUT_COUNT=$(find docs/conversations -name "*test-conversation.md" -type f | wc -l)
+          META_COUNT=$(find docs/conversations -name "*test-conversation.meta.json" -type f | wc -l)
+          
+          if [ "$OUTPUT_COUNT" -eq 0 ]; then
             echo "Error: Conversation markdown file not created"
             exit 1
           fi
           
-          if [ ! -f docs/conversations/*test-conversation.meta.json ]; then
+          if [ "$META_COUNT" -eq 0 ]; then
             echo "Error: Conversation metadata file not created"
             exit 1
           fi
