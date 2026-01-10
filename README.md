@@ -1,6 +1,6 @@
 # Evolving-sun
 
-Structured logging, upgrades, and conversation management system with integrated benchmarking capabilities.
+Structured logging, upgrades, and conversation management system with integrated verifiable benchmark orchestration.
 
 ## Overview
 
@@ -8,7 +8,8 @@ This repository provides utilities and infrastructure for:
 - **Structured Logging**: Organized log directories for evolution, benchmarks, security, and agent activity
 - **Upgrade Management**: Version tracking and archival system for software upgrades
 - **Conversation Ingestion**: Tools to import and organize conversation exports
-- **Benchmark Runners**: Unified system for running and archiving benchmark results
+- **Benchmark Orchestration**: Comprehensive benchmark suite execution with provenance tracking and reproducibility
+- **CI/CD Integration**: Automated weekly benchmark runs on GitHub-hosted runners
 
 ## Repository Structure
 
@@ -28,7 +29,11 @@ Evolving-sun/
 │   ├── import_conversations.py  # Conversation import utility
 │   └── run_benchmarks.py        # Unified benchmark runner
 ├── src/
+│   ├── orchestrator/        # Benchmark orchestration system
+│   │   ├── bench_orchestrator.py  # Main orchestrator
+│   │   └── README.md              # Orchestrator documentation
 │   └── utils/               # Core utility modules (logging, etc.)
+├── tasks.yaml               # Benchmark suite configuration
 └── upgrades/
     ├── v1.0/                # Version 1.0 upgrades
     └── archive/             # Historical upgrade archives
@@ -76,7 +81,38 @@ The script will:
 
 ### Running Benchmarks
 
-Run all benchmarks:
+#### Orchestrated Benchmark Suites
+
+Run comprehensive benchmark suites with full provenance tracking:
+
+```bash
+# Run all configured benchmark suites
+python src/orchestrator/bench_orchestrator.py
+
+# Use custom tasks file
+python src/orchestrator/bench_orchestrator.py --tasks-file custom_tasks.yaml
+
+# Specify custom output location
+python src/orchestrator/bench_orchestrator.py --output-dir ./results
+```
+
+The orchestrator supports:
+- **SWE-Bench Verified**: 50 tasks across 2 shards (25 each) with num_workers=1
+- **GPQA Diamond**: Self-consistency with k=10, limit=500 questions
+- **KEGG**: Pathway analysis for ko01100
+
+Features:
+- Deterministic seed generation for reproducibility
+- Exponential backoff retry logic (30s → 120s)
+- Comprehensive provenance logging (commit SHA, OS/Python versions, library versions)
+- Watermarked JSON summaries with dataset revisions and Docker digests
+- Per-task timeouts and error handling
+
+See [src/orchestrator/README.md](src/orchestrator/README.md) for detailed documentation.
+
+#### Legacy Benchmark Runner
+
+Run simple benchmarks:
 
 ```bash
 python scripts/run_benchmarks.py

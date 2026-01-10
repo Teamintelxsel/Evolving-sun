@@ -25,16 +25,24 @@ jobs:
         with:
           python-version: '3.11'
       
-      - name: Run benchmarks
+      - name: Install dependencies
         run: |
-          python scripts/run_benchmarks.py --benchmark all
+          python -m pip install --upgrade pip
+          pip install pyyaml
+      
+      - name: Run orchestrated benchmarks
+        run: |
+          python src/orchestrator/bench_orchestrator.py --tasks-file tasks.yaml
       
       - name: Archive benchmark results
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results-${{ github.run_number }}
-          path: logs/benchmarks/*.json
+          path: |
+            logs/benchmarks/benchmark_orchestrated_*.json
+            logs/benchmarks/*.json
           retention-days: 90
+          if-no-files-found: warn
       
       - name: Commit results to repository
         run: |
@@ -82,8 +90,26 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Date**: $(date)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Runner**: ubuntu-latest" >> $GITHUB_STEP_SUMMARY
+          echo "**Python Version**: 3.11" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit SHA**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit Status**: ${COMMIT_RESULT:-unknown}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract watermark from latest results file if it exists
+          LATEST_RESULT=$(ls -t logs/benchmarks/benchmark_orchestrated_*.json 2>/dev/null | head -1)
+          if [ -f "$LATEST_RESULT" ]; then
+            echo "### Benchmark Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            WATERMARK=$(python -c "import json; print(json.load(open('$LATEST_RESULT'))['watermark'])" 2>/dev/null || echo "N/A")
+            echo "**Watermark**: $WATERMARK" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Extract suite statuses
+            python scripts/extract_benchmark_summary.py "$LATEST_RESULT" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
           
           if [ "${COMMIT_RESULT}" = "success" ] || [ "${COMMIT_RESULT}" = "no_changes" ]; then
             echo "✅ Benchmark results have been generated and archived." >> $GITHUB_STEP_SUMMARY
