@@ -1,0 +1,78 @@
+name: Post-Quantum Cryptography Signing
+
+on:
+  push:
+    branches: [main, develop]
+  release:
+    types: [created, published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  pqc-sign:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[pqc]"
+      
+      - name: Generate Dilithium keypair
+        id: keygen
+        run: |
+          python scripts/pqc_keygen.py \
+            --key-type signing \
+            --output-dir .pqc-keys \
+            --security-level 5
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+      
+      - name: Sign commits with Dilithium
+        run: |
+          python scripts/sign_commits.py \
+            --start-ref ${{ github.event.before }} \
+            --end-ref ${{ github.sha }} \
+            --key-id ${{ steps.keygen.outputs.key_id }}
+      
+      - name: Sign release artifacts (if release)
+        if: github.event_name == 'release'
+        run: |
+          python scripts/sign_artifacts.py \
+            --release-tag ${{ github.event.release.tag_name }} \
+            --key-id ${{ steps.keygen.outputs.key_id }}
+      
+      - name: Publish PQC signatures
+        run: |
+          git config user.name "PQC Bot"
+          git config user.email "pqc@evolving-sun.ai"
+          git push origin "refs/notes/dilithium-signatures"
+      
+      - name: Upload signature artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pqc-signatures-${{ github.sha }}
+          path: |
+            .pqc-keys/*.pub
+            **/*.dilithium.sig
+          retention-days: 365
+      
+      - name: Verify signatures
+        run: |
+          python scripts/verify_signatures.py \
+            --commits ${{ github.sha }} \
+            --public-key .pqc-keys/signing.pub
