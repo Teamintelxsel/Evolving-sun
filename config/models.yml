@@ -1,0 +1,183 @@
+# Models configuration for multi-provider LLM orchestration
+
+providers:
+  xai:
+    name: "xAI"
+    base_url: "https://api.x.ai/v1"
+    api_key_env: "XAI_API_KEY"
+    models:
+      - grok-4
+    
+  anthropic:
+    name: "Anthropic"
+    base_url: "https://api.anthropic.com/v1"
+    api_key_env: "ANTHROPIC_API_KEY"
+    models:
+      - claude-opus-4.5
+      - claude-sonnet-4
+    
+  google:
+    name: "Google"
+    base_url: "https://generativelanguage.googleapis.com/v1"
+    api_key_env: "GOOGLE_API_KEY"
+    models:
+      - gemini-3-flash
+      - gemini-3-pro
+    
+  meta:
+    name: "Meta"
+    base_url: "http://localhost:11434/v1"  # Ollama local endpoint
+    api_key_env: "META_API_KEY"
+    models:
+      - llama-4
+      - llama-4-instruct
+    
+  alibaba:
+    name: "Alibaba Cloud"
+    base_url: "https://dashscope.aliyuncs.com/api/v1"
+    api_key_env: "ALIBABA_API_KEY"
+    models:
+      - qwen-3
+      - qwen-3-turbo
+    
+  deepseek:
+    name: "DeepSeek"
+    base_url: "https://api.deepseek.com/v1"
+    api_key_env: "DEEPSEEK_API_KEY"
+    models:
+      - deepseek-coder
+      - deepseek-chat
+
+models:
+  grok-4:
+    provider: xai
+    capabilities:
+      - reasoning
+      - coding
+      - analysis
+    context_window: 128000
+    cost_per_1k_input_tokens: 0.010
+    cost_per_1k_output_tokens: 0.020
+    latency_p95_ms: 800
+    priority: 1
+    tags:
+      - premium
+      - reasoning
+  
+  claude-opus-4.5:
+    provider: anthropic
+    capabilities:
+      - coding
+      - analysis
+      - long-context
+    context_window: 200000
+    cost_per_1k_input_tokens: 0.050
+    cost_per_1k_output_tokens: 0.100
+    latency_p95_ms: 1200
+    priority: 2
+    tags:
+      - premium
+      - long-context
+  
+  gemini-3-flash:
+    provider: google
+    capabilities:
+      - speed
+      - basic-reasoning
+    context_window: 32000
+    cost_per_1k_input_tokens: 0.001
+    cost_per_1k_output_tokens: 0.002
+    latency_p95_ms: 300
+    priority: 3
+    tags:
+      - fast
+      - cost-effective
+  
+  llama-4:
+    provider: meta
+    capabilities:
+      - open-source
+      - self-hosted
+    context_window: 16000
+    cost_per_1k_input_tokens: 0.000
+    cost_per_1k_output_tokens: 0.000
+    latency_p95_ms: 500
+    priority: 4
+    tags:
+      - open-source
+      - free
+  
+  qwen-3:
+    provider: alibaba
+    capabilities:
+      - multilingual
+      - reasoning
+    context_window: 32000
+    cost_per_1k_input_tokens: 0.002
+    cost_per_1k_output_tokens: 0.004
+    latency_p95_ms: 600
+    priority: 5
+    tags:
+      - multilingual
+      - cost-effective
+  
+  deepseek:
+    provider: deepseek
+    capabilities:
+      - coding
+      - reasoning
+    context_window: 64000
+    cost_per_1k_input_tokens: 0.003
+    cost_per_1k_output_tokens: 0.005
+    latency_p95_ms: 700
+    priority: 6
+    tags:
+      - coding
+      - chinese-market
+
+routing:
+  default_model: gemini-3-flash
+  fallback_chain:
+    - gemini-3-flash
+    - llama-4
+    - qwen-3
+  
+  task_preferences:
+    reasoning: grok-4
+    coding: claude-opus-4.5
+    speed: gemini-3-flash
+    open-source: llama-4
+    multilingual: qwen-3
+    analysis: deepseek
+  
+  cost_optimization:
+    enabled: true
+    target_savings: 0.35  # 35% cost reduction
+    cache_enabled: true
+    cache_ttl_seconds: 3600
+  
+  carbon_tracking:
+    enabled: true
+    report_frequency: daily
+    co2_per_1k_tokens:
+      grok-4: 2.5
+      claude-opus-4.5: 3.0
+      gemini-3-flash: 0.5
+      llama-4: 1.5
+      qwen-3: 1.8
+      deepseek: 2.0
+
+retry:
+  max_attempts: 3
+  backoff_factor: 2
+  timeout_seconds: 60
+
+rate_limiting:
+  enabled: true
+  requests_per_minute:
+    grok-4: 100
+    claude-opus-4.5: 50
+    gemini-3-flash: 200
+    llama-4: 1000
+    qwen-3: 100
+    deepseek: 100

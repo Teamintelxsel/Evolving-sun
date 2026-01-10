@@ -1,0 +1,198 @@
+name: Benchmark Automation
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # Weekly on Sunday at 3 AM UTC
+  workflow_dispatch:
+    inputs:
+      benchmarks:
+        description: 'Benchmarks to run (comma-separated: gpqa,swe-bench,kegg)'
+        required: false
+        default: 'gpqa,swe-bench,kegg'
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run-benchmarks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360  # 6 hours
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[benchmarks,all]"
+      
+      - name: Run GPQA Benchmark
+        if: contains(github.event.inputs.benchmarks, 'gpqa') || github.event_name == 'schedule'
+        id: gpqa
+        run: |
+          python -c "
+          from benchmarks.gpqa_runner import GPQARunner
+          import json
+          from pathlib import Path
+          
+          runner = GPQARunner(target_score=0.74)
+          results = runner.run_benchmark(model_name='grok-4')
+          
+          # Save results
+          output_dir = Path('benchmarks/results/gpqa')
+          output_dir.mkdir(parents=True, exist_ok=True)
+          runner.save_results(str(output_dir / 'results.json'))
+          
+          # Generate report
+          report = runner.generate_report()
+          with open(output_dir / 'report.md', 'w') as f:
+              f.write(report)
+          
+          print(f'GPQA Score: {results[\"accuracy\"]:.2%}')
+          print(f'::set-output name=gpqa_score::{results[\"accuracy\"]:.4f}')
+          "
+      
+      - name: Run SWE-bench Verified
+        if: contains(github.event.inputs.benchmarks, 'swe-bench') || github.event_name == 'schedule'
+        id: swe_bench
+        run: |
+          python -c "
+          from benchmarks.swe_bench_runner import SWEBenchRunner
+          from pathlib import Path
+          
+          runner = SWEBenchRunner(variant='verified', target_score=0.927)
+          results = runner.run_benchmark(model_name='claude-opus-4.5')
+          
+          # Save results
+          output_dir = Path('benchmarks/results/swe-bench')
+          output_dir.mkdir(parents=True, exist_ok=True)
+          runner.save_results(str(output_dir))
+          
+          # Generate report
+          report = runner.generate_report()
+          with open(output_dir / 'report.md', 'w') as f:
+              f.write(report)
+          
+          print(f'SWE-bench Pass Rate: {results[\"pass_rate\"]:.2%}')
+          print(f'::set-output name=swe_bench_score::{results[\"pass_rate\"]:.4f}')
+          "
+      
+      - name: Run KEGG Validation
+        if: contains(github.event.inputs.benchmarks, 'kegg') || github.event_name == 'schedule'
+        id: kegg
+        run: |
+          python -c "
+          from benchmarks.kegg_validator import KEGGValidator
+          from pathlib import Path
+          
+          validator = KEGGValidator(target_accuracy=0.9994)
+          results = validator.run_comprehensive_validation(['ko01100', 'ko00010', 'ko00020'])
+          
+          # Save results
+          output_dir = Path('benchmarks/results/kegg')
+          output_dir.mkdir(parents=True, exist_ok=True)
+          validator.save_results(str(output_dir / 'results.json'))
+          
+          # Generate report
+          report = validator.generate_report()
+          with open(output_dir / 'report.md', 'w') as f:
+              f.write(report)
+          
+          print(f'KEGG Accuracy: {results[\"accuracy\"]:.4%}')
+          print(f'::set-output name=kegg_score::{results[\"accuracy\"]:.4f}')
+          "
+      
+      - name: Generate Verification Hashes
+        run: |
+          python -c "
+          from benchmarks.verification.sha256_hasher import SHA256Hasher
+          from benchmarks.verification.merkle_builder import MerkleTreeBuilder
+          from pathlib import Path
+          import json
+          
+          hasher = SHA256Hasher()
+          merkle = MerkleTreeBuilder()
+          
+          # Hash all result files
+          result_files = list(Path('benchmarks/results').rglob('results.json'))
+          hashes = [hasher.hash_file(str(f)) for f in result_files]
+          
+          # Build Merkle tree
+          tree = merkle.build_tree([str(f) for f in result_files])
+          
+          # Save verification data
+          verification_dir = Path('benchmarks/verification/results')
+          verification_dir.mkdir(parents=True, exist_ok=True)
+          
+          hasher.save_hashes(str(verification_dir / 'hashes.json'))
+          merkle.save_tree(tree, str(verification_dir / 'merkle_tree.json'))
+          
+          print(f'Merkle Root: {tree[\"root\"][:16]}...')
+          print(f'::set-output name=merkle_root::{tree[\"root\"]}')
+          "
+      
+      - name: Commit results
+        run: |
+          git config user.name "Benchmark Bot"
+          git config user.email "benchmarks@evolving-sun.ai"
+          git add benchmarks/results/
+          git add benchmarks/verification/results/
+          git diff --staged --quiet || git commit -m "chore: Update benchmark results $(date +%Y-%m-%d)"
+          git push || echo "No changes to push"
+      
+      - name: Create benchmark report issue
+        if: github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const gpqaScore = '${{ steps.gpqa.outputs.gpqa_score }}';
+            const sweBenchScore = '${{ steps.swe_bench.outputs.swe_bench_score }}';
+            const keggScore = '${{ steps.kegg.outputs.kegg_score }}';
+            const merkleRoot = '${{ steps.verification.outputs.merkle_root }}';
+            
+            const body = `# 📊 Weekly Benchmark Report
+            
+            **Date:** ${new Date().toISOString().split('T')[0]}
+            **Merkle Root:** \`${merkleRoot?.substring(0, 16)}...\`
+            
+            ## Results
+            
+            | Benchmark | Score | Target | Status |
+            |-----------|-------|--------|--------|
+            | GPQA | ${(parseFloat(gpqaScore || 0) * 100).toFixed(1)}% | 74% | ${parseFloat(gpqaScore || 0) >= 0.74 ? '✅' : '❌'} |
+            | SWE-bench Verified | ${(parseFloat(sweBenchScore || 0) * 100).toFixed(1)}% | 92.7% | ${parseFloat(sweBenchScore || 0) >= 0.927 ? '✅' : '❌'} |
+            | KEGG Validation | ${(parseFloat(keggScore || 0) * 100).toFixed(2)}% | 99.94% | ${parseFloat(keggScore || 0) >= 0.9994 ? '✅' : '❌'} |
+            
+            ## Verification
+            
+            All results are cryptographically verified:
+            - SHA256 hashes generated
+            - Merkle tree constructed
+            - Results committed to immutable git history
+            
+            See full reports in \`benchmarks/results/\`
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `📊 Weekly Benchmark Report - ${new Date().toISOString().split('T')[0]}`,
+              body: body,
+              labels: ['benchmarks', 'automated']
+            });
+      
+      - name: Upload benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_number }}
+          path: |
+            benchmarks/results/
+            benchmarks/verification/results/
+          retention-days: 365
