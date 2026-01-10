@@ -10,6 +10,10 @@ jobs:
   run-benchmarks:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: write  # Required for committing and pushing benchmark results
+      actions: read    # Required for workflow operations
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
