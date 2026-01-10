@@ -1,0 +1,124 @@
+name: Weekly Benchmark CI
+
+# Weekly schedule + manual trigger
+on:
+  schedule:
+    # Run every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+    inputs:
+      benchmarks:
+        description: 'Benchmarks to run (comma-separated: swe,gpqa,kegg or all)'
+        required: false
+        default: 'gpqa,kegg'
+      max_samples:
+        description: 'Maximum samples for GPQA'
+        required: false
+        default: '50'
+
+# Concurrency control - cancel in-progress runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Minimal permissions (security audit fix)
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  run-benchmarks:
+    name: Run Benchmark Harnesses
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # 2 hour timeout for entire job
+    
+    # Path filters - only run if relevant files changed (for PR triggers)
+    # For scheduled runs, this doesn't apply
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2  # Pinned version (audit fix)
+        with:
+          submodules: 'recursive'
+          fetch-depth: 1  # Shallow clone for speed
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5.3.0  # Pinned version (audit fix)
+        with:
+          python-version: '3.11'
+          cache: 'pip'  # Enable pip caching (audit fix)
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4.2.0  # Pinned version (audit fix)
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Create logs directory
+        run: mkdir -p logs/benchmarks
+      
+      - name: Run GPQA Benchmark
+        id: gpqa
+        if: contains(github.event.inputs.benchmarks, 'gpqa') || contains(github.event.inputs.benchmarks, 'all') || github.event_name == 'schedule'
+        run: |
+          python scripts/gpqa_run.py \
+            --max_samples ${{ github.event.inputs.max_samples || '50' }} \
+            --output logs/benchmarks/gpqa_results.json
+        continue-on-error: true
+      
+      - name: Run KEGG Benchmark
+        id: kegg
+        if: contains(github.event.inputs.benchmarks, 'kegg') || contains(github.event.inputs.benchmarks, 'all') || github.event_name == 'schedule'
+        run: |
+          python scripts/bio_kegg_run.py \
+            --pathways hsa00010 hsa00020 hsa00030 \
+            --output logs/benchmarks/kegg_results.json
+        continue-on-error: true
+      
+      # SWE-Bench requires Docker setup - disabled by default for CI
+      # Uncomment when Docker image is available
+      # - name: Run SWE-Bench Benchmark
+      #   id: swe
+      #   if: contains(github.event.inputs.benchmarks, 'swe') || contains(github.event.inputs.benchmarks, 'all')
+      #   run: |
+      #     python scripts/swe_run.py \
+      #       --image sweagent/swe-agent:latest \
+      #       --max_tasks 5 \
+      #       --output logs/benchmarks/swe_results.json
+      #   continue-on-error: true
+      
+      - name: Archive benchmark results
+        uses: actions/upload-artifact@v4.5.0  # Pinned version (audit fix)
+        if: always()
+        with:
+          name: benchmark-results-${{ github.run_number }}
+          path: logs/benchmarks/*.json
+          retention-days: 90
+          compression-level: 9
+      
+      - name: Display results summary
+        if: always()
+        run: |
+          echo "=== Benchmark Results Summary ==="
+          if [ -f logs/benchmarks/gpqa_results.json ]; then
+            echo "GPQA: ✓ Completed"
+            python -c "import json; data=json.load(open('logs/benchmarks/gpqa_results.json')); print(f\"  Accuracy: {data['data'].get('accuracy', 'N/A')}\")"
+          fi
+          if [ -f logs/benchmarks/kegg_results.json ]; then
+            echo "KEGG: ✓ Completed"
+            python -c "import json; data=json.load(open('logs/benchmarks/kegg_results.json')); print(f\"  Pathways: {data['data'].get('successful', 0)}/{data['data'].get('total_pathways', 0)}\")"
+          fi
+          echo "================================="
+      
+      - name: Check for failures
+        if: steps.gpqa.outcome == 'failure' || steps.kegg.outcome == 'failure'
+        run: |
+          echo "::warning::Some benchmarks failed. Check logs for details."
+          exit 0  # Don't fail the workflow, just warn

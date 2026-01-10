@@ -1,0 +1,19 @@
+# Core dependencies for Evolving Sun benchmark framework
+
+# HuggingFace datasets for GPQA
+datasets>=2.14.0
+
+# Biopython for KEGG pathway parsing
+biopython>=1.81
+
+# For SWE-Bench (Docker interaction, subprocess management)
+# SWE-Bench has its own requirements - see vendor/SWE-bench/
+
+# Standard library used but explicitly noted for clarity:
+# - json
+# - hashlib
+# - datetime
+# - pathlib
+# - argparse
+# - subprocess
+# - urllib
