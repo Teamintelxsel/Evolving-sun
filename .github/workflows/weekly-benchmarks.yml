@@ -36,22 +36,57 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add logs/benchmarks/*.json
+          git add logs/benchmarks/*.json || true
+          
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            echo "COMMIT_RESULT=no_changes" >> $GITHUB_ENV
           else
-            git commit -m "chore: weekly benchmark results $(date +%Y-%m-%d)"
-            git push
+            if git commit -m "chore: weekly benchmark results $(date +%Y-%m-%d)"; then
+              echo "Changes committed successfully"
+              
+              # Try to push with retry logic
+              max_retries=3
+              retry_count=0
+              until git push || [ $retry_count -eq $max_retries ]; do
+                retry_count=$((retry_count + 1))
+                echo "Push attempt $retry_count failed, retrying in 5 seconds..."
+                sleep 5
+                git pull --rebase
+              done
+              
+              if [ $retry_count -eq $max_retries ]; then
+                echo "Failed to push after $max_retries attempts"
+                echo "COMMIT_RESULT=push_failed" >> $GITHUB_ENV
+                exit 1
+              else
+                echo "COMMIT_RESULT=success" >> $GITHUB_ENV
+              fi
+            else
+              echo "Commit failed"
+              echo "COMMIT_RESULT=commit_failed" >> $GITHUB_ENV
+              exit 1
+            fi
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create benchmark summary
+        if: always()
         run: |
           echo "## Weekly Benchmark Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Date**: $(date)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Benchmark results have been generated and archived." >> $GITHUB_STEP_SUMMARY
+          echo "**Commit Status**: ${COMMIT_RESULT:-unknown}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Results can be found in \`logs/benchmarks/\`" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${COMMIT_RESULT}" = "success" ] || [ "${COMMIT_RESULT}" = "no_changes" ]; then
+            echo "✅ Benchmark results have been generated and archived." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Results can be found in \`logs/benchmarks/\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Benchmark results were generated but may not have been committed." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check the workflow logs for details. Results are still available as artifacts." >> $GITHUB_STEP_SUMMARY
+          fi

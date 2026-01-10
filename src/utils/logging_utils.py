@@ -8,9 +8,15 @@ subsystems: evolution, benchmarks, security, and agent-activity.
 import json
 import logging
 import os
+import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
+
+
+# Global logger cache to reuse logger instances
+_logger_cache = {}
+_logger_cache_lock = threading.Lock()
 
 
 class StructuredLogger:
@@ -32,6 +38,7 @@ class StructuredLogger:
             )
         
         self.category = category
+        self._file_lock = threading.Lock()
         
         if log_dir is None:
             # Assume we're in src/utils and go up to repo root
@@ -109,20 +116,29 @@ class StructuredLogger:
             "data": data
         }
         
-        # Write to JSON log file
+        # Write to JSON log file with thread safety
         json_log_file = self.log_dir / f"events_{datetime.now().strftime('%Y%m%d')}.json"
         
-        # Append to JSON lines file
-        with open(json_log_file, 'a', encoding='utf-8') as f:
-            f.write(json.dumps(event) + '\n')
+        # Use file lock to ensure thread-safe writes
+        with self._file_lock:
+            with open(json_log_file, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(event) + '\n')
         
         self.info(f"Event logged: {event_type}", metadata=data)
 
 
 # Convenience functions for quick logging
 def get_logger(category: str) -> StructuredLogger:
-    """Get a structured logger for the specified category."""
-    return StructuredLogger(category)
+    """
+    Get a cached structured logger for the specified category.
+    
+    This function maintains a cache of logger instances to avoid
+    creating duplicate loggers with duplicate handlers.
+    """
+    with _logger_cache_lock:
+        if category not in _logger_cache:
+            _logger_cache[category] = StructuredLogger(category)
+        return _logger_cache[category]
 
 
 def log_evolution_event(event_type: str, data: Dict[str, Any]):
