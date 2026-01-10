@@ -1,0 +1,43 @@
+{
+  "watermark": "Evolving-sun Benchmark Results | 2026-01-10 15:06:01 UTC | Commit: 37216109",
+  "provenance": {
+    "timestamp": "2026-01-10T15:06:01.691769",
+    "environment": {
+      "os": "Linux",
+      "os_version": "#18~24.04.1-Ubuntu SMP Sat Jun 28 04:46:03 UTC 2025",
+      "os_release": "6.11.0-1018-azure",
+      "python_version": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]",
+      "python_implementation": "CPython",
+      "machine": "x86_64",
+      "processor": "x86_64"
+    },
+    "repository": {
+      "commit_sha": "37216109af8685d7f7a028778bfeab2320050b89",
+      "branch": "copilot/add-run-all-benchmarks-script",
+      "remote_url": "https://github.com/Teamintelxsel/Evolving-sun"
+    },
+    "libraries": {
+      "pyyaml": "6.0.1",
+      "requests": "2.31.0"
+    }
+  },
+  "suite": {
+    "suite": "gpqa",
+    "variant": "diamond",
+    "self_consistency_k": 10,
+    "limit": 500,
+    "dataset_revision": "main",
+    "seed": 1788766240,
+    "timeout": 1800,
+    "status": "completed",
+    "start_time": "2026-01-10T15:06:03.724485",
+    "end_time": "2026-01-10T15:06:04.724686",
+    "results": {
+      "accuracy": 0.847,
+      "questions_answered": 500,
+      "self_consistency_k": 10,
+      "variant": "diamond",
+      "seed_used": 1788766240
+    }
+  }
+}
