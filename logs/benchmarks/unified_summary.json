@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-01-10T02:11:37.036782",
-  "total_benchmarks": 1,
-  "completed": 1,
+  "timestamp": "2026-01-10T02:14:08.139109",
+  "total_benchmarks": 2,
+  "completed": 2,
   "failed": 0,
   "errors": 0,
   "results": [
@@ -9,9 +9,17 @@
       "name": "GPQA Diamond",
       "status": "completed",
       "returncode": 0,
-      "duration_seconds": 0.056643,
-      "start_time": "2026-01-10T02:11:36.979938",
-      "end_time": "2026-01-10T02:11:37.036581"
+      "duration_seconds": 0.056155,
+      "start_time": "2026-01-10T02:14:07.479069",
+      "end_time": "2026-01-10T02:14:07.535224"
+    },
+    {
+      "name": "KEGG KGML",
+      "status": "completed",
+      "returncode": 0,
+      "duration_seconds": 0.603652,
+      "start_time": "2026-01-10T02:14:07.535330",
+      "end_time": "2026-01-10T02:14:08.138982"
     }
   ]
 }
