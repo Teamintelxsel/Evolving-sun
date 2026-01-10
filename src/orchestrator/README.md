@@ -97,7 +97,7 @@ suites:
 - `shards`: Number of shards to split tasks across
 - `shard_size`: Number of tasks per shard
 - `num_workers`: Number of parallel workers per shard
-- `image_digest`: Docker image SHA256 digest
+- `image_digest`: Docker image SHA256 digest (see [SWE-Bench Setup Guide](../../docs/SWE_BENCH_SETUP.md) for obtaining the digest)
 - `timeout`: Per-shard timeout in seconds
 
 #### GPQA
