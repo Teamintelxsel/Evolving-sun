@@ -1,0 +1,171 @@
+name: Validate Evolution Logs
+
+on:
+  pull_request:
+    paths:
+      - 'logs/**'
+      - 'docs/conversations/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'logs/**'
+      - 'docs/conversations/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-logs:
+    name: Validate Log Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || echo "No external dependencies required"
+      
+      - name: Validate log file structure
+        run: |
+          echo "Validating log files..."
+          
+          # Check that logs directories exist
+          for dir in logs/evolution logs/benchmarks logs/security logs/agent-activity; do
+            if [ ! -d "$dir" ]; then
+              echo "Error: Required directory $dir not found"
+              exit 1
+            fi
+            echo "✓ Directory $dir exists"
+          done
+          
+          # Validate JSON files in logs
+          FAILED=0
+          while IFS= read -r file; do
+            if ! python -m json.tool "$file" > /dev/null 2>&1; then
+              echo "Error: Invalid JSON in $file"
+              FAILED=1
+            else
+              echo "✓ Valid JSON: $file"
+            fi
+          done < <(find logs -name "*.json" -type f)
+          
+          if [ $FAILED -eq 1 ]; then
+            exit 1
+          fi
+          
+          echo "All log files validated successfully!"
+      
+      - name: Validate conversation metadata
+        run: |
+          echo "Validating conversation metadata..."
+          
+          # Check conversation metadata files
+          FAILED=0
+          while IFS= read -r file; do
+            if ! python -m json.tool "$file" > /dev/null 2>&1; then
+              echo "Error: Invalid metadata JSON in $file"
+              FAILED=1
+              continue
+            fi
+            
+            # Verify required fields
+            if ! grep -q '"title"' "$file"; then
+              echo "Error: Missing 'title' in $file"
+              FAILED=1
+            fi
+            if ! grep -q '"imported_at"' "$file"; then
+              echo "Error: Missing 'imported_at' in $file"
+              FAILED=1
+            fi
+            
+            echo "✓ Valid metadata: $file"
+          done < <(find docs/conversations -name "*.meta.json" -type f)
+          
+          if [ $FAILED -eq 1 ]; then
+            exit 1
+          fi
+          
+          echo "All conversation metadata validated successfully!"
+      
+      - name: Check file naming conventions
+        run: |
+          echo "Checking file naming conventions..."
+          
+          # Check evolution logs naming (YYYY-MM-DD-*.md)
+          while IFS= read -r file; do
+            basename=$(basename "$file")
+            if ! echo "$basename" | grep -qE "^[0-9]{4}-[0-9]{2}-[0-9]{2}-.*\.md$"; then
+              echo "Warning: File $file doesn't follow naming convention (YYYY-MM-DD-description.md)"
+            fi
+          done < <(find logs/evolution -name "*.md" -type f | grep -v "README.md")
+          
+          echo "File naming check complete!"
+
+  test-conversation-import:
+    name: Test Conversation Import Tool
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Test import script help
+        run: |
+          python scripts/import_conversations.py --help
+      
+      - name: Test conversation import
+        run: |
+          echo "This is a test conversation" > /tmp/test-conversation.txt
+          python scripts/import_conversations.py \
+            --input /tmp/test-conversation.txt \
+            --title "Test Conversation" \
+            --tags "test,ci" \
+            --author "CI Bot"
+          
+          # Verify output files were created
+          OUTPUT_COUNT=$(find docs/conversations -name "*test-conversation.md" -type f | wc -l)
+          META_COUNT=$(find docs/conversations -name "*test-conversation.meta.json" -type f | wc -l)
+          
+          if [ "$OUTPUT_COUNT" -eq 0 ]; then
+            echo "Error: Conversation markdown file not created"
+            exit 1
+          fi
+          
+          if [ "$META_COUNT" -eq 0 ]; then
+            echo "Error: Conversation metadata file not created"
+            exit 1
+          fi
+          
+          echo "✓ Conversation import test passed!"
+          
+          # Verify the files are valid
+          MD_FILE=$(find docs/conversations -name "*test-conversation.md" -type f | head -1)
+          JSON_FILE=$(find docs/conversations -name "*test-conversation.meta.json" -type f | head -1)
+          
+          if ! python -m json.tool "$JSON_FILE" > /dev/null 2>&1; then
+            echo "Error: Created metadata is not valid JSON"
+            exit 1
+          fi
+          
+          echo "✓ Created files are valid!"
+      
+      - name: Test stdin import
+        run: |
+          echo "Test conversation from stdin" | python scripts/import_conversations.py \
+            --title "Stdin Test" \
+            --tags "test"
+          
+          echo "✓ Stdin import test passed!"
