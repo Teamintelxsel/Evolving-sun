@@ -8,8 +8,8 @@ docs/conversations/ directory with proper formatting and metadata.
 
 import argparse
 import json
-import os
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -242,7 +242,6 @@ Examples:
     try:
         if args.input == '-' or args.input is None:
             # Read from stdin
-            import sys
             content = sys.stdin.read()
             output_path = importer.import_from_text(
                 content,

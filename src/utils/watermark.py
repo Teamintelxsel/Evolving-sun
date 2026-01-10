@@ -5,6 +5,8 @@ This module provides utilities for adding watermarks and metadata
 to conversations, logs, and other content.
 """
 
+import hashlib
+import json
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
@@ -113,7 +115,6 @@ def generate_archive_id(title: str, timestamp: Optional[str] = None) -> str:
         timestamp = datetime.now(timezone.utc).isoformat()
     
     # Create a simple hash-like ID
-    import hashlib
     content = f"{title}-{timestamp}"
     hash_obj = hashlib.sha256(content.encode())
     return f"arch-{hash_obj.hexdigest()[:12]}"
@@ -142,7 +143,6 @@ def format_metadata_header(metadata: Dict, format_type: str = "yaml") -> str:
         header += "---\n"
         return header
     elif format_type == "json":
-        import json
         return "```json\n" + json.dumps(metadata, indent=2) + "\n```\n"
     else:
         raise ValueError(f"Unsupported format type: {format_type}")
