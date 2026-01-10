@@ -107,19 +107,7 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             
             # Extract suite statuses
-            python -c "
-import json
-import sys
-try:
-    with open('$LATEST_RESULT') as f:
-        data = json.load(f)
-    for suite_name, suite_data in data.get('suites', {}).items():
-        status = suite_data.get('status', 'unknown')
-        emoji = '✅' if status in ['completed', 'success'] else '❌'
-        print(f'{emoji} **{suite_name.upper()}**: {status}')
-except Exception as e:
-    print(f'Error reading results: {e}')
-" >> $GITHUB_STEP_SUMMARY
+            python scripts/extract_benchmark_summary.py "$LATEST_RESULT" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
           

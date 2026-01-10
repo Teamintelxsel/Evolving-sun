@@ -1,0 +1,18 @@
+# Evolving-sun Requirements
+# Core dependencies for benchmark orchestration and utilities
+
+# YAML parsing for tasks configuration
+pyyaml>=6.0
+
+# Optional dependencies for specific benchmarks
+# Uncomment as needed for your benchmark suites
+
+# For KEGG pathway analysis
+# biopython>=1.80
+
+# For HTTP requests in benchmarks
+# requests>=2.31.0
+
+# For data manipulation in benchmarks
+# numpy>=1.24.0
+# pandas>=2.0.0
