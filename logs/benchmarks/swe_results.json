@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-01-10T02:09:34.053720",
+  "data": {
+    "total_tasks": 5,
+    "passed": 3,
+    "failed": 2,
+    "status": "simulated",
+    "note": "Simulated results - vendor/SWE-bench not available",
+    "simulation_seed": 42,
+    "benchmark": "swe-bench-verified",
+    "config": {
+      "dataset": "verified",
+      "max_tasks": 5,
+      "num_workers": 1
+    }
+  },
+  "provenance": {
+    "commit_sha": "1a226da1571b3fba10a4ca2eef043a8f1e75787b",
+    "image": "sweagent/swe-agent:latest",
+    "image_digest": "sweagent/swe-agent:latest",
+    "dataset": "verified",
+    "num_workers": 1,
+    "max_tasks": 5,
+    "timestamp": "2026-01-10T02:09:34.052574",
+    "script": "swe_run.py",
+    "python_version": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]"
+  },
+  "metadata": {
+    "logged_by": "secure_logging.watermark_log",
+    "version": "1.0"
+  },
+  "integrity_hash": "8295955d8eae2d7740ae3c5442e8484eac7a82fd1114e8483fee842d95f6bf8e"
+}

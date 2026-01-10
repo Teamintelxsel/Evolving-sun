@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-01-10T02:09:28.292536",
+  "data": {
+    "organism": "hsa",
+    "total_pathways_processed": 3,
+    "successful_fetches": 0,
+    "simulated_fetches": 3,
+    "pathway_data": [
+      {
+        "pathway_id": "hsa00010",
+        "data_size_bytes": 35405,
+        "has_entry": true,
+        "has_relation": true,
+        "has_reaction": true,
+        "fetched": false,
+        "simulated": true,
+        "entry_count": 88,
+        "relation_count": 32,
+        "reaction_count": 9
+      },
+      {
+        "pathway_id": "hsa00020",
+        "data_size_bytes": 34815,
+        "has_entry": true,
+        "has_relation": true,
+        "has_reaction": true,
+        "fetched": false,
+        "simulated": true,
+        "entry_count": 54,
+        "relation_count": 27,
+        "reaction_count": 17
+      },
+      {
+        "pathway_id": "hsa00030",
+        "data_size_bytes": 33828,
+        "has_entry": true,
+        "has_relation": true,
+        "has_reaction": true,
+        "fetched": false,
+        "simulated": true,
+        "entry_count": 80,
+        "relation_count": 62,
+        "reaction_count": 30
+      }
+    ],
+    "statistics": {
+      "total_entries": 222,
+      "total_relations": 121,
+      "total_reactions": 56,
+      "avg_entries_per_pathway": 74.0,
+      "avg_relations_per_pathway": 40.333333333333336,
+      "avg_reactions_per_pathway": 18.666666666666668
+    },
+    "benchmark": "kegg-kgml",
+    "config": {
+      "organism": "hsa",
+      "max_pathways": 3
+    }
+  },
+  "provenance": {
+    "commit_sha": "1a226da1571b3fba10a4ca2eef043a8f1e75787b",
+    "data_source": "KEGG REST API",
+    "api_endpoint": "http://rest.kegg.jp",
+    "organism": "hsa",
+    "max_pathways": 3,
+    "timestamp": "2026-01-10T02:09:27.263075",
+    "script": "bio_kegg_run.py",
+    "python_version": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]"
+  },
+  "metadata": {
+    "logged_by": "secure_logging.watermark_log",
+    "version": "1.0"
+  },
+  "integrity_hash": "46f4ceadc16c15c151b402956760b4763897b62e9314c542139f08ab1a8a45af"
+}

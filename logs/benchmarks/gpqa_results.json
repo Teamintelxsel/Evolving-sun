@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-01-10T02:09:22.184340",
+  "data": {
+    "mode": "baseline_tally",
+    "dataset_statistics": {
+      "total_examples": 100,
+      "features": [
+        "question",
+        "answer",
+        "choices"
+      ],
+      "dataset_available": false,
+      "note": "Simulated dataset - install 'datasets' library for real data",
+      "samples": [
+        {
+          "index": 0,
+          "has_question": true,
+          "has_answer": true,
+          "has_choices": true
+        },
+        {
+          "index": 1,
+          "has_question": true,
+          "has_answer": true,
+          "has_choices": true
+        },
+        {
+          "index": 2,
+          "has_question": true,
+          "has_answer": true,
+          "has_choices": true
+        }
+      ]
+    },
+    "baseline_metrics": {
+      "total_questions": 100,
+      "data_validated": false,
+      "features_validated": true,
+      "simulated_random_baseline": {
+        "accuracy": 0.264,
+        "note": "Simulated random baseline for 4-choice questions"
+      }
+    },
+    "benchmark": "gpqa-diamond",
+    "config": {
+      "limit": 100,
+      "mode": "baseline_tally"
+    }
+  },
+  "provenance": {
+    "commit_sha": "1a226da1571b3fba10a4ca2eef043a8f1e75787b",
+    "dataset": "Idavidrein/gpqa",
+    "split": "diamond",
+    "dataset_version_hash": "7f427f3079890d1d",
+    "limit": 100,
+    "timestamp": "2026-01-10T02:09:22.183357",
+    "script": "gpqa_run.py",
+    "python_version": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]"
+  },
+  "metadata": {
+    "logged_by": "secure_logging.watermark_log",
+    "version": "1.0"
+  },
+  "integrity_hash": "15747573cccfd2bf84a3774ee948567f9652f050293a4a84204c4fb4fe41e898"
+}
