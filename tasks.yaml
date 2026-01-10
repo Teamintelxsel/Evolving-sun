@@ -1,0 +1,26 @@
+# Benchmark Suite Configuration for Evolving-sun
+# This file defines the benchmark suites to be executed by the orchestrator
+
+suites:
+  # SWE-Bench Verified benchmark
+  swebench:
+    dataset: "Verified"
+    shards: 2
+    shard_size: 25
+    num_workers: 1
+    image_digest: "sha256:placeholder_digest_for_swebench_docker_image"
+    timeout: 3600  # Per-shard timeout in seconds
+    
+  # GPQA (Graduate-level Google-Proof Q&A) benchmark
+  gpqa:
+    variant: "diamond"
+    self_consistency_k: 10
+    limit: 500
+    dataset_revision: "main"
+    timeout: 1800  # Timeout in seconds
+    
+  # KEGG (Kyoto Encyclopedia of Genes and Genomes) benchmark
+  kegg:
+    pathway: "ko01100"
+    kegg_url: "https://rest.kegg.jp"
+    timeout: 600  # Timeout in seconds
