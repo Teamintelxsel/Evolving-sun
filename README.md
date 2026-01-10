@@ -98,6 +98,7 @@ python src/orchestrator/bench_orchestrator.py --output-dir ./results
 
 The orchestrator supports:
 - **SWE-Bench Verified**: 50 tasks across 2 shards (25 each) with num_workers=1
+  - **Setup Required**: See [docs/SWE_BENCH_SETUP.md](docs/SWE_BENCH_SETUP.md) for obtaining and pinning the Docker image digest
 - **GPQA Diamond**: Self-consistency with k=10, limit=500 questions
 - **KEGG**: Pathway analysis for ko01100
 

@@ -8,9 +8,13 @@ suites:
     shards: 2
     shard_size: 25
     num_workers: 1
-    # Note: Replace with actual SWE-Bench Docker image digest for production use
-    # Example: sha256:1234567890abcdef...
-    image_digest: "sha256:placeholder_digest_for_swebench_docker_image"
+    # SWE-Bench Verified Docker image from GHCR (ghcr.io/princeton-nlp/swe-bench)
+    # To obtain the current digest, run:
+    #   docker pull ghcr.io/princeton-nlp/swe-bench:verified
+    #   docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/princeton-nlp/swe-bench:verified
+    # This ensures reproducible builds by pinning to an immutable image digest
+    # NOTE: Update this digest periodically to use the latest verified image
+    image_digest: ""  # Required: Set to actual SHA256 digest before running benchmarks
     timeout: 3600  # Per-shard timeout in seconds
     
   # GPQA (Graduate-level Google-Proof Q&A) benchmark
