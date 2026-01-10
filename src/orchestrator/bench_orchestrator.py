@@ -376,7 +376,7 @@ class BenchmarkOrchestrator:
         try:
             import importlib.metadata
             biopython_version = importlib.metadata.version("biopython")
-        except:
+        except (ImportError, Exception):
             pass
         
         results = {

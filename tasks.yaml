@@ -8,6 +8,8 @@ suites:
     shards: 2
     shard_size: 25
     num_workers: 1
+    # Note: Replace with actual SWE-Bench Docker image digest for production use
+    # Example: sha256:1234567890abcdef...
     image_digest: "sha256:placeholder_digest_for_swebench_docker_image"
     timeout: 3600  # Per-shard timeout in seconds
     
