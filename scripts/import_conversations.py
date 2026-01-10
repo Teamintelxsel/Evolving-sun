@@ -83,6 +83,42 @@ class ConversationImporter:
         
         return header + content
     
+    def _write_conversation(self, formatted_content, metadata, title):
+        """
+        Write conversation and metadata files.
+        
+        Args:
+            formatted_content: Formatted conversation content
+            metadata: Metadata dictionary
+            title: Conversation title
+            
+        Returns:
+            Path to created file
+        """
+        # Generate output filename
+        timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+        safe_title = self.sanitize_filename(title)
+        output_filename = f"{timestamp}-{safe_title}.md"
+        output_path = self.output_dir / output_filename
+        
+        # Handle duplicate filenames
+        counter = 1
+        while output_path.exists():
+            output_filename = f"{timestamp}-{safe_title}-{counter}.md"
+            output_path = self.output_dir / output_filename
+            counter += 1
+        
+        # Write formatted conversation
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(formatted_content)
+        
+        # Also save metadata as JSON
+        metadata_path = output_path.with_suffix('.meta.json')
+        with open(metadata_path, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, indent=2)
+        
+        return output_path
+    
     def import_conversation(self, input_file, title=None, tags=None, author=None):
         """
         Import a conversation from a file.
@@ -115,29 +151,8 @@ class ConversationImporter:
         # Format conversation
         formatted_content = self.format_conversation(content, metadata)
         
-        # Generate output filename
-        timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-        safe_title = self.sanitize_filename(title)
-        output_filename = f"{timestamp}-{safe_title}.md"
-        output_path = self.output_dir / output_filename
-        
-        # Handle duplicate filenames
-        counter = 1
-        while output_path.exists():
-            output_filename = f"{timestamp}-{safe_title}-{counter}.md"
-            output_path = self.output_dir / output_filename
-            counter += 1
-        
-        # Write formatted conversation
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(formatted_content)
-        
-        # Also save metadata as JSON
-        metadata_path = output_path.with_suffix('.meta.json')
-        with open(metadata_path, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2)
-        
-        return output_path
+        # Write and return path
+        return self._write_conversation(formatted_content, metadata, title)
     
     def import_from_text(self, text, title, tags=None, author=None):
         """
@@ -158,29 +173,8 @@ class ConversationImporter:
         # Format conversation
         formatted_content = self.format_conversation(text, metadata)
         
-        # Generate output filename
-        timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-        safe_title = self.sanitize_filename(title)
-        output_filename = f"{timestamp}-{safe_title}.md"
-        output_path = self.output_dir / output_filename
-        
-        # Handle duplicate filenames
-        counter = 1
-        while output_path.exists():
-            output_filename = f"{timestamp}-{safe_title}-{counter}.md"
-            output_path = self.output_dir / output_filename
-            counter += 1
-        
-        # Write formatted conversation
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(formatted_content)
-        
-        # Also save metadata as JSON
-        metadata_path = output_path.with_suffix('.meta.json')
-        with open(metadata_path, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2)
-        
-        return output_path
+        # Write and return path
+        return self._write_conversation(formatted_content, metadata, title)
 
 
 def main():
