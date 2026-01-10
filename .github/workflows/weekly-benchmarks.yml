@@ -61,7 +61,9 @@ jobs:
           python -m pip install --upgrade pip
           # Install minimal dependencies for benchmarks
           # datasets library is optional - scripts will use simulation mode if not available
-          pip install datasets || echo "datasets library not installed, will use simulation mode"
+          if ! pip install datasets; then
+            echo "Warning: datasets library could not be installed, will use simulation mode"
+          fi
       
       - name: Run legacy benchmarks
         run: |

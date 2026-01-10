@@ -84,7 +84,7 @@ def append_watermarked_log(
         "data": data,
         "provenance": provenance or {},
         "metadata": {
-            "logged_by": "secure_logging.watermark_log",
+            "logged_by": "secure_logging.append_watermarked_log",
             "version": "1.0"
         }
     }
