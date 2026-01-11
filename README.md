@@ -1,6 +1,6 @@
 # Evolving-sun
 
-Structured logging, upgrades, and conversation management system with integrated verifiable benchmark orchestration.
+Structured logging, upgrades, and conversation management system with integrated benchmarking capabilities.
 
 ## Overview
 
@@ -8,8 +8,7 @@ This repository provides utilities and infrastructure for:
 - **Structured Logging**: Organized log directories for evolution, benchmarks, security, and agent activity
 - **Upgrade Management**: Version tracking and archival system for software upgrades
 - **Conversation Ingestion**: Tools to import and organize conversation exports
-- **Benchmark Orchestration**: Comprehensive benchmark suite execution with provenance tracking and reproducibility
-- **CI/CD Integration**: Automated weekly benchmark runs on GitHub-hosted runners
+- **Benchmark Runners**: Unified system for running and archiving benchmark results
 
 ## Repository Structure
 
@@ -29,11 +28,7 @@ Evolving-sun/
 │   ├── import_conversations.py  # Conversation import utility
 │   └── run_benchmarks.py        # Unified benchmark runner
 ├── src/
-│   ├── orchestrator/        # Benchmark orchestration system
-│   │   ├── bench_orchestrator.py  # Main orchestrator
-│   │   └── README.md              # Orchestrator documentation
 │   └── utils/               # Core utility modules (logging, etc.)
-├── tasks.yaml               # Benchmark suite configuration
 └── upgrades/
     ├── v1.0/                # Version 1.0 upgrades
     └── archive/             # Historical upgrade archives
@@ -81,38 +76,7 @@ The script will:
 
 ### Running Benchmarks
 
-#### Orchestrated Benchmark Suites
-
-Run comprehensive benchmark suites with full provenance tracking:
-
-```bash
-# Run all configured benchmark suites
-python src/orchestrator/bench_orchestrator.py
-
-# Use custom tasks file
-python src/orchestrator/bench_orchestrator.py --tasks-file custom_tasks.yaml
-
-# Specify custom output location
-python src/orchestrator/bench_orchestrator.py --output-dir ./results
-```
-
-The orchestrator supports:
-- **SWE-Bench Verified**: 50 tasks across 2 shards (25 each) with num_workers=1
-- **GPQA Diamond**: Self-consistency with k=10, limit=500 questions
-- **KEGG**: Pathway analysis for ko01100
-
-Features:
-- Deterministic seed generation for reproducibility
-- Exponential backoff retry logic (30s → 120s)
-- Comprehensive provenance logging (commit SHA, OS/Python versions, library versions)
-- Watermarked JSON summaries with dataset revisions and Docker digests
-- Per-task timeouts and error handling
-
-See [src/orchestrator/README.md](src/orchestrator/README.md) for detailed documentation.
-
-#### Legacy Benchmark Runner
-
-Run simple benchmarks:
+Run all benchmarks (including real benchmark harnesses):
 
 ```bash
 python scripts/run_benchmarks.py
@@ -121,17 +85,20 @@ python scripts/run_benchmarks.py
 Run specific benchmarks:
 
 ```bash
-# Performance benchmark
+# Simulated benchmarks
 python scripts/run_benchmarks.py --benchmark performance
-
-# Accuracy benchmark
 python scripts/run_benchmarks.py --benchmark accuracy
-
-# Security benchmark
 python scripts/run_benchmarks.py --benchmark security
+
+# Real benchmark harnesses
+python scripts/run_benchmarks.py --benchmark swe-bench  # SWE-bench Verified
+python scripts/run_benchmarks.py --benchmark gpqa       # GPQA dataset
+python scripts/run_benchmarks.py --benchmark kegg       # KEGG pathways
 ```
 
-Results are saved to `logs/benchmarks/` as JSON files.
+Results are saved to `logs/benchmarks/` as watermarked JSON files with full provenance tracking.
+
+See [scripts/BENCHMARKS.md](scripts/BENCHMARKS.md) for detailed documentation on benchmark harness integrations.
 
 ### Using Structured Logging
 
@@ -190,7 +157,11 @@ For tracking and organization of issues related to this project, please refer to
 - [x] Implement weekly CI for benchmark archival
 - [x] Add structured logging utilities
 - [x] Create comprehensive documentation and examples
+- [x] Add real benchmark harness integrations (SWE-bench, GPQA, KEGG)
+- [x] Implement watermarked logging with provenance tracking
 - [ ] Add security scanning integration
 - [ ] Enhance logging with real-time monitoring
+- [ ] Replace simulated metrics with real benchmark runs
+- [ ] Add more benchmark types (MATH, HumanEval, etc.)
 - [ ] Add support for more benchmark types
 - [ ] Integrate with external monitoring tools

@@ -1,18 +1,7 @@
-# Evolving-sun Requirements
-# Core dependencies for benchmark orchestration and utilities
+# Core dependencies
+datasets>=2.14.0
+biopython>=1.81
 
-# YAML parsing for tasks configuration
-pyyaml>=6.0
-
-# Optional dependencies for specific benchmarks
-# Uncomment as needed for your benchmark suites
-
-# For KEGG pathway analysis
-# biopython>=1.80
-
-# For HTTP requests in benchmarks
-# requests>=2.31.0
-
-# For data manipulation in benchmarks
-# numpy>=1.24.0
-# pandas>=2.0.0
+# Optional dependencies for full functionality
+# docker>=6.0.0  # Uncomment for actual SWE-bench Docker integration
+# transformers>=4.30.0  # Uncomment for model inference in GPQA
