@@ -210,6 +210,14 @@ class BenchmarkOrchestrator:
         image_digest = suite_config.get("image_digest", "")
         timeout = suite_config.get("timeout", 3600)
         
+        # Validate image_digest is set for reproducibility
+        if not image_digest or not image_digest.startswith("sha256:"):
+            print("\n" + "!" * 60)
+            print("WARNING: SWE-Bench image_digest is not properly configured!")
+            print("For reproducible benchmarks, you must pin the Docker image by digest.")
+            print("See docs/SWE_BENCH_SETUP.md for instructions on obtaining the digest.")
+            print("!" * 60 + "\n")
+        
         results = {
             "suite": "swebench",
             "dataset": dataset,
