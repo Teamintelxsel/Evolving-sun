@@ -30,9 +30,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml
       
-      - name: Run orchestrated benchmarks
-        run: |
-          python src/orchestrator/bench_orchestrator.py --tasks-file tasks.yaml
+      - name: Run benchmarks (runner script)
+        run: python run_all_benchmarks.py
       
       - name: Archive benchmark results
         uses: actions/upload-artifact@v4
@@ -42,6 +41,13 @@ jobs:
             logs/benchmarks/benchmark_orchestrated_*.json
             logs/benchmarks/*.json
           retention-days: 90
+          if-no-files-found: warn
+      
+      - name: Upload per-suite results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.sha }}
+          path: logs/benchmarks/*.json
           if-no-files-found: warn
       
       - name: Commit results to repository
