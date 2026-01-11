@@ -12,8 +12,10 @@ This module orchestrates the execution of benchmark suites with:
 
 import hashlib
 import json
+import logging
 import os
 import platform
+import re
 import subprocess
 import sys
 import time
@@ -26,6 +28,9 @@ from typing import Any, Dict, List, Optional, Tuple
 class BenchmarkOrchestrator:
     """Orchestrates benchmark suite execution with provenance tracking."""
     
+    # SHA256 digest format: sha256: followed by 64 hexadecimal characters
+    DIGEST_PATTERN = re.compile(r'^sha256:[0-9a-f]{64}$', re.IGNORECASE)
+    
     def __init__(self, tasks_file: str = "tasks.yaml", output_dir: Optional[str] = None):
         """
         Initialize the benchmark orchestrator.
@@ -35,6 +40,15 @@ class BenchmarkOrchestrator:
             output_dir: Output directory for benchmark results (defaults to logs/benchmarks)
         """
         self.tasks_file = Path(tasks_file)
+        
+        # Set up logging
+        self.logger = logging.getLogger(__name__)
+        if not self.logger.handlers:
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter('%(levelname)s: %(message)s')
+            handler.setFormatter(formatter)
+            self.logger.addHandler(handler)
+            self.logger.setLevel(logging.INFO)
         
         if output_dir is None:
             # Default to logs/benchmarks in repository root
@@ -210,13 +224,24 @@ class BenchmarkOrchestrator:
         image_digest = suite_config.get("image_digest", "")
         timeout = suite_config.get("timeout", 3600)
         
-        # Validate image_digest is set for reproducibility
-        if not image_digest or not image_digest.startswith("sha256:"):
-            print("\n" + "!" * 60)
-            print("WARNING: SWE-Bench image_digest is not properly configured!")
-            print("For reproducible benchmarks, you must pin the Docker image by digest.")
-            print("See docs/SWE_BENCH_SETUP.md for instructions on obtaining the digest.")
-            print("!" * 60 + "\n")
+        # Validate image_digest format for reproducibility
+        if not image_digest:
+            self.logger.warning(
+                "\n" + "!" * 70 + "\n"
+                "SWE-Bench image_digest is not configured!\n"
+                "For reproducible benchmarks, you must pin the Docker image by digest.\n"
+                "See docs/SWE_BENCH_SETUP.md for instructions on obtaining the digest.\n"
+                + "!" * 70
+            )
+        elif not self.DIGEST_PATTERN.match(image_digest):
+            self.logger.warning(
+                "\n" + "!" * 70 + "\n"
+                f"Invalid SWE-Bench image_digest format: {image_digest}\n"
+                "Expected format: sha256: followed by 64 hexadecimal characters\n"
+                "Example: sha256:1234567890abcdef...(64 chars total)\n"
+                "See docs/SWE_BENCH_SETUP.md for instructions on obtaining the digest.\n"
+                + "!" * 70
+            )
         
         results = {
             "suite": "swebench",
