@@ -1,0 +1,67 @@
+{
+  "watermark": "Evolving-sun Benchmark Results | 2026-01-11 02:01:28 UTC | Commit: ab6d5d25",
+  "provenance": {
+    "timestamp": "2026-01-11T02:01:28.089860",
+    "environment": {
+      "os": "Linux",
+      "os_version": "#18~24.04.1-Ubuntu SMP Sat Jun 28 04:46:03 UTC 2025",
+      "os_release": "6.11.0-1018-azure",
+      "python_version": "3.11.14 (main, Oct 10 2025, 01:03:14) [GCC 13.3.0]",
+      "python_implementation": "CPython",
+      "machine": "x86_64",
+      "processor": "x86_64"
+    },
+    "repository": {
+      "commit_sha": "ab6d5d2531f27908a5f905457bde994a64473017",
+      "branch": "main",
+      "remote_url": "https://github.com/Teamintelxsel/Evolving-sun"
+    },
+    "libraries": {
+      "pyyaml": "6.0.3"
+    }
+  },
+  "execution": {
+    "start_time": "2026-01-11T02:01:28.113622",
+    "tasks_file": "tasks.yaml",
+    "end_time": "2026-01-11T02:01:30.114290"
+  },
+  "suites": {
+    "gpqa": {
+      "suite": "gpqa",
+      "variant": "diamond",
+      "self_consistency_k": 10,
+      "limit": 500,
+      "dataset_revision": "main",
+      "seed": 1788766240,
+      "timeout": 1800,
+      "status": "completed",
+      "start_time": "2026-01-11T02:01:28.113673",
+      "end_time": "2026-01-11T02:01:29.113808",
+      "results": {
+        "accuracy": 0.847,
+        "questions_answered": 500,
+        "self_consistency_k": 10,
+        "variant": "diamond",
+        "seed_used": 1788766240
+      }
+    },
+    "kegg": {
+      "suite": "kegg",
+      "pathway": "ko01100",
+      "kegg_url": "https://rest.kegg.jp",
+      "biopython_version": null,
+      "seed": 1345956576,
+      "timeout": 600,
+      "status": "completed",
+      "start_time": "2026-01-11T02:01:29.114131",
+      "end_time": "2026-01-11T02:01:30.114270",
+      "results": {
+        "pathway_retrieved": "ko01100",
+        "compounds_analyzed": 150,
+        "reactions_analyzed": 200,
+        "kegg_url_used": "https://rest.kegg.jp",
+        "seed_used": 1345956576
+      }
+    }
+  }
+}
