@@ -41,6 +41,18 @@ logs/**/*.txt
 logs/**/events_*.json
 !logs/**/.gitkeep
 !logs/**/benchmark_*.json
+!logs/**/meta_opt_*.json
+!logs/**/meta_opt_*.csv
+!logs/**/latency_*.json
+!logs/**/distributed_*.json
+
+# Dashboard database
+dashboard/*.db
+dashboard/*.db-journal
+
+# Checkpoints (keep last 5)
+checkpoints/*.json
+!checkpoints/iter_*[0-9]0.json
 
 # Temporary files
 /tmp/
@@ -64,3 +76,10 @@ htmlcov/
 # Environment variables
 .env
 .env.local
+
+# Ray temporary files
+/tmp/ray/
+ray_results/
+
+# Verification reports
+logs/verification_report.json
