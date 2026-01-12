@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Benchmark Result Schema",
+  "description": "JSON Schema for validating benchmark results with cryptographic verification",
+  "type": "object",
+  "required": ["benchmark_name", "timestamp", "status", "duration_seconds", "verification"],
+  "properties": {
+    "benchmark_name": {
+      "type": "string",
+      "description": "Name of the benchmark that was run",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the benchmark was executed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed", "completed", "error", "skipped"],
+      "description": "Status of the benchmark execution"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0.01,
+      "description": "Actual execution time in seconds (must be > 0.01s to prevent simulated data)"
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Performance metrics collected during the benchmark",
+      "properties": {
+        "latency_ms": {
+          "type": "object",
+          "properties": {
+            "p50": {"type": "number", "minimum": 0},
+            "p95": {"type": "number", "minimum": 0},
+            "p99": {"type": "number", "minimum": 0},
+            "mean": {"type": "number", "minimum": 0},
+            "std_dev": {"type": "number", "minimum": 0},
+            "cv": {"type": "number", "minimum": 0, "maximum": 1, "description": "Coefficient of variation (must be < 0.1% for stability)"}
+          }
+        },
+        "throughput": {
+          "type": "object",
+          "properties": {
+            "requests_per_second": {"type": "number", "minimum": 0},
+            "tokens_per_second": {"type": "number", "minimum": 0}
+          }
+        },
+        "accuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Accuracy score (target: 0.999 for 99.9%)"
+        },
+        "cpu_utilization_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "CPU utilization percentage (target: 99.9)"
+        },
+        "gpu_utilization_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "memory_usage_mb": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "hardware": {
+      "type": "object",
+      "required": ["cpu_model", "total_memory_gb"],
+      "properties": {
+        "cpu_model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cpu_cores": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "total_memory_gb": {
+          "type": "number",
+          "minimum": 0
+        },
+        "gpu_model": {
+          "type": "string"
+        },
+        "gpu_memory_gb": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["sha256_hash", "verified", "timestamp"],
+      "properties": {
+        "sha256_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA256 hash of the benchmark data for integrity verification"
+        },
+        "verified": {
+          "type": "boolean",
+          "description": "Whether the benchmark passed verification checks"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "gpg_signature": {
+          "type": "string",
+          "description": "Optional GPG signature for additional authenticity"
+        },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$",
+          "description": "Git commit SHA at time of execution"
+        }
+      }
+    },
+    "iterations": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of iterations performed"
+    },
+    "confidence_interval": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence level (e.g., 0.99 for 99%)"
+        },
+        "lower_bound": {
+          "type": "number"
+        },
+        "upper_bound": {
+          "type": "number"
+        }
+      }
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if status is 'error' or 'failed'"
+    }
+  }
+}
