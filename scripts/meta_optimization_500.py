@@ -368,22 +368,24 @@ class MetaOptimization:
         if SCIPY_AVAILABLE and accuracy_stats:
             results['statistics'] = {
                 'accuracy': {
-                    'mean': accuracy_stats.mean,
-                    'std_dev': accuracy_stats.std_dev,
-                    'cv': accuracy_stats.cv,
-                    'confidence_interval_95': accuracy_stats.confidence_interval_95,
-                    'confidence_interval_99': accuracy_stats.confidence_interval_99,
-                    'converged': accuracy_stats.converged
+                    'mean': float(accuracy_stats.mean),
+                    'std_dev': float(accuracy_stats.std_dev),
+                    'cv': float(accuracy_stats.cv),
+                    'confidence_interval_95': [float(accuracy_stats.confidence_interval_95[0]), 
+                                               float(accuracy_stats.confidence_interval_95[1])],
+                    'confidence_interval_99': [float(accuracy_stats.confidence_interval_99[0]), 
+                                               float(accuracy_stats.confidence_interval_99[1])],
+                    'converged': bool(accuracy_stats.converged)
                 },
                 'latency_ms': {
-                    'mean': latency_stats.mean,
-                    'std_dev': latency_stats.std_dev,
-                    'cv': latency_stats.cv
+                    'mean': float(latency_stats.mean),
+                    'std_dev': float(latency_stats.std_dev),
+                    'cv': float(latency_stats.cv)
                 },
                 'throughput_rps': {
-                    'mean': throughput_stats.mean,
-                    'std_dev': throughput_stats.std_dev,
-                    'cv': throughput_stats.cv
+                    'mean': float(throughput_stats.mean),
+                    'std_dev': float(throughput_stats.std_dev),
+                    'cv': float(throughput_stats.cv)
                 }
             }
         
