@@ -1,0 +1,166 @@
+name: Validate Benchmark Results
+
+on:
+  pull_request:
+    paths:
+      - 'logs/benchmarks/**/*.json'
+      - 'schemas/benchmark_result.json'
+      - 'scripts/verify_benchmarks.py'
+  push:
+    branches:
+      - main
+    paths:
+      - 'logs/benchmarks/**/*.json'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  validate-benchmarks:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Install jsonschema for schema validation if needed
+          pip install jsonschema || true
+      
+      - name: Run benchmark validation
+        id: validate
+        run: |
+          echo "Running benchmark validation..."
+          python scripts/verify_benchmarks.py --all --fail-on-warning
+          echo "validation_status=$?" >> $GITHUB_OUTPUT
+      
+      - name: Check for placeholder data
+        run: |
+          echo "Checking for placeholder/simulated data indicators..."
+          
+          # Define indicator patterns
+          patterns=(
+            "placeholder"
+            "simulated"
+            "mock"
+            "sha256:placeholder"
+            "abc123"
+            "fake"
+          )
+          
+          found_issues=0
+          for pattern in "${patterns[@]}"; do
+            if grep -r "$pattern" logs/benchmarks/*.json 2>/dev/null; then
+              echo "❌ Found placeholder indicator: $pattern"
+              found_issues=1
+            fi
+          done
+          
+          if [ $found_issues -eq 1 ]; then
+            echo "::error::Benchmark files contain placeholder/simulated data"
+            exit 1
+          else
+            echo "✅ No placeholder data found"
+          fi
+      
+      - name: Check execution times
+        run: |
+          echo "Checking for unrealistic execution times..."
+          
+          # Look for very small duration values (< 0.001s)
+          if grep -E '"duration_seconds":\s*[0-9.]*e-0[5-9]' logs/benchmarks/*.json; then
+            echo "::error::Found unrealistic execution times (scientific notation with e-05 or smaller)"
+            exit 1
+          fi
+          
+          if python3 -c "
+          import json
+          import sys
+          from pathlib import Path
+          
+          issues = []
+          for f in Path('logs/benchmarks').glob('*.json'):
+              with open(f) as file:
+                  data = json.load(file)
+                  items = data if isinstance(data, list) else [data]
+                  for item in items:
+                      if 'duration_seconds' in item and item['duration_seconds'] < 0.001:
+                          issues.append(f'{f.name}: {item.get(\"benchmark_name\", \"unknown\")} - {item[\"duration_seconds\"]}s')
+          
+          if issues:
+              print('❌ Found unrealistic execution times:')
+              for issue in issues:
+                  print(f'  - {issue}')
+              sys.exit(1)
+          else:
+              print('✅ All execution times are realistic')
+          "; then
+            echo "Execution time check passed"
+          else
+            echo "::error::Unrealistic execution times detected"
+            exit 1
+          fi
+      
+      - name: Verify provenance data
+        run: |
+          echo "Checking for provenance metadata..."
+          
+          python3 -c "
+          import json
+          from pathlib import Path
+          
+          issues = []
+          for f in Path('logs/benchmarks').glob('*.json'):
+              with open(f) as file:
+                  data = json.load(file)
+                  items = data if isinstance(data, list) else [data]
+                  for idx, item in enumerate(items):
+                      name = item.get('benchmark_name', 'unknown')
+                      # Skip simulated benchmarks for now
+                      if name in ['performance', 'accuracy', 'security']:
+                          continue
+                      
+                      if 'provenance' not in item:
+                          issues.append(f'{f.name}[{idx}] ({name}): Missing provenance data')
+          
+          if issues:
+              print('⚠️  Some benchmarks missing provenance:')
+              for issue in issues:
+                  print(f'  - {issue}')
+          else:
+              print('✅ Provenance data present where expected')
+          "
+      
+      - name: Generate validation summary
+        if: always()
+        run: |
+          echo "## Benchmark Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.validate.outputs.validation_status }}" == "0" ]; then
+            echo "✅ All benchmark files passed validation" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Benchmark validation found issues" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Files Validated" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ls -lh logs/benchmarks/*.json 2>/dev/null || echo "No benchmark files found"
+          echo '```' >> $GITHUB_STEP_SUMMARY
+      
+      - name: Upload validation report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: |
+            logs/benchmarks/*.json
+          retention-days: 30

@@ -35,6 +35,18 @@ jobs:
         run: |
           python scripts/run_benchmarks.py --benchmark all
       
+      - name: Validate benchmark results
+        id: validate
+        run: |
+          echo "Validating benchmark results..."
+          python scripts/verify_benchmarks.py --all --fail-on-warning || {
+            echo "VALIDATION_FAILED=true" >> $GITHUB_ENV
+            echo "::warning::Benchmark validation found issues. Results will still be archived but not committed."
+            exit 0  # Don't fail the workflow, just warn
+          }
+          echo "VALIDATION_FAILED=false" >> $GITHUB_ENV
+          echo "✅ Benchmark validation passed"
+      
       - name: Archive benchmark results
         uses: actions/upload-artifact@v4
         with:
@@ -44,6 +56,13 @@ jobs:
       
       - name: Commit results to repository
         run: |
+          # Only commit if validation passed
+          if [ "${VALIDATION_FAILED}" = "true" ]; then
+            echo "Skipping commit due to validation failures"
+            echo "COMMIT_RESULT=validation_failed" >> $GITHUB_ENV
+            exit 0
+          fi
+          
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add logs/benchmarks/*.json || true
@@ -95,6 +114,15 @@ jobs:
             echo "✅ Benchmark results have been generated and archived." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Results can be found in \`logs/benchmarks/\`" >> $GITHUB_STEP_SUMMARY
+          elif [ "${COMMIT_RESULT}" = "validation_failed" ]; then
+            echo "⚠️ Benchmark results failed validation and were not committed." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Results are available as artifacts but contain issues that need to be resolved." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Common issues:" >> $GITHUB_STEP_SUMMARY
+            echo "- Unrealistic execution times (< 1ms)" >> $GITHUB_STEP_SUMMARY
+            echo "- Placeholder or simulated data" >> $GITHUB_STEP_SUMMARY
+            echo "- Missing provenance information" >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ Benchmark results were generated but may not have been committed." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY

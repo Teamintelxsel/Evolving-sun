@@ -1,0 +1,7 @@
+# Bandit security scanning configuration
+[bandit]
+exclude_dirs = ['/tests/', '/examples/', '/vendor/']
+skips = ['B101']  # Skip assert_used warnings in tests
+
+[bandit.assert_used]
+skips = ['*/test_*.py', '*_test.py']

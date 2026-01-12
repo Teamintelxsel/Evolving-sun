@@ -1,0 +1,100 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^docs/conversations/
+      - id: end-of-file-fixer
+        exclude: ^docs/conversations/
+      - id: check-yaml
+        args: ['--unsafe']  # Allow custom YAML tags
+      - id: check-json
+        exclude: ^schemas/  # Schema files may have comments
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: detect-private-key
+        exclude: ^examples/
+
+  # Python code formatting
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3
+        args: ['--line-length=100']
+
+  # Python import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ['--profile', 'black', '--line-length', '100']
+
+  # Python linting
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        args: ['--max-line-length=100', '--extend-ignore=E203,W503']
+
+  # Security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.6
+    hooks:
+      - id: bandit
+        args: ['-c', '.bandit', '-r', 'src/', 'scripts/']
+        files: \.py$
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix']
+        exclude: ^docs/conversations/
+
+  # Secrets detection
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: package.lock.json
+
+# Local hooks
+  - repo: local
+    hooks:
+      - id: validate-benchmarks
+        name: Validate Benchmark Results
+        entry: python scripts/verify_benchmarks.py
+        language: system
+        files: ^logs/benchmarks/.*\.json$
+        pass_filenames: true
+
+      - id: no-placeholder-data
+        name: Check for Placeholder Data in Benchmarks
+        entry: bash -c 'grep -rn "placeholder\|simulated\|mock" logs/benchmarks/*.json && exit 1 || exit 0'
+        language: system
+        files: ^logs/benchmarks/.*\.json$
+        pass_filenames: false
+
+# CI specific settings
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: [bandit, validate-benchmarks, no-placeholder-data]  # Skip heavy/custom hooks in CI
+  submodules: false

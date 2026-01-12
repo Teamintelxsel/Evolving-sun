@@ -1,0 +1,107 @@
+name: Close Stale Issues and PRs
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Mark and close stale issues
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Days before marking as stale
+          days-before-stale: 60
+          
+          # Days before closing after marked stale
+          days-before-close: 14
+          
+          # Issue settings
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had recent activity.
+            It will be closed in 14 days if no further activity occurs.
+            
+            If this issue is still relevant, please:
+            - Add a comment to keep it open
+            - Provide additional information or updates
+            - Remove the stale label
+            
+            Thank you for your contributions!
+          
+          close-issue-message: |
+            This issue has been automatically closed due to inactivity.
+            
+            If you believe this issue is still relevant, please:
+            - Reopen the issue with updated information
+            - Create a new issue referencing this one
+            
+            Thank you for your understanding!
+          
+          stale-issue-label: 'stale'
+          
+          # PR settings
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not had recent activity.
+            It will be closed in 14 days if no further activity occurs.
+            
+            If this PR is still relevant, please:
+            - Rebase on the latest main branch
+            - Address any review comments
+            - Add a comment explaining the current status
+            - Remove the stale label
+            
+            Thank you for your contribution!
+          
+          close-pr-message: |
+            This pull request has been automatically closed due to inactivity.
+            
+            If you'd like to continue this work:
+            - Reopen this PR with updates
+            - Create a new PR with the latest changes
+            - Reference this PR in the new one
+            
+            Thank you for your contribution!
+          
+          stale-pr-label: 'stale'
+          
+          # Different timing for PRs
+          days-before-pr-stale: 45
+          days-before-pr-close: 14
+          
+          # Labels to exempt from staleness
+          exempt-issue-labels: 'pinned,security,help wanted,good first issue,priority: critical,priority: high'
+          exempt-pr-labels: 'pinned,security,priority: critical,priority: high,ready-for-review'
+          
+          # Only issues/PRs with certain labels
+          # only-labels: ''
+          
+          # Labels to exclude
+          exempt-all-milestones: true
+          
+          # Assignees
+          exempt-all-assignees: false
+          
+          # Operations per run
+          operations-per-run: 100
+          
+          # Remove stale label when updated
+          remove-stale-when-updated: true
+          
+          # Debug mode
+          # debug-only: true
+          
+          # Ascending order (oldest first)
+          ascending: true
+          
+          # Enable issue statistics
+          enable-statistics: true

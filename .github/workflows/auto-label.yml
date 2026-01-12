@@ -1,0 +1,170 @@
+name: Auto Label Issues and PRs
+
+on:
+  issues:
+    types: [opened, edited]
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Label issues by type
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title.toLowerCase();
+            const body = (issue.body || '').toLowerCase();
+            const labels = [];
+            
+            // Auto-label based on title prefix
+            if (title.startsWith('[bug]')) {
+              labels.push('bug');
+            } else if (title.startsWith('[feature]')) {
+              labels.push('enhancement');
+            } else if (title.startsWith('[benchmark]')) {
+              labels.push('benchmark', 'verification');
+            }
+            
+            // Auto-label based on content
+            if (body.includes('benchmark') || body.includes('verification')) {
+              labels.push('area: benchmarks');
+            }
+            if (body.includes('documentation') || body.includes('readme')) {
+              labels.push('area: docs');
+            }
+            if (body.includes('workflow') || body.includes('ci') || body.includes('github actions')) {
+              labels.push('area: ci-cd');
+            }
+            if (body.includes('security') || body.includes('vulnerability')) {
+              labels.push('security');
+            }
+            if (body.includes('script') || title.includes('script')) {
+              labels.push('area: scripts');
+            }
+            
+            // Add needs-triage if not already present
+            const existingLabels = issue.labels.map(l => l.name);
+            if (!existingLabels.includes('needs-triage')) {
+              labels.push('needs-triage');
+            }
+            
+            // Add labels
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: [...new Set(labels)]  // Remove duplicates
+              });
+              
+              console.log(`Added labels: ${labels.join(', ')}`);
+            }
+      
+      - name: Label PRs by files changed
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = [];
+            
+            // Get files changed in PR
+            const files = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+            
+            const changedFiles = files.data.map(f => f.filename);
+            console.log('Changed files:', changedFiles);
+            
+            // Label based on file paths
+            if (changedFiles.some(f => f.startsWith('logs/benchmarks/'))) {
+              labels.push('benchmark', 'area: benchmarks');
+            }
+            if (changedFiles.some(f => f.startsWith('.github/workflows/'))) {
+              labels.push('area: ci-cd');
+            }
+            if (changedFiles.some(f => f.startsWith('docs/') || f.match(/README|CONTRIBUTING|VERIFICATION/))) {
+              labels.push('documentation', 'area: docs');
+            }
+            if (changedFiles.some(f => f.startsWith('scripts/'))) {
+              labels.push('area: scripts');
+            }
+            if (changedFiles.some(f => f === 'requirements.txt' || f.includes('package'))) {
+              labels.push('dependencies');
+            }
+            if (changedFiles.some(f => f.includes('test'))) {
+              labels.push('needs-testing');
+            }
+            
+            // Check PR title for type
+            const title = pr.title.toLowerCase();
+            if (title.includes('break')) {
+              labels.push('breaking-change');
+            }
+            if (title.includes('security')) {
+              labels.push('security');
+            }
+            
+            // Add labels
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: [...new Set(labels)]
+              });
+              
+              console.log(`Added labels: ${labels.join(', ')}`);
+            }
+      
+      - name: Request review for specific areas
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Get files changed in PR
+            const files = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+            
+            const changedFiles = files.data.map(f => f.filename);
+            
+            // Check for high-impact changes
+            const criticalFiles = [
+              '.github/workflows/',
+              'scripts/verify_benchmarks.py',
+              'schemas/',
+              '.pre-commit-config.yaml'
+            ];
+            
+            const hasCriticalChanges = changedFiles.some(f => 
+              criticalFiles.some(cf => f.startsWith(cf) || f === cf)
+            );
+            
+            if (hasCriticalChanges) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: '⚠️ This PR includes changes to critical files. Please ensure thorough testing and review.'
+              });
+            }
