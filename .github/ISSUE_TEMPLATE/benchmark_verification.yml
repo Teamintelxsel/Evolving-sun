@@ -1,0 +1,135 @@
+name: Benchmark Verification Request
+description: Request verification or report issues with benchmark results
+title: "[Benchmark]: "
+labels: ["benchmark", "verification", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to request verification of benchmark results or report issues with benchmark data.
+
+  - type: dropdown
+    id: request-type
+    attributes:
+      label: Request Type
+      description: What type of benchmark issue are you reporting?
+      options:
+        - Verification request - Need to verify results
+        - Invalid data - Results appear incorrect
+        - Missing provenance - Results lack required metadata
+        - Reproduction failure - Cannot reproduce results
+        - Performance regression - Results worse than expected
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: benchmark-type
+    attributes:
+      label: Benchmark Type
+      description: Which benchmark is this about?
+      options:
+        - SWE-bench
+        - GPQA
+        - KEGG
+        - Performance
+        - Accuracy
+        - Security
+        - All benchmarks
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: results-location
+    attributes:
+      label: Benchmark Results Location
+      description: Provide path to benchmark results file or link to results
+      placeholder: |
+        - File: logs/benchmarks/benchmark_all_20260110_011538.json
+        - Commit: abc123def456
+        - Or link to workflow run
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: Describe the verification request or issue with the benchmark results
+      placeholder: |
+        Example issues:
+        - Execution time is unrealistic (0.000016s)
+        - Missing hardware specs in provenance
+        - Results show placeholder/simulated data
+        - Cannot reproduce the claimed accuracy
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-vs-actual
+    attributes:
+      label: Expected vs Actual Results
+      description: What did you expect to see vs what you actually saw?
+      placeholder: |
+        Expected: Realistic execution time (> 1 second)
+        Actual: duration_seconds: 1.6450881958007812e-05
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Provide any evidence (logs, screenshots, data snippets)
+      render: json
+    validations:
+      required: false
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Reproduction Steps (if applicable)
+      description: Steps you took to try to reproduce the results
+      placeholder: |
+        1. Ran command: python scripts/run_benchmarks.py --benchmark all
+        2. Checked output in logs/benchmarks/
+        3. Noticed execution time is unrealistic
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue?
+      options:
+        - Critical - Results are completely invalid
+        - High - Results are misleading
+        - Medium - Results need clarification
+        - Low - Minor metadata issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      description: Please confirm the following
+      options:
+        - label: I have checked that this benchmark result file exists
+          required: true
+        - label: I have provided specific evidence of the issue
+          required: true
+        - label: I have searched for similar verification requests
+          required: true

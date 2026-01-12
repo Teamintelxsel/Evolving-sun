@@ -1,0 +1,32 @@
+# Code Owners
+# These owners will be requested for review when someone opens a pull request.
+# Order matters - the last matching pattern takes precedence.
+
+# Default owners for everything in the repo
+* @Teamintelxsel
+
+# Benchmark-related files
+/logs/benchmarks/ @Teamintelxsel
+/scripts/*benchmark* @Teamintelxsel
+/scripts/swe_run.py @Teamintelxsel
+/scripts/gpqa_run.py @Teamintelxsel
+/scripts/bio_kegg_run.py @Teamintelxsel
+/schemas/ @Teamintelxsel
+
+# CI/CD workflows
+/.github/workflows/ @Teamintelxsel
+
+# Documentation
+/docs/ @Teamintelxsel
+/README.md @Teamintelxsel
+/CONTRIBUTING.md @Teamintelxsel
+/VERIFICATION.md @Teamintelxsel
+
+# Security-sensitive files
+/scripts/verify_benchmarks.py @Teamintelxsel
+/src/utils/secure_logging.py @Teamintelxsel
+/.github/workflows/validate-benchmarks.yml @Teamintelxsel
+
+# Configuration files
+/.pre-commit-config.yaml @Teamintelxsel
+/requirements.txt @Teamintelxsel

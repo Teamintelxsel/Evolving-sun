@@ -1,0 +1,132 @@
+# GitHub Labels Configuration
+# This file defines the labels used in the repository for issue and PR management
+
+# Type labels
+- name: "bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "enhancement"
+  color: "a2eeef"
+  description: "New feature or request"
+
+- name: "documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation"
+
+- name: "benchmark"
+  color: "1d76db"
+  description: "Related to benchmark execution or results"
+
+- name: "verification"
+  color: "fbca04"
+  description: "Needs verification or validation"
+
+- name: "security"
+  color: "d93f0b"
+  description: "Security-related issue or improvement"
+
+# Status labels
+- name: "needs-triage"
+  color: "ededed"
+  description: "Needs initial review and categorization"
+
+- name: "in-progress"
+  color: "c5def5"
+  description: "Work in progress"
+
+- name: "blocked"
+  color: "b60205"
+  description: "Blocked by external dependency or decision"
+
+- name: "ready-for-review"
+  color: "0e8a16"
+  description: "Ready for code review"
+
+- name: "changes-requested"
+  color: "fbca04"
+  description: "Changes requested by reviewer"
+
+- name: "approved"
+  color: "0e8a16"
+  description: "Approved and ready to merge"
+
+# Priority labels
+- name: "priority: critical"
+  color: "d93f0b"
+  description: "Critical priority - immediate attention needed"
+
+- name: "priority: high"
+  color: "ff9900"
+  description: "High priority"
+
+- name: "priority: medium"
+  color: "fbca04"
+  description: "Medium priority"
+
+- name: "priority: low"
+  color: "ededed"
+  description: "Low priority"
+
+# Area labels
+- name: "area: benchmarks"
+  color: "1d76db"
+  description: "Benchmark execution and validation"
+
+- name: "area: ci-cd"
+  color: "5319e7"
+  description: "CI/CD workflows and automation"
+
+- name: "area: logging"
+  color: "c5def5"
+  description: "Logging and monitoring"
+
+- name: "area: scripts"
+  color: "bfdadc"
+  description: "Utility scripts"
+
+- name: "area: docs"
+  color: "0075ca"
+  description: "Documentation"
+
+# Issue quality labels
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"
+
+- name: "question"
+  color: "d876e3"
+  description: "Further information is requested"
+
+- name: "duplicate"
+  color: "cfd3d7"
+  description: "This issue or pull request already exists"
+
+- name: "invalid"
+  color: "e4e669"
+  description: "This doesn't seem right or lacks required information"
+
+- name: "wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "stale"
+  color: "eeeeee"
+  description: "No recent activity"
+
+# Workflow labels
+- name: "dependencies"
+  color: "0366d6"
+  description: "Pull requests that update a dependency file"
+
+- name: "breaking-change"
+  color: "d93f0b"
+  description: "Introduces breaking changes"
+
+- name: "needs-testing"
+  color: "fbca04"
+  description: "Needs additional testing"
