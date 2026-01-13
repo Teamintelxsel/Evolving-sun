@@ -1,0 +1,36 @@
+{
+  "created_at": "2026-01-12T22:13:45.781102",
+  "data": {
+    "benchmark": "kegg_pathway",
+    "pathways": [
+      {
+        "data_hash": "f5a3ca77ddd33d37",
+        "data_size_bytes": 9681,
+        "line_count": 140,
+        "name": "Glycolysis / Gluconeogenesis - Homo sapiens (human)",
+        "organism": "hsa",
+        "pathway_id": "hsa00010"
+      }
+    ],
+    "summary": {
+      "failed": 0,
+      "fetch_kgml": false,
+      "organism": "hsa",
+      "successful": 1,
+      "total_pathways": 1
+    }
+  },
+  "provenance": {
+    "commit_sha": "unknown",
+    "fetch_kgml": false,
+    "kegg_rest_api": "http://rest.kegg.jp",
+    "organism": "hsa",
+    "pathways": [
+      "00010"
+    ],
+    "script_version": "1.0.0",
+    "timestamp": "2026-01-12T22:13:45.758918"
+  },
+  "watermark": "d43e4ae9598a6693510ff47076007d505a224b708fa1c0651c4614e05adf2820",
+  "watermark_algorithm": "sha256"
+}
