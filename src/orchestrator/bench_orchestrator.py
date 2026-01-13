@@ -126,8 +126,8 @@ class BenchmarkOrchestrator:
             
             # Validate timeout values
             timeout = suite_config.get('timeout', 3600)
-            if not isinstance(timeout, (int, float)) or timeout <= 0:
-                raise ValueError(f"Suite '{suite_name}' has invalid timeout: {timeout}")
+            if not isinstance(timeout, int) or timeout <= 0:
+                raise ValueError(f"Suite '{suite_name}' has invalid timeout: {timeout} (must be positive integer)")
             
             # Suite-specific validation
             if suite_name == 'swebench':

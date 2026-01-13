@@ -109,12 +109,9 @@ jobs:
                 echo "Push attempt $retry_count failed, retrying in ${retry_delay} seconds..."
                 sleep $retry_delay
                 
-                # Pull with rebase to handle any conflicts
-                if ! git pull --rebase; then
-                  echo "Rebase failed, attempting to reset and retry"
-                  git rebase --abort || true
-                  git pull --no-rebase
-                fi
+                # Fetch latest changes and reset to avoid merge commits
+                git fetch origin
+                git reset --hard origin/$(git branch --show-current)
                 
                 # Exponential backoff
                 retry_delay=$((retry_delay * 2))
@@ -165,7 +162,10 @@ jobs:
             
             # Extract suite statuses
             if [ -f "scripts/extract_benchmark_summary.py" ]; then
-              python scripts/extract_benchmark_summary.py "$LATEST_RESULT" >> $GITHUB_STEP_SUMMARY || echo "Summary extraction failed" >> $GITHUB_STEP_SUMMARY
+              python scripts/extract_benchmark_summary.py "$LATEST_RESULT" >> $GITHUB_STEP_SUMMARY 2>&1 || {
+                ERROR_CODE=$?
+                echo "Summary extraction failed with exit code: $ERROR_CODE" >> $GITHUB_STEP_SUMMARY
+              }
             fi
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
