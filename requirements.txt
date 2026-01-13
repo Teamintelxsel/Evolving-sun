@@ -1,0 +1,7 @@
+# Core dependencies
+datasets>=2.14.0
+biopython>=1.81
+
+# Optional dependencies for full functionality
+# docker>=6.0.0  # Uncomment for actual SWE-bench Docker integration
+# transformers>=4.30.0  # Uncomment for model inference in GPQA
