@@ -5,10 +5,22 @@ on:
     # Run every Sunday at 00:00 UTC
     - cron: '0 0 * * 0'
   workflow_dispatch:  # Allow manual triggering
+    inputs:
+      suite:
+        description: 'Benchmark suite to run (all, swebench, gpqa, kegg)'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - swebench
+          - gpqa
+          - kegg
 
 jobs:
   run-benchmarks:
     runs-on: ubuntu-latest
+    timeout-minutes: 120  # Overall job timeout for reliability
     
     permissions:
       contents: write  # Required for committing and pushing benchmark results
@@ -24,27 +36,57 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'  # Cache pip dependencies for faster builds
       
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml
+        timeout-minutes: 5  # Timeout for installation step
+      
+      - name: Validate configuration
+        run: |
+          python -c "
+          import yaml
+          import sys
+          
+          with open('tasks.yaml') as f:
+              config = yaml.safe_load(f)
+          
+          # Validate structure
+          if 'suites' not in config:
+              print('ERROR: tasks.yaml missing suites key')
+              sys.exit(1)
+          
+          # Validate each suite has required fields
+          for suite_name, suite_config in config['suites'].items():
+              if 'timeout' not in suite_config:
+                  print(f'WARNING: {suite_name} missing timeout field')
+          
+          print('✓ Configuration validated successfully')
+          "
+        timeout-minutes: 2
       
       - name: Run orchestrated benchmarks
         run: |
+          set -e  # Exit on error
           python src/orchestrator/bench_orchestrator.py --tasks-file tasks.yaml
+        timeout-minutes: 90  # Timeout for benchmark execution
       
       - name: Archive benchmark results
         uses: actions/upload-artifact@v4
+        if: always()  # Always upload artifacts even if benchmarks fail
         with:
-          name: benchmark-results-${{ github.run_number }}
+          name: benchmark-results-${{ github.run_number }}-${{ github.run_attempt }}
           path: |
             logs/benchmarks/benchmark_orchestrated_*.json
             logs/benchmarks/*.json
           retention-days: 90
           if-no-files-found: warn
+          compression-level: 6  # Balance between speed and size
       
       - name: Commit results to repository
+        if: success()  # Only commit if benchmarks succeeded
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -57,14 +99,25 @@ jobs:
             if git commit -m "chore: weekly benchmark results $(date +%Y-%m-%d)"; then
               echo "Changes committed successfully"
               
-              # Try to push with retry logic
-              max_retries=3
+              # Try to push with retry logic and exponential backoff
+              max_retries=5
               retry_count=0
+              retry_delay=5
+              
               until git push || [ $retry_count -eq $max_retries ]; do
                 retry_count=$((retry_count + 1))
-                echo "Push attempt $retry_count failed, retrying in 5 seconds..."
-                sleep 5
-                git pull --rebase
+                echo "Push attempt $retry_count failed, retrying in ${retry_delay} seconds..."
+                sleep $retry_delay
+                
+                # Pull with rebase to handle any conflicts
+                if ! git pull --rebase; then
+                  echo "Rebase failed, attempting to reset and retry"
+                  git rebase --abort || true
+                  git pull --no-rebase
+                fi
+                
+                # Exponential backoff
+                retry_delay=$((retry_delay * 2))
               done
               
               if [ $retry_count -eq $max_retries ]; then
@@ -82,6 +135,7 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        timeout-minutes: 10
       
       - name: Create benchmark summary
         if: always()
@@ -93,6 +147,8 @@ jobs:
           echo "**Runner**: ubuntu-latest" >> $GITHUB_STEP_SUMMARY
           echo "**Python Version**: 3.11" >> $GITHUB_STEP_SUMMARY
           echo "**Commit SHA**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Attempt**: ${{ github.run_attempt }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit Status**: ${COMMIT_RESULT:-unknown}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -102,12 +158,15 @@ jobs:
           if [ -f "$LATEST_RESULT" ]; then
             echo "### Benchmark Results" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Results File**: \`$(basename "$LATEST_RESULT")\`" >> $GITHUB_STEP_SUMMARY
             WATERMARK=$(python -c "import json; print(json.load(open('$LATEST_RESULT'))['watermark'])" 2>/dev/null || echo "N/A")
             echo "**Watermark**: $WATERMARK" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
             # Extract suite statuses
-            python scripts/extract_benchmark_summary.py "$LATEST_RESULT" >> $GITHUB_STEP_SUMMARY
+            if [ -f "scripts/extract_benchmark_summary.py" ]; then
+              python scripts/extract_benchmark_summary.py "$LATEST_RESULT" >> $GITHUB_STEP_SUMMARY || echo "Summary extraction failed" >> $GITHUB_STEP_SUMMARY
+            fi
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
           
@@ -120,3 +179,12 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Check the workflow logs for details. Results are still available as artifacts." >> $GITHUB_STEP_SUMMARY
           fi
+        timeout-minutes: 5
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Benchmark workflow failed. Check logs for details."
+          echo "## ❌ Benchmark Workflow Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The benchmark workflow encountered an error. Please review the logs above for details." >> $GITHUB_STEP_SUMMARY

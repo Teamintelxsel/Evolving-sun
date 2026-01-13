@@ -31,6 +31,9 @@ class BenchmarkOrchestrator:
     # SHA256 digest format: sha256: followed by 64 hexadecimal characters
     DIGEST_PATTERN = re.compile(r'^sha256:[0-9a-f]{64}$', re.IGNORECASE)
     
+    # Version for compatibility tracking
+    VERSION = "2.0.0"
+    
     def __init__(self, tasks_file: str = "tasks.yaml", output_dir: Optional[str] = None):
         """
         Initialize the benchmark orchestrator.
@@ -41,14 +44,20 @@ class BenchmarkOrchestrator:
         """
         self.tasks_file = Path(tasks_file)
         
-        # Set up logging
+        # Set up logging with enhanced formatting
         self.logger = logging.getLogger(__name__)
         if not self.logger.handlers:
             handler = logging.StreamHandler()
-            formatter = logging.Formatter('%(levelname)s: %(message)s')
+            formatter = logging.Formatter(
+                '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                datefmt='%Y-%m-%d %H:%M:%S'
+            )
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
             self.logger.setLevel(logging.INFO)
+        
+        # Log orchestrator initialization
+        self.logger.info(f"Initializing BenchmarkOrchestrator v{self.VERSION}")
         
         if output_dir is None:
             # Default to logs/benchmarks in repository root
@@ -61,12 +70,19 @@ class BenchmarkOrchestrator:
             self.output_dir = Path(output_dir)
         
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.logger.info(f"Output directory: {self.output_dir}")
         
-        # Load tasks configuration
-        self.tasks = self._load_tasks()
+        # Load tasks configuration with validation
+        try:
+            self.tasks = self._load_tasks()
+            self._validate_configuration()
+        except Exception as e:
+            self.logger.error(f"Failed to load or validate configuration: {e}")
+            raise
         
         # Provenance data
         self.provenance = self._collect_provenance()
+        self.logger.info("Orchestrator initialized successfully")
     
     def _find_repo_root(self) -> Path:
         """Find the repository root directory."""
@@ -78,17 +94,54 @@ class BenchmarkOrchestrator:
         return Path.cwd()
     
     def _load_tasks(self) -> Dict[str, Any]:
-        """Load tasks configuration from YAML file."""
+        """Load tasks configuration from YAML file with enhanced error handling."""
         if not self.tasks_file.exists():
             raise FileNotFoundError(f"Tasks file not found: {self.tasks_file}")
         
-        with open(self.tasks_file, 'r', encoding='utf-8') as f:
-            tasks = yaml.safe_load(f)
+        try:
+            with open(self.tasks_file, 'r', encoding='utf-8') as f:
+                tasks = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            raise ValueError(f"Invalid YAML syntax in tasks file: {e}")
+        except Exception as e:
+            raise RuntimeError(f"Failed to read tasks file: {e}")
         
         if not tasks or 'suites' not in tasks:
             raise ValueError("Invalid tasks.yaml: missing 'suites' key")
         
+        self.logger.info(f"Loaded {len(tasks.get('suites', {}))} benchmark suite(s)")
         return tasks
+    
+    def _validate_configuration(self) -> None:
+        """Validate the loaded configuration for completeness and correctness."""
+        suites = self.tasks.get('suites', {})
+        
+        if not suites:
+            raise ValueError("No benchmark suites defined in configuration")
+        
+        for suite_name, suite_config in suites.items():
+            # Validate required fields
+            if 'timeout' not in suite_config:
+                self.logger.warning(f"Suite '{suite_name}' missing 'timeout' field, using default")
+            
+            # Validate timeout values
+            timeout = suite_config.get('timeout', 3600)
+            if not isinstance(timeout, (int, float)) or timeout <= 0:
+                raise ValueError(f"Suite '{suite_name}' has invalid timeout: {timeout}")
+            
+            # Suite-specific validation
+            if suite_name == 'swebench':
+                if 'shards' in suite_config:
+                    shards = suite_config['shards']
+                    if not isinstance(shards, int) or shards < 1:
+                        raise ValueError(f"Invalid shards value: {shards}")
+                
+                if 'shard_size' in suite_config:
+                    shard_size = suite_config['shard_size']
+                    if not isinstance(shard_size, int) or shard_size < 1:
+                        raise ValueError(f"Invalid shard_size value: {shard_size}")
+        
+        self.logger.info("Configuration validation passed")
     
     def _collect_provenance(self) -> Dict[str, Any]:
         """Collect comprehensive provenance information."""
