@@ -1,0 +1,101 @@
+{
+  "total_iterations": 10,
+  "final_accuracy": 0.8514999999999999,
+  "average_accuracy": 0.850825,
+  "average_latency_ms": 55.5,
+  "iterations": [
+    {
+      "iteration": 1,
+      "accuracy": 0.85015,
+      "latency_ms": 51,
+      "throughput_rps": 101,
+      "cpu_utilization": 95.5,
+      "timestamp": 1768251416.143921,
+      "worker_id": 0
+    },
+    {
+      "iteration": 2,
+      "accuracy": 0.8503,
+      "latency_ms": 52,
+      "throughput_rps": 102,
+      "cpu_utilization": 96.0,
+      "timestamp": 1768251416.2440557,
+      "worker_id": 0
+    },
+    {
+      "iteration": 3,
+      "accuracy": 0.8504499999999999,
+      "latency_ms": 53,
+      "throughput_rps": 103,
+      "cpu_utilization": 96.5,
+      "timestamp": 1768251416.3441749,
+      "worker_id": 0
+    },
+    {
+      "iteration": 4,
+      "accuracy": 0.8506,
+      "latency_ms": 54,
+      "throughput_rps": 104,
+      "cpu_utilization": 97.0,
+      "timestamp": 1768251416.444299,
+      "worker_id": 0
+    },
+    {
+      "iteration": 5,
+      "accuracy": 0.85075,
+      "latency_ms": 55,
+      "throughput_rps": 105,
+      "cpu_utilization": 97.5,
+      "timestamp": 1768251416.5444427,
+      "worker_id": 0
+    },
+    {
+      "iteration": 6,
+      "accuracy": 0.8509,
+      "latency_ms": 56,
+      "throughput_rps": 106,
+      "cpu_utilization": 98.0,
+      "timestamp": 1768251416.6445901,
+      "worker_id": 0
+    },
+    {
+      "iteration": 7,
+      "accuracy": 0.85105,
+      "latency_ms": 57,
+      "throughput_rps": 107,
+      "cpu_utilization": 98.5,
+      "timestamp": 1768251416.7447505,
+      "worker_id": 0
+    },
+    {
+      "iteration": 8,
+      "accuracy": 0.8512,
+      "latency_ms": 58,
+      "throughput_rps": 108,
+      "cpu_utilization": 99.0,
+      "timestamp": 1768251416.8448753,
+      "worker_id": 0
+    },
+    {
+      "iteration": 9,
+      "accuracy": 0.8513499999999999,
+      "latency_ms": 59,
+      "throughput_rps": 109,
+      "cpu_utilization": 99.5,
+      "timestamp": 1768251416.9450045,
+      "worker_id": 0
+    },
+    {
+      "iteration": 10,
+      "accuracy": 0.8514999999999999,
+      "latency_ms": 60,
+      "throughput_rps": 110,
+      "cpu_utilization": 95.0,
+      "timestamp": 1768251417.0451238,
+      "worker_id": 0
+    }
+  ],
+  "duration_seconds": 1.0014729499816895,
+  "mode": "serial",
+  "num_workers": 10
+}

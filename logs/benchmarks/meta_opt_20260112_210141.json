@@ -1,0 +1,54 @@
+{
+  "benchmark_name": "meta_optimization_500",
+  "timestamp": "2026-01-12T21:01:41.842005",
+  "status": "completed",
+  "duration_seconds": 0.5085630416870117,
+  "dry_run": true,
+  "iterations": 10,
+  "target_iterations": 10,
+  "metrics": {
+    "accuracy": 0.9032,
+    "final_latency_ms": 55,
+    "final_throughput_rps": 113,
+    "final_cpu_utilization": 97.46
+  },
+  "statistics": {
+    "accuracy": {
+      "mean": 0.8795,
+      "std_dev": 0.015324997734275723,
+      "cv": 0.017424670533571034,
+      "confidence_interval_95": [
+        0.868537157036801,
+        0.8904628429631989
+      ],
+      "confidence_interval_99": [
+        0.8637506801540582,
+        0.8952493198459417
+      ],
+      "converged": false
+    },
+    "latency_ms": {
+      "mean": 58.6,
+      "std_dev": 4.948624949305503,
+      "cv": 0.08444752473217582
+    },
+    "throughput_rps": {
+      "mean": 122.4,
+      "std_dev": 9.845472732852055,
+      "cv": 0.08043686873245143
+    }
+  },
+  "verification": {
+    "sha256_hash": "ff5a43f8a7f6608ce08cdf169a6520fb3d4045987d69a963aeed212902a80fdf",
+    "verified": true,
+    "timestamp": "2026-01-12T21:01:41.842077",
+    "algorithm": "sha256"
+  },
+  "phases": {
+    "exploration": {
+      "iterations": 10,
+      "avg_accuracy": 0.8795,
+      "final_accuracy": 0.9032
+    }
+  }
+}

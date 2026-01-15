@@ -1,0 +1,83 @@
+# Notification Configuration
+
+# Slack Integration
+slack:
+  enabled: false
+  webhook_url: "${SLACK_WEBHOOK_URL}"  # Set via environment variable
+  channel: "#benchmarks"
+  username: "Benchmark Bot"
+  icon_emoji: ":rocket:"
+  
+  # When to send notifications
+  milestones: [50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
+  on_start: true
+  on_completion: true
+  on_error: true
+  on_convergence: true
+  
+  # Rate limiting
+  min_interval: 60  # Minimum seconds between notifications
+
+# Email Notifications
+email:
+  enabled: false
+  
+  smtp:
+    host: "smtp.gmail.com"
+    port: 587
+    use_tls: true
+    username: "${EMAIL_USERNAME}"
+    password: "${EMAIL_PASSWORD}"
+  
+  from: "benchmarks@evolving-sun.ai"
+  to:
+    - "${EMAIL_RECIPIENT}"
+  
+  # When to send emails
+  milestones: [100, 200, 300, 400, 500]
+  on_start: true
+  on_completion: true
+  on_error: true
+  
+  # Template settings
+  include_charts: true
+  include_results: true
+
+# Discord Integration
+discord:
+  enabled: false
+  webhook_url: "${DISCORD_WEBHOOK_URL}"
+  username: "Benchmark Bot"
+  
+  # When to send notifications
+  milestones: [100, 200, 300, 400, 500]
+  on_start: true
+  on_completion: true
+  on_error: true
+
+# Telegram Integration (optional)
+telegram:
+  enabled: false
+  bot_token: "${TELEGRAM_BOT_TOKEN}"
+  chat_id: "${TELEGRAM_CHAT_ID}"
+  
+  milestones: [100, 200, 300, 400, 500]
+
+# General Settings
+general:
+  quiet_hours:
+    enabled: false
+    start: "22:00"  # 10 PM
+    end: "08:00"    # 8 AM
+    timezone: "UTC"
+  
+  retry:
+    max_attempts: 3
+    backoff_seconds: 5
+  
+  templates:
+    start: "🚀 Starting {iterations}-iteration benchmark run"
+    milestone: "📊 Milestone {iteration}/{total}: Accuracy {accuracy:.2%}, Phase: {phase}"
+    completion: "✅ Benchmark complete! Final accuracy: {accuracy:.2%} in {duration:.1f}s"
+    convergence: "🎯 Convergence achieved at iteration {iteration}! Accuracy: {accuracy:.2%}"
+    error: "❌ Error at iteration {iteration}: {error}"

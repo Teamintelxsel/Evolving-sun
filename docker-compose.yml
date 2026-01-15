@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Dashboard web interface
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs:ro
+      - ./checkpoints:/app/checkpoints:ro
+      - ./dashboard/benchmark_data.db:/app/dashboard/benchmark_data.db
+    environment:
+      - FLASK_ENV=production
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=8080
+    restart: unless-stopped
+    networks:
+      - benchmark-net
+  
+  # Optional: Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    restart: unless-stopped
+    networks:
+      - benchmark-net
+    profiles:
+      - monitoring
+  
+  # Optional: Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana-dashboards:/etc/grafana/provisioning/dashboards:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    restart: unless-stopped
+    networks:
+      - benchmark-net
+    profiles:
+      - monitoring
+
+networks:
+  benchmark-net:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  grafana-data:

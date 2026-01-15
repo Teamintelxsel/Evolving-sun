@@ -1,0 +1,60 @@
+{
+  "benchmark_name": "latency_benchmark_real",
+  "timestamp": "2026-01-12T20:46:51.627025",
+  "status": "completed",
+  "duration_seconds": 1.0124143890000141,
+  "mode": "simulation",
+  "url": null,
+  "workers": 5,
+  "iterations": 50,
+  "metrics": {
+    "latency_ms": {
+      "p50": 100.07050399997297,
+      "p95": 140.09675599999127,
+      "p99": 140.1075289999767,
+      "mean": 95.09683685999562,
+      "std_dev": 28.724989015937787,
+      "cv": 0.30206040457715294,
+      "min": 50.07544200003622,
+      "max": 140.1075289999767
+    },
+    "throughput": {
+      "requests_per_second": 49.38689191229907,
+      "successful_requests": 50,
+      "failed_requests": 0,
+      "success_rate": 1.0
+    },
+    "cpu_utilization_percent": 0.0,
+    "memory_usage_mb": 0.0
+  },
+  "hardware": {
+    "cpu_model": "x86_64",
+    "cpu_cores": 4,
+    "platform": "Linux",
+    "platform_release": "6.11.0-1018-azure",
+    "total_memory_gb": 0.0
+  },
+  "system_snapshots": {
+    "start": {
+      "timestamp": 1768250810.612947,
+      "cpu_percent": 0.0,
+      "memory_percent": 0.0,
+      "memory_used_mb": 0.0,
+      "memory_available_mb": 0.0
+    },
+    "end": {
+      "timestamp": 1768250811.6253684,
+      "cpu_percent": 0.0,
+      "memory_percent": 0.0,
+      "memory_used_mb": 0.0,
+      "memory_available_mb": 0.0
+    }
+  },
+  "verification": {
+    "sha256_hash": "9126707937cc6f441427e09a8a25d07037d8d4658ea155eeccf98158180665a2",
+    "verified": true,
+    "timestamp": "2026-01-12T20:46:51.628901",
+    "algorithm": "sha256",
+    "commit_sha": "ace3db79e325f3c34d2080881744df1557bd2437"
+  }
+}

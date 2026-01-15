@@ -1,0 +1,29 @@
+{
+  "benchmark_name": "meta_optimization_500",
+  "timestamp": "2026-01-12T20:49:38.441240",
+  "status": "completed",
+  "duration_seconds": 0.502251386642456,
+  "dry_run": true,
+  "iterations": 10,
+  "target_iterations": 10,
+  "metrics": {
+    "accuracy": 0.8985,
+    "final_latency_ms": 68,
+    "final_throughput_rps": 108,
+    "final_cpu_utilization": 96.6
+  },
+  "statistics": {},
+  "verification": {
+    "sha256_hash": "5b4a68a377e5df5ec35ec3f96ab173c43d2e9ebeb3981bcbc1355585c7660cef",
+    "verified": true,
+    "timestamp": "2026-01-12T20:49:38.441318",
+    "algorithm": "sha256"
+  },
+  "phases": {
+    "exploration": {
+      "iterations": 10,
+      "avg_accuracy": 0.8760600000000001,
+      "final_accuracy": 0.8985
+    }
+  }
+}

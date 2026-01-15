@@ -1,0 +1,108 @@
+{
+  "iteration": 10,
+  "total_iterations": 10,
+  "timestamp": "2026-01-12T21:01:41.838654",
+  "results": [
+    {
+      "iteration": 1,
+      "accuracy": 0.8563,
+      "latency_ms": 61,
+      "throughput_rps": 142,
+      "cpu_utilization": 95.74,
+      "success_rate": 0.999,
+      "timestamp": 1768251701.3866415,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 2,
+      "accuracy": 0.8588,
+      "latency_ms": 57,
+      "throughput_rps": 120,
+      "cpu_utilization": 96.68,
+      "success_rate": 0.9804999999999999,
+      "timestamp": 1768251701.4367433,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 3,
+      "accuracy": 0.8684,
+      "latency_ms": 58,
+      "throughput_rps": 112,
+      "cpu_utilization": 99.22,
+      "success_rate": 0.9993,
+      "timestamp": 1768251701.4870055,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 4,
+      "accuracy": 0.8741,
+      "latency_ms": 67,
+      "throughput_rps": 120,
+      "cpu_utilization": 97.57,
+      "success_rate": 0.9854999999999999,
+      "timestamp": 1768251701.5370975,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 5,
+      "accuracy": 0.8776,
+      "latency_ms": 56,
+      "throughput_rps": 124,
+      "cpu_utilization": 97.94,
+      "success_rate": 0.9951,
+      "timestamp": 1768251701.5873675,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 6,
+      "accuracy": 0.8838,
+      "latency_ms": 60,
+      "throughput_rps": 123,
+      "cpu_utilization": 95.93,
+      "success_rate": 0.9939,
+      "timestamp": 1768251701.6374974,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 7,
+      "accuracy": 0.8878,
+      "latency_ms": 54,
+      "throughput_rps": 110,
+      "cpu_utilization": 96.28,
+      "success_rate": 0.995,
+      "timestamp": 1768251701.6877596,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 8,
+      "accuracy": 0.8939,
+      "latency_ms": 52,
+      "throughput_rps": 128,
+      "cpu_utilization": 95.52,
+      "success_rate": 0.9853999999999999,
+      "timestamp": 1768251701.737879,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 9,
+      "accuracy": 0.8911,
+      "latency_ms": 66,
+      "throughput_rps": 132,
+      "cpu_utilization": 99.88,
+      "success_rate": 0.9852,
+      "timestamp": 1768251701.7881598,
+      "phase": "exploration"
+    },
+    {
+      "iteration": 10,
+      "accuracy": 0.9032,
+      "latency_ms": 55,
+      "throughput_rps": 113,
+      "cpu_utilization": 97.46,
+      "success_rate": 0.9992,
+      "timestamp": 1768251701.8383172,
+      "phase": "exploration"
+    }
+  ],
+  "elapsed_time": 0.5052967071533203
+}

@@ -1,0 +1,98 @@
+name: Benchmark Validation
+
+on:
+  push:
+    branches: [ main, develop, copilot/** ]
+    paths:
+      - 'logs/benchmarks/**.json'
+      - 'scripts/verify_benchmarks.py'
+      - 'schemas/benchmark_result.json'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'logs/benchmarks/**.json'
+      - 'scripts/verify_benchmarks.py'
+      - 'schemas/benchmark_result.json'
+
+jobs:
+  validate-benchmarks:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install jsonschema
+    
+    - name: Verify benchmark results
+      run: |
+        python scripts/verify_benchmarks.py logs/benchmarks/ --output logs/verification_report.json
+      continue-on-error: true
+    
+    - name: Upload verification report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: verification-report
+        path: logs/verification_report.json
+        retention-days: 30
+    
+    - name: Comment on PR with results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('logs/verification_report.json', 'utf8'));
+          
+          const summary = report.summary;
+          const passed = summary.passed;
+          const failed = summary.failed;
+          const total = summary.total_files;
+          const passRate = summary.pass_rate * 100;
+          
+          const status = failed === 0 ? '✅' : '❌';
+          
+          const comment = `## ${status} Benchmark Verification Report
+          
+          **Summary:**
+          - Total Files: ${total}
+          - Passed: ${passed} (${passRate.toFixed(1)}%)
+          - Failed: ${failed}
+          
+          ${failed > 0 ? '**⚠️ Some benchmarks failed validation. Please review the errors below.**' : '**✅ All benchmarks passed validation!**'}
+          
+          <details>
+          <summary>Click to see detailed results</summary>
+          
+          \`\`\`json
+          ${JSON.stringify(report, null, 2)}
+          \`\`\`
+          
+          </details>
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+    
+    - name: Fail if validation failed
+      run: |
+        if [ -f logs/verification_report.json ]; then
+          FAILED=$(python -c "import json; print(json.load(open('logs/verification_report.json'))['summary']['failed'])")
+          if [ "$FAILED" != "0" ]; then
+            echo "❌ Validation failed for $FAILED benchmark(s)"
+            exit 1
+          fi
+        fi
