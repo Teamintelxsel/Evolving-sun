@@ -1,5 +1,11 @@
 [
   {
+    "workflow": "Dry run",
+    "command": "act -n",
+    "success": true,
+    "timestamp": "2026-01-19T04:51:31.642Z"
+  },
+  {
     "workflow": "Quick Run: main.yml",
     "command": "act push -W .github\\workflows\\main.yml",
     "success": true,

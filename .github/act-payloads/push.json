@@ -1,0 +1,22 @@
+{
+  "repository": {
+    "name": "your-repo",
+    "owner": {
+      "login": "your-username"
+    },
+    "full_name": "your-username/your-repo"
+  },
+  "sender": {
+    "login": "test-user"
+  },
+  "ref": "refs/heads/main",
+  "commits": [
+    {
+      "id": "abc123",
+      "message": "Test commit",
+      "author": {
+        "name": "Test User"
+      }
+    }
+  ]
+}
