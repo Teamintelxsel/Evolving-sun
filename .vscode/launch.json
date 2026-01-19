@@ -131,6 +131,151 @@ Evolving-sun
 
 Production-ready benchmark system with cryptographic verification,
 "configurations": [
+    
+
+
+{
+    "name": "PowerShell Attach to Host Process",
+    "type": "PowerShell",
+    "request": "attach"
+},
+
+{
+    "name": "Attach by Process ID",
+    "processId": "${command:PickProcess}",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "address": "TCP/IP address of process to be debugged",
+    "localRoot": "${workspaceFolder}",
+    "name": "Attach to Remote",
+    "port": 9229,
+    "remoteRoot": "Absolute path to the remote directory containing the program",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Attach by Process ID",
+    "processId": "${command:PickProcess}",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Launch Chrome",
+    "request": "launch",
+    "type": "chrome",
+    "url": "http://localhost:8080",
+    "webRoot": "${workspaceFolder}"
+},
+
+
+
+
+
+{
+    "address": "TCP/IP address of process to be debugged",
+    "localRoot": "${workspaceFolder}",
+    "name": "Attach to Remote",
+    "port": 9229,
+    "remoteRoot": "Absolute path to the remote directory containing the program",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Electron Main",
+    "program": "${workspaceFolder}/main.js",
+    "request": "launch",
+    "runtimeExecutable": "electron",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "address": "TCP/IP address of process to be debugged",
+    "localRoot": "${workspaceFolder}",
+    "name": "Attach to Remote",
+    "port": 9229,
+    "remoteRoot": "Absolute path to the remote directory containing the program",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Attach by Process ID",
+    "processId": "${command:PickProcess}",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Attach",
+    "port": 9229,
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch add-on",
+    "addonPath": "${workspaceFolder}"
+},
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch index.html",
+    "file": "${workspaceFolder}/index.html"
+},
+{
+    "name": "Launch Chrome",
+    "request": "launch",
+    "type": "chrome",
+    "url": "http://localhost:8080",
+    "webRoot": "${workspaceFolder}"
+},
+
+
+
+{
+    "name": "Electron Main",
+    "program": "${workspaceFolder}/main.js",
+    "request": "launch",
+    "runtimeExecutable": "electron",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch add-on",
+    "addonPath": "${workspaceFolder}"
+},
 
 {
     "name": "Attach to Edge",
