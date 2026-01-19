@@ -1,0 +1,3423 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2,"configurations": []
+Skip to content
+Navigation Menu
+Teamintelxsel
+Evolving-sun
+
+Code
+Issues 26
+Pull requests 21
+Discussions
+Actions
+Projects
+Security
+Insights
+
+    Settings
+
+Evolving-sun
+Public template
+
+Teamintelxsel/Evolving-sun
+Name	Last commit message
+	Last commit date
+ 
+.github/workflows
+	
+ 
+	
+ 
+checkpoints
+	
+ 
+	
+ 
+config
+	
+ 
+	
+ 
+dashboard
+	
+ 
+	
+ 
+docs
+	
+ 
+	
+ 
+
+
+ 
+	
+ 
+logs
+	
+ 
+	
+ 
+schemas
+	
+ 
+	
+ 
+scripts
+	
+ 
+	
+ 
+src/utils
+	
+ 
+	
+ 
+upgrades
+	
+ 
+	
+ 
+.gitignore
+	
+ 
+	
+ 
+.gitmodules
+	
+ 
+	
+ 
+CONTRIBUTING.md
+	
+ 
+	
+ 
+Dockerfile.dashboard
+	
+ 
+	
+ 
+IMPLEMENTATION_SUMMARY.md
+	
+ 
+	
+ 
+README.md
+	
+ 
+	
+ 
+docker-compose.yml
+	
+ 
+	
+ 
+requirements.txt
+	
+ 
+	
+ 
+Repository files navigation
+
+README
+
+    Contributing
+
+Evolving-sun
+
+Production-ready benchmark system with cryptographic verification,
+"configurations": [
+
+{
+    "name": "Attach to Edge",
+    "port": 9222,
+    "request": "attach",
+    "type": "msedge",
+    "webRoot": "${workspaceFolder}"
+},
+{
+    "type": "firefox",
+    "request": "attach",
+    "name": "Attach"
+},
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch localhost",
+    "url": "http://localhost/index.html",
+    "webRoot": "${workspaceFolder}"
+},
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch index.html",
+    "file": "${workspaceFolder}/index.html"
+},
+{
+    "name": "Electron Main",
+    "program": "${workspaceFolder}/main.js",
+    "request": "launch",
+    "runtimeExecutable": "electron",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "address": "TCP/IP address of process to be debugged",
+    "localRoot": "${workspaceFolder}",
+    "name": "Attach to Remote",
+    "port": 9229,
+    "remoteRoot": "Absolute path to the remote directory containing the program",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Attach by Process ID",
+    "processId": "${command:PickProcess}",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "PowerShell: Windows PowerShell",
+    "type": "PowerShell",
+    "request": "launch",
+    "sessionName": "Windows PowerShell (x64)"
+},
+
+
+{
+    "name": "Attach to Chrome",
+    "port": 9222,
+    "request": "attach",
+    "type": "chrome",
+    "webRoot": "${workspaceFolder}"
+},
+{
+    "name": "Attach to Edge",
+    "port": 9222,
+    "request": "attach",
+    "type": "msedge",
+    "webRoot": "${workspaceFolder}"
+},
+{
+    "name": "Launch Edge",
+    "request": "launch",
+    "type": "msedge",
+    "url": "http://localhost:8080",
+    "webRoot": "${workspaceFolder}"
+},
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch index.html",
+    "file": "${workspaceFolder}/index.html"
+},
+{
+    "type": "firefox",
+    "request": "attach",
+    "name": "Attach"
+},
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch localhost",
+    "url": "http://localhost/index.html",
+    "webRoot": "${workspaceFolder}"
+},
+{
+    "type": "firefox",
+    "request": "launch",
+    "reAttach": true,
+    "name": "Launch add-on",
+    "addonPath": "${workspaceFolder}"
+},
+{
+    "name": "Attach by Process ID",
+    "processId": "${command:PickProcess}",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Attach by Process ID",
+    "processId": "${command:PickProcess}",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Attach",
+    "port": 9229,
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "address": "TCP/IP address of process to be debugged",
+    "localRoot": "${workspaceFolder}",
+    "name": "Attach to Remote",
+    "port": 9229,
+    "remoteRoot": "Absolute path to the remote directory containing the program",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "type": "artificial-workflow",
+    "request": "launch",
+    "name": "Debug Current Workflow File",
+    "program": "${file}"
+},
+{
+    "address": "TCP/IP address of process to be debugged",
+    "localRoot": "${workspaceFolder}",
+    "name": "Attach to Remote",
+    "port": 9229,
+    "remoteRoot": "Absolute path to the remote directory containing the program",
+    "request": "attach",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+{
+    "name": "Electron Main",
+    "program": "${workspaceFolder}/main.js",
+    "request": "launch",
+    "runtimeExecutable": "electron",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "type": "node"
+},
+
+
+
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2,"configurations": []
+Skip to content
+Navigation Menu
+Teamintelxsel
+Evolving-sun
+
+Code
+Issues 26
+Pull requests 21
+Discussions
+Actions
+Projects
+Security
+Insights
+
+    Settings
+
+Evolving-sun
+Public template
+
+Teamintelxsel/Evolving-sun
+Name	Last commit message
+	Last commit date
+ 
+.github/workflows
+	
+ 
+	
+ 
+checkpoints
+	
+ 
+	
+ 
+config
+	
+ 
+	
+ 
+dashboard
+	
+ 
+	
+ 
+docs
+	
+ 
+	
+ 
+
+
+ 
+	
+ 
+logs
+	
+ 
+	
+ 
+schemas
+	
+ 
+	
+ 
+scripts
+	
+ 
+	
+ 
+src/utils
+	
+ 
+	
+ 
+upgrades
+	
+ 
+	
+ 
+.gitignore
+	
+ 
+	
+ 
+.gitmodules
+	
+ 
+	
+ 
+CONTRIBUTING.md
+	
+ 
+	
+ 
+Dockerfile.dashboard
+	
+ 
+	
+ 
+IMPLEMENTATION_SUMMARY.md
+	
+ 
+	
+ 
+README.md
+	
+ 
+	
+ 
+docker-compose.yml
+	
+ 
+	
+ 
+requirements.txt
+	
+ 
+	
+ 
+Repository files navigation
+
+README
+
+    Contributing
+
+Evolving-sun
+
+Production-ready benchmark system with cryptographic verification,
+"configurations": [
+
+
+
+
+
+{
+    "name": "Attach to Edge",
+    "port": 9222,
+    "request": "attach",
+    "type": "msedge",
+    "webRoot": "${workspaceFolder}"
+}
+], distributed execution, and real-time monitoring.
+Overview
+
+This repository provides a comprehensive benchmarking infrastructure featuring:
+
+    🚀 500-Iteration Meta-Optimization: Progressive accuracy targets (90% → 95% → 99.9%)
+    🔒 Cryptographic Verification: SHA256 hashing and validation of all results
+    ⚡ Real Latency Measurement: High-precision timing with nanosecond accuracy
+    🌐 Distributed Execution: Multi-GPU parallel processing via Ray
+    📊 Real-Time Dashboard: Web-based monitoring with live metrics
+    📈 Statistical Analysis: 99% confidence intervals and convergence detection
+    ✅ Comprehensive Validation: Automated detection of simulated/fake data
+    💾 Checkpoint/Resume: Save progress every 10 iterations
+
+Quick Start (3 Commands)
+
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Run quick test (10 iterations, ~1 minute)
+bash examples/quick_start.sh
+
+# 3. Start dashboard (optional)
+python dashboard/app.py  # Open http://localhost:8080
+
+Architecture
+
+Evolving-sun Benchmark System
+│
+├── Core Components
+│   ├── Meta-Optimization Engine (500 iterations → 99.9% accuracy)
+│   ├── Latency Benchmarking (real measurements, not simulated)
+│   ├── Verification System (SHA256, schema validation)
+│   └── CPU Stress Controller (99.9% utilization target)
+│
+├── Distributed Execution
+│   ├── Ray-based parallelization
+│   ├── Multi-GPU support (10+ workers)
+│   └── Fault tolerance & retry logic
+│
+├── Monitoring & Reporting
+│   ├── Real-time web dashboard
+│   ├── API endpoints (status, metrics, benchmarks)
+│   └── Progress tracking & notifications
+│
+└── Data Management
+    ├── Checkpoint system (every 10 iterations)
+    ├── JSON & CSV export
+    └── Watermarked results with provenance
+
+Repository Structure
+
+Evolving-sun/
+├── .github/workflows/       # CI/CD workflows
+├── config/
+│   ├── benchmark_config.yaml    # Centralized configuration
+│   └── notifications.yaml       # Notification settings
+├── dashboard/
+│   ├── app.py                   # Flask web dashboard
+│   └── benchmark_data.db        # SQLite database
+├── docs/
+│   ├── LATENCY_OPTIMIZATION.md  # Optimization guide
+│   ├── DISTRIBUTED_EXECUTION.md # Multi-GPU setup
+│   └── DASHBOARD_SETUP.md       # Dashboard deployment
+├── examples/
+│   ├── quick_start.sh           # One-command demo
+│   └── verify_results.sh        # Validation tool
+├── logs/
+│   ├── benchmarks/              # Benchmark results (JSON/CSV)
+│   └── checkpoints/             # Iteration checkpoints
+├── schemas/
+│   └── benchmark_result.json    # JSON schema for validation
+├── scripts/
+│   ├── meta_optimization_500.py      # 500-iteration system
+│   ├── latency_benchmark_real.py     # Real latency testing
+│   ├── distributed_executor.py       # Multi-GPU execution
+│   ├── cpu_stress_controller.py      # CPU stress testing
+│   ├── verify_benchmarks.py          # Validation script
+│   └── run_benchmarks.py             # Legacy unified runner
+└── requirements.txt             # Python dependencies
+
+Getting Started
+Prerequisites
+
+    Python 3.9 or higher
+    (Optional) NVIDIA GPUs for distributed execution
+    (Optional) Ray for multi-GPU parallelization
+
+Installation
+
+# Clone repository
+git clone https://github.com/Teamintelxsel/Evolving-sun.git
+cd Evolving-sun
+
+# Install core dependencies
+pip install -r requirements.txt
+
+# (Optional) Install Ray for distributed execution
+pip install 'ray[default]>=2.5.0'
+
+Usage
+Running Benchmarks
+Quick Test (Dry Run)
+
+# 10-iteration test (~1 minute)
+python scripts/meta_optimization_500.py --dry-run
+
+Full 500-Iteration Run
+
+# Serial execution (~8 hours)
+python scripts/meta_optimization_500.py
+
+# Distributed execution with 10 GPUs (~50 minutes)
+python scripts/distributed_executor.py --iterations 500 --workers 10
+
+Latency Benchmarking
+
+# Real latency measurement (1000 requests)
+python scripts/latency_benchmark_real.py \
+    --mode simulation \
+    --requests 1000 \
+    --workers 10
+
+# HTTP endpoint testing
+python scripts/latency_benchmark_real.py \
+    --mode http \
+    --url https://api.example.com/v1/predict \
+    --requests 1000
+
+Verifying Results
+
+# Verify single file
+python scripts/verify_benchmarks.py logs/benchmarks/meta_opt_*.json
+
+# Verify entire directory
+python scripts/verify_benchmarks.py logs/benchmarks/
+
+# Save verification report
+python scripts/verify_benchmarks.py logs/benchmarks/ \
+    --output logs/verification_report.json
+
+Dashboard
+
+# Start web dashboard
+python dashboard/app.py
+
+# Access at http://localhost:8080
+# API endpoints available at /api/status, /api/benchmarks, /api/latest
+
+Checkpoint & Resume
+
+# Checkpoints are saved automatically every 10 iterations
+# Resume from checkpoint:
+python scripts/meta_optimization_500.py \
+    --resume checkpoints/iter_250.json
+
+Features
+Meta-Optimization System
+
+    Progressive Targets:
+        Phase 1 (Exploration, 1-100): 90% accuracy
+        Phase 2 (Refinement, 101-300): 95% accuracy
+        Phase 3 (Convergence, 301-500): 99.9% accuracy
+
+    Convergence Detection: Automatically stops when CV < 0.1%
+
+    Statistical Analysis: 95% and 99% confidence intervals
+
+    Export Formats: JSON (detailed) and CSV (analysis)
+
+Verification System
+
+Detects fake/simulated data through:
+
+    ✅ Timing validation (flags duration < 0.01s)
+    ✅ SHA256 hash verification
+    ✅ Statistical validity checks
+    ✅ JSON schema compliance
+    ✅ Hardware specification validation
+    ✅ Percentile ordering verification
+
+Distributed Execution
+
+    Automatic GPU Detection: Uses all available GPUs
+    Fault Tolerance: Retries failed iterations
+    Progress Tracking: Real-time status updates
+    Resource Monitoring: Per-GPU utilization tracking
+    Graceful Shutdown: Saves checkpoints on interrupt
+
+Performance Targets
+Mode 	Duration 	Workers 	Expected Result
+Dry Run 	~1 min 	1 	10 iterations complete
+Serial 	~8 hours 	1 	500 iterations, 99.9% accuracy
+Distributed (10 GPUs) 	~50 min 	10 	500 iterations, parallel
+Configuration
+Benchmark Configuration
+
+Edit config/benchmark_config.yaml:
+
+meta_optimization:
+  total_iterations: 500
+  checkpoint_interval: 10
+  early_stopping: true
+
+distributed:
+  enabled: true
+  num_workers: 10
+  gpu_per_worker: 1
+
+benchmark:
+  cpu_target: 99.9
+  latency:
+    requests: 1000
+    workers: 10
+
+Notification Configuration
+
+Edit config/notifications.yaml and set environment variables:
+
+export SLACK_WEBHOOK_URL="https://hooks.slack.com/..."
+export EMAIL_USERNAME="your@email.com"
+export EMAIL_PASSWORD="password"
+
+Contributing
+
+Contributions are welcome! Please read CONTRIBUTING.md for details on our code of conduct and the process for submitting pull requests.
+Citation
+
+If you use this benchmark system in your research, please cite:
+
+@software{evolving_sun_benchmark,
+  title = {Evolving-sun: Production-Ready Benchmark System},
+  author = {Teamintelxsel},
+  year = {2026},
+  url = {https://github.com/Teamintelxsel/Evolving-sun},
+  note = {Cryptographically verified benchmark system with distributed execution}
+}
+
+License
+
+This project is open source and available under the MIT License.
+Support
+
+    Issues: GitHub Issues
+    Documentation: See docs/ directory
+    Examples: See examples/ directory
+
+Acknowledgments
+
+    Built with Flask, Ray, NumPy, SciPy
+    Inspired by production ML benchmarking best practices
+    Verification methodology based on cryptographic standards
+
+Documentation
+
+    Latency Optimization Guide - 10+ optimization techniques with expected gains
+    Distributed Execution Guide - Multi-GPU setup and configuration
+    Dashboard Setup Guide - Web dashboard deployment
+    Examples - Quick start and verification scripts
+    Benchmark Documentation - Legacy benchmark harness integrations
+
+Example Results
+Meta-Optimization (Dry Run)
+
+======================================================================
+META-OPTIMIZATION 500 RESULTS
+======================================================================
+
+Mode: DRY RUN (10 iterations)
+Completed: 10/10
+Duration: 0.50s
+
+Final Accuracy: 0.8985 (89.85%)
+Final Latency: 68.00ms
+Final Throughput: 108.00 req/s
+
+Accuracy Statistics:
+  Mean: 0.8761
+  Std Dev: 0.0241
+  CV: 0.0275
+  95% CI: [0.8571, 0.8951]
+  99% CI: [0.8509, 0.9013]
+  Converged: ✓
+
+Verification: True
+SHA256: 5b4a68a377e5df5e...
+======================================================================
+
+Verification Report
+
+======================================================================
+BENCHMARK VERIFICATION REPORT
+======================================================================
+
+Total files: 3
+Passed: 1 (33.3%)
+Failed: 2 (66.7%)
+
+Individual Results:
+  ✓ PASS: meta_opt_20260112.json
+    - All checks passed
+    - Duration: 1.01s (realistic)
+    - Verification hash valid
+  
+  ✗ FAIL: benchmark_old_simulated.json
+    - Error: Suspiciously fast execution (0.000016s)
+    - Error: Missing verification block
+    - Warning: No hardware specifications
+======================================================================
+
+Roadmap
+Completed ✅
+
+    Core benchmark infrastructure (latency, CPU stress, verification)
+    Meta-optimization with 500-iteration support
+    JSON schema validation
+    Cryptographic verification (SHA256)
+    Checkpoint/resume capability
+    Statistical convergence detection
+    CSV export for analysis
+    Basic web dashboard
+    Distributed executor framework
+    Comprehensive documentation
+    Example scripts and quick start
+
+In Progress 🚧
+
+    Full WebSocket-based real-time dashboard
+    Multi-channel notification system (Slack, Email, Discord)
+    Automated leaderboard submission
+    Enhanced distributed execution with Ray
+    Docker containerization
+    CI/CD integration for automated validation
+
+Planned 📋
+
+    Agent arena for multi-agent competition
+    Optimization rewrite engine (INT8, Flash Attention, etc.)
+    GPU temperature and power monitoring
+    Prometheus metrics export
+    Grafana dashboard templates
+    Weekly scheduled 500-iteration runs
+
+About
+
+Nano agent a I greatly improved
+Resources
+Readme
+Contributing
+Contributing
+Activity
+Custom properties
+Stars
+1 star
+Watchers
+1 watching
+Forks
+0 forks
+Audit log
+Report repository
+Releases
+No releases published
+Create a new release
+Packages
+No packages published
+Publish your first package
+Contributors 3
+
+     
+     
+     
+
+Languages
+
+    Python 100.0% 
+
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+
+    Terms
+    Privacy
+    Security
+    Status
+    Community
+    Docs
+    Contact
+
+
+    .0",
+    "configurations": [
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+
+        {
+            "name": "PowerShell: Windows PowerShell",
+            "type": "PowerShell",
+            "request": "launch",
+            "sessionName": "Windows PowerShell (x64)"
+        },
+
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "PowerShell Launch Current File",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${cwd}"
+        },
+        {
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "nodemon",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "restart": true,
+            "runtimeExecutable": "nodemon",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "generator"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "Yeoman generator",
+            "program": "${workspaceFolder}/node_modules/yo/lib/cli.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "PowerShell: Windows PowerShell",
+            "type": "PowerShell",
+            "request": "launch",
+            "sessionName": "Windows PowerShell (x64)"
+        },
+        {
+            "name": "PowerShell Launch Script",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter path or command to execute, for example, ${workspaceFolder}/src/foo.ps1 or Invoke-Pester",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell: Binary Module Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "
+            
+            "
+        },
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "
+            "
+        },
+
+
+
+
+
+
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": " 
+            "
+        }, 
+
+ 
+
+        {
+            "name": "PowerShell Launch Current File",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Attach to Host Process",
+            "type": "PowerShell",
+            "request": "attach"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "type": "artificial-workflow",
+            "request": "launch",
+            "name": "Debug Current Workflow File",
+            "program": "${file}"
+        },
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
+            "command": "npm start",
+            "name": "Run npm start",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "npm start",
+            "name": "Run npm start",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "name": "PowerShell: Windows PowerShell",
+            "type": "PowerShell",
+            "request": "launch",
+            "sessionName": "Windows PowerShell (x64)"
+        },
+        {
+            "name": "PowerShell: Binary Module Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+        {
+            "name": "PowerShell: Binary Module Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+        {
+            "name": "PowerShell Run Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+
+        {
+            "name": "PowerShell Launch Script",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter path or command to execute, for example, ${workspaceFolder}/src/foo.ps1 or Invoke-Pester",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Launch Current File",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell: Binary Module Interactive",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter command to import your binary module, for example: \"Import-Module -Force /path/to/module.psd1|dll\"",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+        {
+            "name": "PowerShell: Module Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter command to import your binary module, for example: \"Import-Module -Force /path/to/module.psd1|dll\""
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Attach to Host Process",
+            "type": "PowerShell",
+            "request": "attach"
+        },
+        {
+            "args": [
+                "generator"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "Yeoman generator",
+            "program": "${workspaceFolder}/node_modules/yo/lib/cli.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "generator"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "Yeoman generator",
+            "program": "${workspaceFolder}/node_modules/yo/lib/cli.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "nodemon",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "restart": true,
+            "runtimeExecutable": "nodemon",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Mocha Tests",
+            "program": "mocha",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Mocha Tests",
+            "program": "mocha",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Launch via NPM",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "debug"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "task"
+            ],
+            "name": "Gulp task",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+
+
+
+
+        {
+            "type": "artificial-workflow",
+            "request": "launch",
+            "name": "Debug Current Workflow File",
+            "program": "${file}"
+        }
+ 
+ 
+    ]
+}
+
+{
+    "name": "Attach to Edge",
+    "port": 9222,
+    "request": "attach",
+    "type": "msedge",
+    "webRoot": "${workspaceFolder}"
+}
+], distributed execution, and real-time monitoring.
+Overview
+
+This repository provides a comprehensive benchmarking infrastructure featuring:
+
+    🚀 500-Iteration Meta-Optimization: Progressive accuracy targets (90% → 95% → 99.9%)
+    🔒 Cryptographic Verification: SHA256 hashing and validation of all results
+    ⚡ Real Latency Measurement: High-precision timing with nanosecond accuracy
+    🌐 Distributed Execution: Multi-GPU parallel processing via Ray
+    📊 Real-Time Dashboard: Web-based monitoring with live metrics
+    📈 Statistical Analysis: 99% confidence intervals and convergence detection
+    ✅ Comprehensive Validation: Automated detection of simulated/fake data
+    💾 Checkpoint/Resume: Save progress every 10 iterations
+
+Quick Start (3 Commands)
+
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Run quick test (10 iterations, ~1 minute)
+bash examples/quick_start.sh
+
+# 3. Start dashboard (optional)
+python dashboard/app.py  # Open http://localhost:8080
+
+Architecture
+
+Evolving-sun Benchmark System
+│
+├── Core Components
+│   ├── Meta-Optimization Engine (500 iterations → 99.9% accuracy)
+│   ├── Latency Benchmarking (real measurements, not simulated)
+│   ├── Verification System (SHA256, schema validation)
+│   └── CPU Stress Controller (99.9% utilization target)
+│
+├── Distributed Execution
+│   ├── Ray-based parallelization
+│   ├── Multi-GPU support (10+ workers)
+│   └── Fault tolerance & retry logic
+│
+├── Monitoring & Reporting
+│   ├── Real-time web dashboard
+│   ├── API endpoints (status, metrics, benchmarks)
+│   └── Progress tracking & notifications
+│
+└── Data Management
+    ├── Checkpoint system (every 10 iterations)
+    ├── JSON & CSV export
+    └── Watermarked results with provenance
+
+Repository Structure
+
+Evolving-sun/
+├── .github/workflows/       # CI/CD workflows
+├── config/
+│   ├── benchmark_config.yaml    # Centralized configuration
+│   └── notifications.yaml       # Notification settings
+├── dashboard/
+│   ├── app.py                   # Flask web dashboard
+│   └── benchmark_data.db        # SQLite database
+├── docs/
+│   ├── LATENCY_OPTIMIZATION.md  # Optimization guide
+│   ├── DISTRIBUTED_EXECUTION.md # Multi-GPU setup
+│   └── DASHBOARD_SETUP.md       # Dashboard deployment
+├── examples/
+│   ├── quick_start.sh           # One-command demo
+│   └── verify_results.sh        # Validation tool
+├── logs/
+│   ├── benchmarks/              # Benchmark results (JSON/CSV)
+│   └── checkpoints/             # Iteration checkpoints
+├── schemas/
+│   └── benchmark_result.json    # JSON schema for validation
+├── scripts/
+│   ├── meta_optimization_500.py      # 500-iteration system
+│   ├── latency_benchmark_real.py     # Real latency testing
+│   ├── distributed_executor.py       # Multi-GPU execution
+│   ├── cpu_stress_controller.py      # CPU stress testing
+│   ├── verify_benchmarks.py          # Validation script
+│   └── run_benchmarks.py             # Legacy unified runner
+└── requirements.txt             # Python dependencies
+
+Getting Started
+Prerequisites
+
+    Python 3.9 or higher
+    (Optional) NVIDIA GPUs for distributed execution
+    (Optional) Ray for multi-GPU parallelization
+
+Installation
+
+# Clone repository
+git clone https://github.com/Teamintelxsel/Evolving-sun.git
+cd Evolving-sun
+
+# Install core dependencies
+pip install -r requirements.txt
+
+# (Optional) Install Ray for distributed execution
+pip install 'ray[default]>=2.5.0'
+
+Usage
+Running Benchmarks
+Quick Test (Dry Run)
+
+# 10-iteration test (~1 minute)
+python scripts/meta_optimization_500.py --dry-run
+
+Full 500-Iteration Run
+
+# Serial execution (~8 hours)
+python scripts/meta_optimization_500.py
+
+# Distributed execution with 10 GPUs (~50 minutes)
+python scripts/distributed_executor.py --iterations 500 --workers 10
+
+Latency Benchmarking
+
+# Real latency measurement (1000 requests)
+python scripts/latency_benchmark_real.py \
+    --mode simulation \
+    --requests 1000 \
+    --workers 10
+
+# HTTP endpoint testing
+python scripts/latency_benchmark_real.py \
+    --mode http \
+    --url https://api.example.com/v1/predict \
+    --requests 1000
+
+Verifying Results
+
+# Verify single file
+python scripts/verify_benchmarks.py logs/benchmarks/meta_opt_*.json
+
+# Verify entire directory
+python scripts/verify_benchmarks.py logs/benchmarks/
+
+# Save verification report
+python scripts/verify_benchmarks.py logs/benchmarks/ \
+    --output logs/verification_report.json
+
+Dashboard
+
+# Start web dashboard
+python dashboard/app.py
+
+# Access at http://localhost:8080
+# API endpoints available at /api/status, /api/benchmarks, /api/latest
+
+Checkpoint & Resume
+
+# Checkpoints are saved automatically every 10 iterations
+# Resume from checkpoint:
+python scripts/meta_optimization_500.py \
+    --resume checkpoints/iter_250.json
+
+Features
+Meta-Optimization System
+
+    Progressive Targets:
+        Phase 1 (Exploration, 1-100): 90% accuracy
+        Phase 2 (Refinement, 101-300): 95% accuracy
+        Phase 3 (Convergence, 301-500): 99.9% accuracy
+
+    Convergence Detection: Automatically stops when CV < 0.1%
+
+    Statistical Analysis: 95% and 99% confidence intervals
+
+    Export Formats: JSON (detailed) and CSV (analysis)
+
+Verification System
+
+Detects fake/simulated data through:
+
+    ✅ Timing validation (flags duration < 0.01s)
+    ✅ SHA256 hash verification
+    ✅ Statistical validity checks
+    ✅ JSON schema compliance
+    ✅ Hardware specification validation
+    ✅ Percentile ordering verification
+
+Distributed Execution
+
+    Automatic GPU Detection: Uses all available GPUs
+    Fault Tolerance: Retries failed iterations
+    Progress Tracking: Real-time status updates
+    Resource Monitoring: Per-GPU utilization tracking
+    Graceful Shutdown: Saves checkpoints on interrupt
+
+Performance Targets
+Mode 	Duration 	Workers 	Expected Result
+Dry Run 	~1 min 	1 	10 iterations complete
+Serial 	~8 hours 	1 	500 iterations, 99.9% accuracy
+Distributed (10 GPUs) 	~50 min 	10 	500 iterations, parallel
+Configuration
+Benchmark Configuration
+
+Edit config/benchmark_config.yaml:
+
+meta_optimization:
+  total_iterations: 500
+  checkpoint_interval: 10
+  early_stopping: true
+
+distributed:
+  enabled: true
+  num_workers: 10
+  gpu_per_worker: 1
+
+benchmark:
+  cpu_target: 99.9
+  latency:
+    requests: 1000
+    workers: 10
+
+Notification Configuration
+
+Edit config/notifications.yaml and set environment variables:
+
+export SLACK_WEBHOOK_URL="https://hooks.slack.com/..."
+export EMAIL_USERNAME="your@email.com"
+export EMAIL_PASSWORD="password"
+
+Contributing
+
+Contributions are welcome! Please read CONTRIBUTING.md for details on our code of conduct and the process for submitting pull requests.
+Citation
+
+If you use this benchmark system in your research, please cite:
+
+@software{evolving_sun_benchmark,
+  title = {Evolving-sun: Production-Ready Benchmark System},
+  author = {Teamintelxsel},
+  year = {2026},
+  url = {https://github.com/Teamintelxsel/Evolving-sun},
+  note = {Cryptographically verified benchmark system with distributed execution}
+}
+
+License
+
+This project is open source and available under the MIT License.
+Support
+
+    Issues: GitHub Issues
+    Documentation: See docs/ directory
+    Examples: See examples/ directory
+
+Acknowledgments
+
+    Built with Flask, Ray, NumPy, SciPy
+    Inspired by production ML benchmarking best practices
+    Verification methodology based on cryptographic standards
+
+Documentation
+
+    Latency Optimization Guide - 10+ optimization techniques with expected gains
+    Distributed Execution Guide - Multi-GPU setup and configuration
+    Dashboard Setup Guide - Web dashboard deployment
+    Examples - Quick start and verification scripts
+    Benchmark Documentation - Legacy benchmark harness integrations
+
+Example Results
+Meta-Optimization (Dry Run)
+
+======================================================================
+META-OPTIMIZATION 500 RESULTS
+======================================================================
+
+Mode: DRY RUN (10 iterations)
+Completed: 10/10
+Duration: 0.50s
+
+Final Accuracy: 0.8985 (89.85%)
+Final Latency: 68.00ms
+Final Throughput: 108.00 req/s
+
+Accuracy Statistics:
+  Mean: 0.8761
+  Std Dev: 0.0241
+  CV: 0.0275
+  95% CI: [0.8571, 0.8951]
+  99% CI: [0.8509, 0.9013]
+  Converged: ✓
+
+Verification: True
+SHA256: 5b4a68a377e5df5e...
+======================================================================
+
+Verification Report
+
+======================================================================
+BENCHMARK VERIFICATION REPORT
+======================================================================
+
+Total files: 3
+Passed: 1 (33.3%)
+Failed: 2 (66.7%)
+
+Individual Results:
+  ✓ PASS: meta_opt_20260112.json
+    - All checks passed
+    - Duration: 1.01s (realistic)
+    - Verification hash valid
+  
+  ✗ FAIL: benchmark_old_simulated.json
+    - Error: Suspiciously fast execution (0.000016s)
+    - Error: Missing verification block
+    - Warning: No hardware specifications
+======================================================================
+
+Roadmap
+Completed ✅
+
+    Core benchmark infrastructure (latency, CPU stress, verification)
+    Meta-optimization with 500-iteration support
+    JSON schema validation
+    Cryptographic verification (SHA256)
+    Checkpoint/resume capability
+    Statistical convergence detection
+    CSV export for analysis
+    Basic web dashboard
+    Distributed executor framework
+    Comprehensive documentation
+    Example scripts and quick start
+
+In Progress 🚧
+
+    Full WebSocket-based real-time dashboard
+    Multi-channel notification system (Slack, Email, Discord)
+    Automated leaderboard submission
+    Enhanced distributed execution with Ray
+    Docker containerization
+    CI/CD integration for automated validation
+
+Planned 📋
+
+    Agent arena for multi-agent competition
+    Optimization rewrite engine (INT8, Flash Attention, etc.)
+    GPU temperature and power monitoring
+    Prometheus metrics export
+    Grafana dashboard templates
+    Weekly scheduled 500-iteration runs
+
+About
+
+Nano agent a I greatly improved
+Resources
+Readme
+Contributing
+Contributing
+Activity
+Custom properties
+Stars
+1 star
+Watchers
+1 watching
+Forks
+0 forks
+Audit log
+Report repository
+Releases
+No releases published
+Create a new release
+Packages
+No packages published
+Publish your first package
+Contributors 3
+
+     
+     
+     
+
+Languages
+
+    Python 100.0% 
+
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+
+    Terms
+    Privacy
+    Security
+    Status
+    Community
+    Docs
+    Contact
+
+
+    .0",
+    "configurations": [
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+
+        {
+            "name": "PowerShell: Windows PowerShell",
+            "type": "PowerShell",
+            "request": "launch",
+            "sessionName": "Windows PowerShell (x64)"
+        },
+
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "PowerShell Launch Current File",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${cwd}"
+        },
+        {
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "nodemon",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "restart": true,
+            "runtimeExecutable": "nodemon",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "generator"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "Yeoman generator",
+            "program": "${workspaceFolder}/node_modules/yo/lib/cli.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "PowerShell: Windows PowerShell",
+            "type": "PowerShell",
+            "request": "launch",
+            "sessionName": "Windows PowerShell (x64)"
+        },
+        {
+            "name": "PowerShell Launch Script",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter path or command to execute, for example, ${workspaceFolder}/src/foo.ps1 or Invoke-Pester",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell: Binary Module Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "
+            
+            "
+        },
+
+
+
+
+
+
+
+
+
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "
+            "
+        },
+
+
+
+
+
+
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": " 
+            "
+        }, 
+
+ 
+
+        {
+            "name": "PowerShell Launch Current File",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Attach to Host Process",
+            "type": "PowerShell",
+            "request": "attach"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "type": "artificial-workflow",
+            "request": "launch",
+            "name": "Debug Current Workflow File",
+            "program": "${file}"
+        },
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
+            "command": "npm start",
+            "name": "Run npm start",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "npm start",
+            "name": "Run npm start",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "name": "PowerShell: Windows PowerShell",
+            "type": "PowerShell",
+            "request": "launch",
+            "sessionName": "Windows PowerShell (x64)"
+        },
+        {
+            "name": "PowerShell: Binary Module Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+        {
+            "name": "PowerShell: Binary Module Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+        {
+            "name": "PowerShell Run Pester Tests",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Invoke-Pester",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+
+        {
+            "name": "PowerShell Launch Script",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter path or command to execute, for example, ${workspaceFolder}/src/foo.ps1 or Invoke-Pester",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Launch Current File",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell: Binary Module Interactive",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter command to import your binary module, for example: \"Import-Module -Force /path/to/module.psd1|dll\"",
+            "createTemporaryIntegratedConsole": true,
+            "attachDotnetDebugger": true
+        },
+        {
+            "name": "PowerShell: Module Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "Enter command to import your binary module, for example: \"Import-Module -Force /path/to/module.psd1|dll\""
+        },
+        {
+            "name": "PowerShell Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "cwd": "${cwd}"
+        },
+        {
+            "name": "PowerShell Attach to Host Process",
+            "type": "PowerShell",
+            "request": "attach"
+        },
+        {
+            "args": [
+                "generator"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "Yeoman generator",
+            "program": "${workspaceFolder}/node_modules/yo/lib/cli.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "generator"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "Yeoman generator",
+            "program": "${workspaceFolder}/node_modules/yo/lib/cli.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "name": "nodemon",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "restart": true,
+            "runtimeExecutable": "nodemon",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Mocha Tests",
+            "program": "mocha",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Mocha Tests",
+            "program": "mocha",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Launch via NPM",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "debug"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "args": [
+                "task"
+            ],
+            "name": "Gulp task",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch add-on",
+            "addonPath": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch index.html",
+            "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/main.js",
+            "request": "launch",
+            "runtimeExecutable": "electron",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "address": "TCP/IP address of process to be debugged",
+            "localRoot": "${workspaceFolder}",
+            "name": "Attach to Remote",
+            "port": 9229,
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "name": "Launch localhost",
+            "url": "http://localhost/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "firefox",
+            "request": "attach",
+            "name": "Attach"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+
+
+
+
+        {
+            "type": "artificial-workflow",
+            "request": "launch",
+            "name": "Debug Current Workflow File",
+            "program": "${file}"
+        }
+    ]
+}
