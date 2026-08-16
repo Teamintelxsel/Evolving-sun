@@ -1,0 +1,26 @@
+{
+  "repository": {
+    "name": "your-repo",
+    "owner": {
+      "login": "your-username"
+    },
+    "full_name": "your-username/your-repo"
+  },
+  "sender": {
+    "login": "test-user"
+  },
+  "action": "opened",
+  "number": 1,
+  "pull_request": {
+    "number": 1,
+    "title": "Test PR",
+    "head": {
+      "ref": "feature-branch",
+      "sha": "abc123"
+    },
+    "base": {
+      "ref": "main",
+      "sha": "def456"
+    }
+  }
+}

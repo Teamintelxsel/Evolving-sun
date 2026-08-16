@@ -1,0 +1,15 @@
+[
+  {
+    "workflow": "weekly-benchmarks.yml",
+    "command": "act pull_request -W .github\\workflows\\weekly-benchmarks.yml",
+    "success": true,
+    "timestamp": "2026-01-19T05:15:16.000Z"
+  },
+  {
+    "workflow": "benchmark-validation.yml",
+    "command": "act push -W .github\\workflows\\benchmark-validation.yml",
+    "success": true,
+    "timestamp": "2026-01-19T05:15:10.052Z"
+  }
+]
+
